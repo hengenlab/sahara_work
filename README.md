@@ -3,7 +3,7 @@ These are functions to make running large amounts of data through criticality ea
 
 *SKIP DOWN TO THE LAST FUNCTION!* these are just helper functions
 
-#### break_up_mat
+### break_up_mat
 **Parameters**:
 FR_mat: The binarized spike matrix
 small_bin: the binsize used to binarize the matrix
@@ -12,7 +12,7 @@ hour_bins: how you want the data broken up
 **Output**:
 Returns an array of the binarized data reshaped into chunks. So if the data was 12 hours and you wanted it in 3 hour bins, you'll get an array of shape (4,#cells,#bins)
 
-#### looped_crit
+### looped_crit
 **Parameters**:
 FR_mat: the array of binarized spikes
 params: dictionary of parameters
@@ -23,7 +23,7 @@ Outputs a dictionary with all the possible criticality data you could need
 
 
 ---
-#### lilo_and_stitch
+## lilo_and_stitch
 This bad boy takes in a list of paths, in addition to a dictionary of parameters, and runs criticality for all the paths and saves the master_dictionary to each directory you give it
 
 **Parameters**:
