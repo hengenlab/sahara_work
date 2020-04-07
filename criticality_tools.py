@@ -1,6 +1,8 @@
 from sahara_work import Criticality as cr 
 import musclebeachtools_hlab.musclebeachtools as mbt 
 import numpy as np 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
 
 
