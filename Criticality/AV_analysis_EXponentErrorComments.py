@@ -2,7 +2,7 @@ import numpy as np
 from sahara_work import Criticality as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
-def AV_analysis_ExponentErrorComments(burst, T, bm, tm, flag = 1, EX_burst = 1, EX_time = 1, name):
+def AV_analysis_ExponentErrorComments(burst, T, bm, tm, flag = 1, EX_burst = 1, EX_time = 1, pltname):
 # This function calculate exponents for PDF(AVsize), PDF(AVdura), and
 # scaling relation. When flag == 1 (default),
 # Tranlsated by Lizzie Tilden 5/29/19
@@ -44,7 +44,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, flag = 1, EX_burst = 1, 
 		Result['P_burst'], ks, hax_burst = cr.pvaluenew(burst[idx_burst],sizelimit)
 		hax_burst.axes[0].set_xlabel('Size (S)', fontsize = 16)
 		hax_burst.axes[0].set_ylabel('Prob(size < S)', fontsize = 16)
-		hax_burst.savefig(name+'pvalue_burst')
+		hax_burst.savefig(pltname+'pvalue_burst')
 
 	
 	elif flag == 3:
@@ -108,7 +108,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, flag = 1, EX_burst = 1, 
 		Result['P_t'], ks, hax_time  = cr.pvaluenew(T[idx_time],durationlimit)
 		hax_time.axes[0].set_xlabel('Duration (D)', fontsize = 16)
 		hax_time.axes[0].set_ylabel('Prob(size < D)', fontsize = 16)
-		hax_burst.savefig(name+'pvalue_time')
+		hax_burst.savefig(pltname+'pvalue_time')
 		#hax_time.suptitle('Avalanche Duration')
 
 	elif flag == 3:
@@ -171,7 +171,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, flag = 1, EX_burst = 1, 
 		plt.tight_layout()
 		plt.legend()
 		#plt.show()
-		plt.savefig(name+'scaling_relations')
+		plt.savefig(pltname+'scaling_relations')
 		return Result, fig1
 	elif flag == 2:
 		return Result, hax_burst, hax_time
