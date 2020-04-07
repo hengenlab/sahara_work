@@ -2,7 +2,7 @@ import numpy as np
 from sahara_work import Criticality as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
-def AV_analysis_ExponentErrorComments(burst, T, bm, tm, flag = 1, EX_burst = 1, EX_time = 1, pltname):
+def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_burst = 1, EX_time = 1):
 # This function calculate exponents for PDF(AVsize), PDF(AVdura), and
 # scaling relation. When flag == 1 (default),
 # Tranlsated by Lizzie Tilden 5/29/19
