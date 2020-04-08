@@ -108,7 +108,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		Result['P_t'], ks, hax_time  = cr.pvaluenew(T[idx_time],durationlimit)
 		hax_time.axes[0].set_xlabel('Duration (D)', fontsize = 16)
 		hax_time.axes[0].set_ylabel('Prob(size < D)', fontsize = 16)
-		hax_burst.savefig(pltname+'pvalue_time')
+		hax_time.savefig(pltname+'pvalue_time')
 		#hax_time.suptitle('Avalanche Duration')
 
 	elif flag == 3:
