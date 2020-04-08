@@ -128,17 +128,17 @@ def looped_crit(FR_mat, params, plot=True):
     return master_dict
 
 
-params = {
-    'ava_binsz': 0.04,
-    'hour_bins': 4,
-    'perc': 0.30,
-    'burstM': 17,
-    'tM': 4,
-    'quality': [1,2],
-    'time_frame': '0326_0_16',
-    'animal' : 'caf19',
-    'notes': ''
-}
+# params = {
+#     'ava_binsz': 0.04,
+#     'hour_bins': 4,
+#     'perc': 0.30,
+#     'burstM': 17,
+#     'tM': 4,
+#     'quality': [1,2],
+#     'time_frame': '0326_0_16',
+#     'animal' : 'caf19',
+#     'notes': ''
+# }
 
 
 def lilo_and_stitch(paths, params, overlap=0, plot=False):
