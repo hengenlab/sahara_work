@@ -120,7 +120,7 @@ def looped_crit(FR_mat, params, plot=True):
         ax2.set_xlim([0,len(FR_mat)+1]) 
         ax2.plot([0, 16.5], [0.2, 0.2], linestyle = '--', color = '#ff964f', zorder = 15)
         ax2.set_ylabel('DCC', fontsize = 20)
-        ax2.set_xlabel("block num", fontsize=20)
+        ax2.set_xlabel("hours", fontsize=20)
 
         fig.savefig("criticality_figures")
     return master_dict
@@ -138,6 +138,17 @@ params = {
     'notes': ''
 }
 
+all_p_b=[]
+all_p_t=[]
+all_dcc=[]
+for d in data:
+    all_p_b.concatenate(np.array(d['all_p_values_burst']))
+    all_p_t.concatenate(np.array(d['all_p_values_t']))
+    all_dcc.concatenate(np.array(d['all_dcc_values']))
+
+all_p_b = np.array(all_p_b).flatten()
+all_p_t = np.array(all_p_t).flatten()
+all_dcc = np.array(all_dcc).flatten()
 
 def lilo_and_stitch(paths, params, overlap=0, plot=False):
     """
