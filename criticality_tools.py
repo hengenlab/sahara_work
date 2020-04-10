@@ -1,6 +1,8 @@
-import Criticality as cr 
+from sahara_work import Criticality as cr 
 import musclebeachtools_hlab.musclebeachtools as mbt 
 import numpy as np 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
 
 
@@ -82,8 +84,8 @@ def looped_crit(FR_mat, params, plot=True):
     for idx, t_bin in enumerate(FR_mat):
         print(f"working on block {idx+1} of {len(FR_mat)}")
         Result = cr.AV_analysis_BurstT(t_bin, perc=perc)
-        Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, flag = 2, EX_burst=1, EX_time=1)
-        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, flag = 3)
+        Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, time_frame+'_'+str(idx), flag = 2, EX_burst=1, EX_time=1)
+        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, time_frame+'_'+str(idx), flag = 3)
         master_dict["Result_block"+str(idx)] = Result2
         master_dict["dcc_ax_block"+str(idx)] = ax3
         master_dict["p_test_axs_block"+str(idx)] = (ax1, ax2)
@@ -126,17 +128,17 @@ def looped_crit(FR_mat, params, plot=True):
     return master_dict
 
 
-params = {
-    'ava_binsz': 0.04,
-    'hour_bins': 4,
-    'perc': 0.30,
-    'burstM': 15,
-    'tM': 5,
-    'quality': [1],
-    'time_frame': '0326_32-48',
-    'animal': 'caf19',
-    'notes': ''
-}
+# params = {
+#     'ava_binsz': 0.04,
+#     'hour_bins': 4,
+#     'perc': 0.30,
+#     'burstM': 17,
+#     'tM': 4,
+#     'quality': [1,2],
+#     'time_frame': '0326_0_16',
+#     'animal' : 'caf19',
+#     'notes': ''
+# }
 
 all_p_b=[]
 all_p_t=[]
