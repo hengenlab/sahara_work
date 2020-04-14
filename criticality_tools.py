@@ -2,21 +2,31 @@ from sahara_work import Criticality as cr
 import musclebeachtools_hlab.musclebeachtools as mbt 
 import numpy as np 
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
 
 """
 takes in an array of dictionaries and pulls all the dcc and p_value data, appends all that data into a nice block and saves it where you want
 """
-def pull_crit_data(all_dicts, save_loc, animal, time_frame):
+def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
+    all_dicts_obj=[]
+    if paths:
+        for path in all_dicts:
+            print(f'loading dict: {path}')
+            all_dicts_obj.append(np.load(path, allow_pickle=True).item())
+    else:
+        all_dicts_obj=all_dicts
+
     all_dccs=[]
     all_p_t=[]
     all_p_b=[]
-    
-    for data in all_dicts:
+    all_params=[]
+    for i, data in enumerate(all_dicts_obj):
+        print(f"working on block: {i}")
         all_dccs.append(np.array(data['all_dcc_values']))
         all_p_t.append(np.array(data['all_p_values_t']))
         all_p_b.append(np.array(data['all_p_values_burst']))
+        all_params.append(data['parameters'])
     
     all_dccs = np.array(all_dccs).flatten()
     all_p_t = np.array(all_p_t).flatten()
@@ -24,51 +34,55 @@ def pull_crit_data(all_dicts, save_loc, animal, time_frame):
 
     all_data = [all_dccs, all_p_b, all_p_t]
 
-    np.save(save_loc+f"/dcc_pb_pt_{animal}_{time_frame}")
-    return all_data
+    np.save(save_loc+f"/dcc_pb_pt_{animal}_{time_frame}", all_data)
+    return all_data, all_params
 
 params={
     "animal": "caf19",
     "date": "0326",
-    "time_range":"0-64"
+    "time_range":"0-288"
 }
 """
-makes pretty plots from arrays of all dcc and p value data. not from the dictionaries 
+makes pretty plots from arrays of all dcc and p value data. not from the dictionaries - make sure theres an extra 0 in the labels
 """
-def crit_plots(dcc, p_b, p_t, labels, params, save=False){
+def crit_plots(dcc, p_b, p_t, labels, params, save=False):
+        plt.ion()
         fig, (ax1,ax2) = plt.subplots(nrows=2, ncols=1)
 
         bar_width=0.4
         size_x = np.arange(len(dcc))+1
         dur_x = size_x + bar_width
-        ax1.bar(size_x, p_b, bar_width, color = '#a6c875', alpha = 0.7, label = 'DCC', zorder = 10)
-        ax1.bar(dur_x, p_t, bar_width, color = '#f1da7a', alpha = 0.7, label = 'DCC', zorder = 10)
+        color_b = np.where(p_b<0.05, "black", '#a6c875')
+        color_t = np.where(p_t<0.05, "black", '#f1da7a')
+        ax1.bar(size_x, p_b, bar_width, color = color_b, alpha = 0.7, label = 'DCC', zorder = 10)
+        ax1.bar(dur_x, p_t, bar_width, color = color_t, alpha = 0.7, label = 'DCC', zorder = 10)
         ax1.set_xlim([0,len(dcc)+1]) 
         ax1.set_xticks(np.arange(np.size(size_x)+1)+bar_width/2)
         xlim = ax1.get_xlim()
         ax1.plot([xlim[0], xlim[1]], [0.05, 0.05], color = '#738595', linestyle = '--')
         ax1.set_ylabel('p value', fontsize = 20)
-        ax1.set_xticklabels(labels, rotation=30)
+        ax1.set_xticklabels(labels, rotation=50)
 
 
-        ax2.bar(np.arange(len(dcc))+1, dcc, color = '#464196', alpha = 0.7, label = 'DCC', zorder = 10)
+        color_dcc = np.where(dcc>0.2, "lightcoral", '#464196')
+        ax2.bar(np.arange(len(dcc))+1, dcc, color = color_dcc, alpha = 0.7, label = 'DCC', zorder = 10)
         ax2.set_ylim([0,1])
         ax2.set_xlim([0,len(dcc)+1]) 
-        ax2.plot([0, 16.5], [0.2, 0.2], linestyle = '--', color = '#ff964f', zorder = 15)
+        ax2.plot([0, len(dcc)+1], [0.2, 0.2], linestyle = '--', color = '#ff964f', zorder = 15)
         ax2.set_ylabel('DCC', fontsize = 20)
         ax2.set_xlabel("time-bin", fontsize=20)
-        ax2.set_xticklabels(labels, rotation=30)
+        ax2.set_xticks(np.arange(np.size(size_x)+1))
+        ax2.set_xticklabels(labels, rotation=50)
 
-        fig.settitle(f"{params["animal"]} data for time range {params['time_range']} on {params['date']}")
+        ax1.set_title(f"{params['animal']} data for time range {params['time_range']} on {params['date']}")
 
+        plt.tight_layout()
+        plt.show()
         if(save):
             fig.savefig(f"criticality_figures_{params['animal']}_{params['date']}_{params['time_range']}")
         
-        return fig
+        return fig, ax1, ax2
 
-        
-        
-}
 
 def break_up_mat(FR_mat, small_bin, hour_bins):
     # small_bin: original size of bin used to make the matrix, in seconds
@@ -192,29 +206,18 @@ def looped_crit(FR_mat, params, plot=True):
     return master_dict
 
 
-# params = {
-#     'ava_binsz': 0.04,
-#     'hour_bins': 4,
-#     'perc': 0.30,
-#     'burstM': 17,
-#     'tM': 4,
-#     'quality': [1,2],
-#     'time_frame': '0326_0_16',
-#     'animal' : 'caf19',
-#     'notes': ''
-# }
+params = {
+    'ava_binsz': 0.04,
+    'hour_bins': 4,
+    'perc': 0.35,
+    'burstM': 18,
+    'tM': 4,
+    'quality': [1],
+    'time_frame': '0326_0_16',
+    'animal' : 'caf19',
+    'notes': ''
+}
 
-all_p_b=[]
-all_p_t=[]
-all_dcc=[]
-for d in data:
-    all_p_b.concatenate(np.array(d['all_p_values_burst']))
-    all_p_t.concatenate(np.array(d['all_p_values_t']))
-    all_dcc.concatenate(np.array(d['all_dcc_values']))
-
-all_p_b = np.array(all_p_b).flatten()
-all_p_t = np.array(all_p_t).flatten()
-all_dcc = np.array(all_dcc).flatten()
 
 def lilo_and_stitch(paths, params, overlap=0, plot=False):
     """
@@ -248,7 +251,8 @@ def lilo_and_stitch(paths, params, overlap=0, plot=False):
         print("------- WORKING ON ", path, " --------")
         last_slash = path.rfind("/")
         base_path = path[0:last_slash+1]
-        time_frame = base_path[0:-1]
+        
+        time_frame = base_path[0:base_path.find("/probe")]
         params['time_frame']=time_frame
         
         cells = np.load(path, allow_pickle=True)
