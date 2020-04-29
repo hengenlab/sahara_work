@@ -180,6 +180,10 @@ def looped_crit(FR_mat, params, plot=True):
     time_frame = params["time_frame"]
     animal = params["animal"]
 
+    total_bins=len(FR_mat[0])
+    total_seconds=total_bins*ava_binsz*1000 # converts to seconds from ms
+    total_hours=total_seconds/3600
+
     num_bins = int(total_time/hour_bins)
     bin_len = int((hour_bins*3600)/ava_binsz)
 
@@ -191,13 +195,17 @@ def looped_crit(FR_mat, params, plot=True):
         print(f"working on block {idx+1} of {num_bins}")
         
         if idx == num_bins-1:
+            exec(f"data{idx+1}=FR_mat[:, (idx*bin_len):]")
             data=FR_mat[:, (idx*bin_len):]
         else:
+            exec(f"data{idx+1}=FR_mat[:, (idx*bin_len) : ((idx+1)*bin_len)]")
             data=FR_mat[:, (idx*bin_len) : ((idx+1)*bin_len)]
 
         Result = cr.AV_analysis_BurstT(data, perc=perc)
+
         Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, time_frame+'_'+str(idx), flag = 2, EX_burst=1, EX_time=1)
         Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, time_frame+'_'+str(idx), flag = 3)
+        
         master_dict["Result_block"+str(idx)] = Result2
         master_dict["dcc_ax_block"+str(idx)] = ax3
         master_dict["p_test_axs_block"+str(idx)] = (ax1, ax2)
@@ -241,14 +249,14 @@ def looped_crit(FR_mat, params, plot=True):
 
 
 params = {
-    'ava_binsz': 0.04,
+    'ava_binsz': 0.045,
     'hour_bins': 4,
-    'total_time':16,
-    'perc': 0.35,
-    'burstM': 18,
+    'total_time':13,
+    'perc': 0.25,
+    'burstM': 10,
     'tM': 4,
-    'quality': [1],
-    'time_frame': '0409',
+    'quality': [1,2],
+    'time_frame': '0420',
     'animal' : 'caf19',
     'notes': 'new recording, trying new params'
 }
