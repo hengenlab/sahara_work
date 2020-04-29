@@ -3,13 +3,13 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sahara_work import Criticality as cr
+import Criticality as cr
 
 # Load data from mbt output; transform spiketimes into binary spikewords
 
 goodCells = np.load('EAB50.npy',allow_pickle=True) 
-ava_binsz = 0.045    # avalanches bin size 20ms  suggest to be 20-50ms
-nrn_time = 16     # 12h recording block
+ava_binsz = 0.02    # avalanches bin size 20ms  suggest to be 20-50ms
+nrn_time = 12     # 12h recording block
 
 # spks = mbt.getspikes(goodCells, 0, 3600*nrn_time)
 # data_T = mbt.spiketimes_to_spikewords(spks,0,3600*nrn_time,ava_binsz,1)  # old version musclebeachtools
@@ -27,8 +27,8 @@ data = mbt.n_spiketimes_to_spikewords(goodCells,ava_binsz,0,3600*nrn_time,1)   #
 
 perc = 0.3   # threshold of neural avalanches   suggest to be 20-50%
 r = cr.AV_analysis_BurstT(data, perc = perc)
-x = r['S'] # x is AVsize
-y = r['T'] # y is AVdura
+burst = r['S'] #  AVsize
+duration = r['T'] # AVdura
 
 ################## Avalanche analysis including AVsize, AVduration
 # distribution and scaling relation. burstM and tM are used to set the
@@ -37,12 +37,22 @@ y = r['T'] # y is AVdura
 # Result2 return pvalue for null hypothesis
 # Result3 generate three figures for scaling relationship
 
-burstM = 18  # suggest to be 8-20; adjust based on figures from Result3
-tM = 4       # suggest to be 3-6; adjust based on figures from Result3
+burstM = 12  # suggest to be 8-30; adjust based on figures from Result3
+tM = 4       # suggest to be 3-12; adjust based on figures from Result3
 
-Result1 = cr.AV_analysis_ExponentErrorComments(x, y, burstM, tM)
+Result1 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM)
 
-Result2 = cr.AV_analysis_ExponentErrorComments(x, y, burstM, tM, flag = 2)
+Result2 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag = 2)
 
-Result3, ax3 = cr.AV_analysis_ExponentErrorComments(x, y, burstM, tM, flag = 3)
+Result3, ax3 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag = 3)
 
+# Generate figures with shuffle data
+
+# calcuate the size and duration of AVs from shuffled data 
+burst_shuffle, duration_shuffle = cr.Genshuffle(goodCells,nrn_time,ava_binsz,perc, binary = 1, frame =0) 
+# binary = 1, binarize the data; binary = 0, count the actual number of spikes in each bin
+# frame = 0, generate random spiketimes (uniform distribution, keep the same FR for each neuron)
+# frame = 1, do frame shuffling: for each neuron, swap all spikes in one time bin (30s window) with spikes at another randomly chosen time bin. 
+
+cr.Plotshuffle(burstM,tM,burst,duration,burst_shuffle,duration_shuffle) 
+# burst and duration is the size and duration of AVs from your experimental data, which you generated above.

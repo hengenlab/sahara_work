@@ -1,5 +1,5 @@
 import numpy as np
-from sahara_work import Criticality as cr
+import Criticality as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
 def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_burst = 1, EX_time = 1):
@@ -46,7 +46,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		hax_burst.axes[0].set_ylabel('Prob(size < S)', fontsize = 16)
 		hax_burst.savefig(pltname+'pvalue_burst')
 
-	
+
 	elif flag == 3:
 		#plot distribution together with fitted distribution
     		############### Plot PDF ####################
@@ -66,7 +66,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		ax1[0].set_xlabel('AVsize')
 		ax1[0].set_ylabel('PDF(D)')
 		ax1[0].set_title('AVsize PDF, ' + str(np.round(alpha[0], 3)))
-		#plt.ion()
+		# plt.ion()
 		
 	if EX_time:
 		#calculate exponent and other parameters for AVdura.
@@ -150,8 +150,8 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 	Result['pre'] = sigma
 	Result['fit'] = fit_sigma
 	Result['df'] = np.abs(sigma - fit_sigma[0])
-	# Result['TT'] = TT
-	# Result['Sm'] = Sm
+	Result['TT'] = TT
+	Result['Sm'] = Sm
 
 	if flag == 3:
 	    ############# Plot scaling relation/fitted/predicted ###########

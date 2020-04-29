@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
+import Criticality as cr
 
 def spiketimes_to_spikewords(spiketimes,startime,stoptime,binsize,binarize): 
     ### ARGUMENTS
@@ -21,21 +22,124 @@ def spiketimes_to_spikewords(spiketimes,startime,stoptime,binsize,binarize):
     
     #get sec_time to bin conversion factor
     #startime in bins
-    startime_ms = startime * 1000
-    stoptime_ms = stoptime * 1000
-    binrange = np.arange(start = startime_ms,stop = stoptime_ms+1, step = binsize)
-    n_cells = len(spiketimes)
+	startime_ms = startime * 1000
+	stoptime_ms = stoptime * 1000
+	binrange = np.arange(start = startime_ms,stop = stoptime_ms+1, step = binsize)
+	n_cells = len(spiketimes)
 
-    spikewords_array = np.zeros([n_cells,binrange.shape[0]-1])
-    for i in range(n_cells):
-        spiketimes_cell = np.asarray(spiketimes)[i] * 1000. #spiketimes in seconds * 1000 msec/sec
-        counts, bins = np.histogram(spiketimes_cell,bins = binrange)
-        if binarize == 1:
+	spikewords_array = np.zeros([n_cells,binrange.shape[0]-1])
+	for i in range(n_cells):
+		spiketimes_cell = np.asarray(spiketimes)[i] * 1000. #spiketimes in seconds * 1000 msec/sec
+		counts, bins = np.histogram(spiketimes_cell,bins = binrange)
+		if binarize == 1:
 	        #binarize the counts
-	        counts[counts>0] = 1
+			counts[counts>0] = 1
         # print(counts.astype(np.int))
-        spikewords_array[i,:] = counts
-    return(spikewords_array.astype(np.int8).T)
+		spikewords_array[i,:] = counts
+	return(spikewords_array.astype(np.int8).T)
+
+def Genshuffle(neurons, nrn_time, ava_binsz, perc, binary = 1, frame = 0):
+
+	spks = mbt.n_getspikes(neurons, 0, 3600*nrn_time)
+
+	spks_shuffle = []
+
+	if frame == 0:
+	# generate random spiketimes (Uniform distribution, keep the same FR for each neuron)
+		print('generate random spiketimes')
+		for i in np.arange(0,len(spks)):
+			spikes = spks[i]
+			numspk = np.shape(spikes)[0]
+			spikes_shuffle = np.random.random(size = numspk) * nrn_time * 3600
+			spks_shuffle.append(spikes_shuffle)
+	
+	else:
+	# frame shuffling; For each neuron, swap all spikes in one time bin (30s window) with spikes at another randomly chosen time bin.
+		print('Frame Shuffling')
+
+		endtime = nrn_time*3600
+		for i in np.arange(0,len(spks)): 
+			spikes = spks[i] 
+			spikes_shuffle = frameshuffle(spikes,endtime) 
+			spks_shuffle.append(spikes_shuffle)
+	
+	data_T = cr.spiketimes_to_spikewords(spks_shuffle,0,3600*nrn_time,ava_binsz*1000,binary) # 1 for binary
+	data_shuffle = data_T.T
+	print('generate shuffled spikewords')
+
+	perc = perc     
+
+	r_shuffle = cr.AV_analysis_BurstT(data_shuffle, perc = perc)
+	burst_shuffle = r_shuffle['S'] 
+	duration_shuffle = r_shuffle['T'] 
+
+	return burst_shuffle,duration_shuffle
+
+def Plotshuffle(bm, tm, burst, duration, burst_shuffle, duration_shuffle):
+
+	Result = cr.AV_analysis_ExponentErrorComments(burst, duration, bm, tm)
+
+	burst_min = Result['xmin']
+	burst_max = Result['xmax']
+	duration_min = Result['tmin']
+	duration_max =  Result['tmax']
+	alpha = Result['alpha']
+	beta = Result['beta']
+
+	pdf = np.histogram(burst, bins = np.arange(1, np.max(burst)+2))[0]
+	pdf_shuffle = np.histogram(burst_shuffle, bins = np.arange(np.min(burst_shuffle), np.max(burst_shuffle)+2))[0]
+	tdf = np.histogram(duration,bins = np.arange(1, np.max(duration)+2))[0]
+	tdf_shuffle = np.histogram(duration_shuffle,bins = np.arange(np.min(duration_shuffle), np.max(duration_shuffle)+2))[0]
+
+	fig1, ax1 = plt.subplots(nrows = 1, ncols = 2, figsize = [12, 8])
+	ax1[0].plot(np.arange(1,np.max(burst)+1),pdf/np.sum(pdf), marker = 'o', markersize = 3, linestyle = 'None', color = '#2138ab', alpha = 0.75)
+	ax1[0].set_yscale('log')
+	ax1[0].set_xscale('log')
+
+	x = np.arange(burst_min, burst_max+1)
+	y = (np.size(np.where(burst == burst_min+6)[0])/np.power(burst_min+6, -alpha))*np.power(x, -alpha) # calculate the fitted probability
+	y = y/np.sum(pdf)
+
+	x_shuffle = np.arange(np.min(burst_shuffle),np.max(burst_shuffle)+1)
+	y_shuffle = pdf_shuffle/np.sum(pdf_shuffle)   # shuffled probability
+
+	ax1[0].plot(x,y, color = '#c5c9c7',label = "data",linestyle = '--',linewidth = 2)
+	ax1[0].plot(x_shuffle,y_shuffle,color = '#c5c9c7',linestyle = '-', label = "shuffle")
+	ax1[0].set_xlabel('AVsize')
+	ax1[0].set_ylabel('PDF(D)')
+	ax1[0].set_title('AVsize PDF, ' + str(np.round(alpha[0], 3)))
+
+	# plot duration distribution
+	ax1[1].plot(np.arange(1,np.max(duration)+1),tdf/np.sum(tdf), marker = 'o', markersize = 3, linestyle = 'None', color = '#7bfdc7', alpha = 0.75)
+	ax1[1].set_yscale('log')
+	ax1[1].set_xscale('log')
+
+	x = np.arange(duration_min, duration_max+1)
+	y = (np.size(np.where(duration == duration_min+4)[0])/np.power(duration_min+4, -beta))*np.power(x, -beta)
+	y = y/np.sum(tdf)
+
+	x_shuffle = np.arange(np.min(duration_shuffle),np.max(duration_shuffle)+1)
+	y_shuffle = tdf_shuffle/np.sum(tdf_shuffle)
+
+	ax1[1].plot(x,y, color = '#c5c9c7',label = "data",linestyle = '--',linewidth = 2)
+	ax1[1].plot(x_shuffle,y_shuffle,color = '#c5c9c7',linestyle = '-', label = "shuffle")
+	ax1[1].set_xlabel('AVduration')
+	ax1[1].set_ylabel('PDF(T)')
+	ax1[1].set_title('AVduration PDF, ' + str(np.round(beta[0], 3)))
+	
+	# plt.legend()
+	plt.show()
+
+def frameshuffle(spks,endtime):
+    for j in np.arange(0,1000):
+        frame1 = np.random.rand() * endtime
+        frame2 = np.random.rand() * endtime
+        idx1 = np.where(np.logical_and(spks <= frame1 + 30, spks >= frame1 ))[0]
+        idx2 = np.where(np.logical_and(spks <= frame2 + 30, spks >= frame2 ))[0]
+        spks[idx1] = spks[idx1] - frame1 + frame2
+        spks[idx2] = spks[idx2] - frame2 + frame1
+    spks = np.sort(spks)  
+    return spks
 
 def check_SW_comp(nrn, state, mat_time, SW_binsz):
 	''' This function finds the percentage of a certain time bin that is spent in a desired state.
