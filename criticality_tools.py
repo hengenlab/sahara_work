@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
+import csv
+import os
 
 
 def FR_plot(cells, binsz, rec_len, color=False):
@@ -24,12 +26,28 @@ def FR_plot(cells, binsz, rec_len, color=False):
         fr=fr[0]/600
         a
 
+def ratio_to_csv(alpha, beta, block, filename):
+    if(os.path.exists(filename)):
+        with open(filename, mode='a+') as ratio_file:
+            writer = csv.writer(ratio_file, delimiter=',' , quotechar='"')
+            a = str(alpha)
+            b=str(beta)
+            c=str(beta/alpha)
+            writer.writerow([block, a,b,c])
+    else:
+        with open(filename, mode='w') as ratio_file:
+            writer = csv.writer(ratio_file, delimiter=',' , quotechar='"')
+            writer.writerow(['Block', 'Alpha', 'Beta', 'Beta/Alpha'])
+            a = str(alpha)
+            b=str(beta)
+            c=str(beta/alpha)
+            writer.writerow([block, a,b,c])
 
 
-"""
-takes in an array of dictionaries and pulls all the dcc and p_value data, appends all that data into a nice block and saves it where you want
-"""
 def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
+    """
+    takes in an array of dictionaries and pulls all the dcc and p_value data, appends all that data into a nice block and saves it where you want
+    """
     all_dicts_obj=[]
 
     if paths:
@@ -65,49 +83,49 @@ params={
     "date": "0409",
     "time_range":"108-168"
 }
-"""
-makes pretty plots from arrays of all dcc and p value data. not from the dictionaries - make sure theres an extra 0 in the labels
-"""
+
 def crit_plots(dcc, p_b, p_t, labels, params, save=False):
-        plt.ion()
-        fig, (ax1,ax2) = plt.subplots(nrows=2, ncols=1)
+    """
+    makes pretty plots from arrays of all dcc and p value data. not from the dictionaries - make sure theres an extra 0 in the labels
+    """
+    plt.ion()
+    fig, (ax1,ax2) = plt.subplots(nrows=2, ncols=1)
 
-        bar_width=0.4
-        size_x = np.arange(len(dcc))+1
-        dur_x = size_x + bar_width
-        color_b = np.where(p_b<0.05, "black", '#a6c875')
-        color_t = np.where(p_t<0.05, "black", '#f1da7a')
-        ax1.bar(size_x, p_b, bar_width, color = color_b, alpha = 0.7, label = 'DCC', zorder = 10)
-        ax1.bar(dur_x, p_t, bar_width, color = color_t, alpha = 0.7, label = 'DCC', zorder = 10)
-        ax1.set_xlim([0,len(dcc)+1]) 
-        ax1.set_xticks(np.arange(np.size(size_x)+1)+bar_width/2)
-        xlim = ax1.get_xlim()
-        ax1.plot([xlim[0], xlim[1]], [0.05, 0.05], color = '#738595', linestyle = '--')
-        ax1.set_ylabel('p value', fontsize = 20)
-        ax1.set_xticklabels(labels, rotation=50)
-
-
-        color_dcc = np.where(dcc>0.2, "lightcoral", '#464196')
-        ax2.bar(np.arange(len(dcc))+1, dcc, color = color_dcc, alpha = 0.7, label = 'DCC', zorder = 10)
-        ax2.set_ylim([0,1])
-        ax2.set_xlim([0,len(dcc)+1]) 
-        ax2.plot([0, len(dcc)+1], [0.2, 0.2], linestyle = '--', color = '#ff964f', zorder = 15)
-        ax2.set_ylabel('DCC', fontsize = 20)
-        ax2.set_xlabel("time-bin", fontsize=20)
-        ax2.set_xticks(np.arange(np.size(size_x)+1))
-        ax2.set_xticklabels(labels, rotation=50)
-
-        ax1.set_title(f"{params['animal']} data for time range {params['time_range']} on {params['date']}")
-
-        plt.tight_layout()
-        plt.show()
-        if(save):
-            fig.savefig(f"criticality_figures_{params['animal']}_{params['date']}_{params['time_range']}")
-        
-        return fig, ax1, ax2
+    bar_width=0.4
+    size_x = np.arange(len(dcc))+1
+    dur_x = size_x + bar_width
+    color_b = np.where(p_b<0.05, "black", '#a6c875')
+    color_t = np.where(p_t<0.05, "black", '#f1da7a')
+    ax1.bar(size_x, p_b, bar_width, color = color_b, alpha = 0.7, label = 'DCC', zorder = 10)
+    ax1.bar(dur_x, p_t, bar_width, color = color_t, alpha = 0.7, label = 'DCC', zorder = 10)
+    ax1.set_xlim([0,len(dcc)+1]) 
+    ax1.set_xticks(np.arange(np.size(size_x)+1)+bar_width/2)
+    xlim = ax1.get_xlim()
+    ax1.plot([xlim[0], xlim[1]], [0.05, 0.05], color = '#738595', linestyle = '--')
+    ax1.set_ylabel('p value', fontsize = 20)
+    ax1.set_xticklabels(labels, rotation=50)
 
 
-def break_up_mat(FR_mat, small_bin, hour_bins):
+    color_dcc = np.where(dcc>0.2, "lightcoral", '#464196')
+    ax2.bar(np.arange(len(dcc))+1, dcc, color = color_dcc, alpha = 0.7, label = 'DCC', zorder = 10)
+    ax2.set_ylim([0,1])
+    ax2.set_xlim([0,len(dcc)+1]) 
+    ax2.plot([0, len(dcc)+1], [0.2, 0.2], linestyle = '--', color = '#ff964f', zorder = 15)
+    ax2.set_ylabel('DCC', fontsize = 20)
+    ax2.set_xlabel("time-bin", fontsize=20)
+    ax2.set_xticks(np.arange(np.size(size_x)+1))
+    ax2.set_xticklabels(labels, rotation=50)
+
+    ax1.set_title(f"{params['animal']} data for time range {params['time_range']} on {params['date']}")
+
+    plt.tight_layout()
+    plt.show()
+    if(save):
+        fig.savefig(f"criticality_figures_{params['animal']}_{params['date']}_{params['time_range']}")
+    
+    return fig, ax1, ax2
+
+
     # small_bin: original size of bin used to make the matrix, in seconds
     # hour_bins: how you want the matrix broken up, in hours 
         # ex: 4 - would break up a 12 hour matrix into 3 arrays of 4 hours
@@ -191,6 +209,10 @@ def looped_crit(FR_mat, params, plot=True):
     all_p_values_burst = []
     all_p_values_t=[]
     all_dcc_values = []
+
+    qual_str = '_'.join(map(str,quality))
+    param_str = f'{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc*100))}_binsz{str(int(ava_binsz*1000))}ms_bm{str(burstM)}_tm{str(tM)}_q{qual_str}'
+    csv_filename = f'alpha_beta_ratios_{param_str}.csv'
     for idx, t_bin in enumerate(np.arange(0, num_bins)):
         print(f"working on block {idx+1} of {num_bins}")
         
@@ -203,9 +225,10 @@ def looped_crit(FR_mat, params, plot=True):
 
         Result = cr.AV_analysis_BurstT(data, perc=perc)
 
-        Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, time_frame+'_'+str(idx), flag = 2, EX_burst=1, EX_time=1)
-        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, time_frame+'_'+str(idx), flag = 3)
+        Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 2, EX_burst=1, EX_time=1)
+        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 3)
         
+        ratio_to_csv(Result3['alpha'][0], Result3['beta'][0], f'{time_frame}_{idx+1}', csv_filename)
         master_dict["Result_block"+str(idx)] = Result2
         master_dict["dcc_ax_block"+str(idx)] = ax3
         master_dict["p_test_axs_block"+str(idx)] = (ax1, ax2)
@@ -214,6 +237,7 @@ def looped_crit(FR_mat, params, plot=True):
         all_dcc_values.append(Result3["df"][0])
         print("P_VALUES: ", all_p_values_burst[-1], " -- ", all_p_values_t[-1])
         print("DCC: ", all_dcc_values[-1])
+
     master_dict["all_p_values_burst"]=all_p_values_burst
     master_dict["all_p_values_t"]=all_p_values_t
     master_dict["all_dcc_values"]=all_dcc_values
@@ -313,7 +337,10 @@ def lilo_and_stitch(paths, params, overlap=0, plot=False):
         #     data = fr_mat_reshaped
         
         master_dict = looped_crit(data, params, plot=False)
-        np.save(base_path+animal+"_dict_"+str(hour_bins)+"hrs_"+time_frame, master_dict)
+
+
+        qual_str = '_'.join(map(str,quality))
+        np.save(f'{base_path}{animal}_dict_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc*100))}_binsz{str(int(ava_binsz*1000))}ms_bm{str(burstM)}_tm{str(tM)}_q{qual_str}', master_dict)
         all_data.append(master_dict)
     
     if plot:
