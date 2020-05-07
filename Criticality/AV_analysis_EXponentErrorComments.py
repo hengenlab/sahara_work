@@ -2,7 +2,7 @@ import numpy as np
 import Criticality as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
-def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_burst = 1, EX_time = 1):
+def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_burst = 1, EX_time = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False):
 # This function calculate exponents for PDF(AVsize), PDF(AVdura), and
 # scaling relation. When flag == 1 (default),
 # Tranlsated by Lizzie Tilden 5/29/19
@@ -56,6 +56,15 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		ax1[0].plot(np.arange(1,np.max(burst)+1),pdf/np.sum(pdf), marker = 'o', markersize = 3, linestyle = 'None', color = '#2138ab', alpha = 0.75)
 		ax1[0].set_yscale('log')
 		ax1[0].set_xscale('log')
+
+		if plot_shuffled: # gonna want to change the color of this and such 	
+			pdf_shuffled = np.histogram(burst_shuffled, bins=np.arange(1, np.max(burst_shuffled)+2))[0]
+			ax1[0].plot(np.arange(1,np.max(burst_shuffled)+1),pdf_shuffled/np.sum(pdf_shuffled), marker = 'o', markersize = 3, linestyle = 'None', color = 'rosybrown', alpha = 0.2)
+			x_s = np.arange(burstMin, burstMax+1)
+			y_s = (np.size(np.where(burst_shuffled == xmin+6)[0])/np.power(xmin+6, -alpha))*np.power(x_s, -alpha)
+			y_s = y_s/np.sum(pdf_shuffled)
+				# ax1[0].plot(x_s,y_s, color = 'bisque');
+
 		############### Plot fitted PDF #################
 		
 		x = np.arange(burstMin, burstMax+1)
@@ -121,6 +130,13 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		ax1[1].set_xscale('log')
 		sns.despine()
 
+		if plot_shuffled:
+			tdf_shuffled = np.histogram(T_shuffled,bins = np.arange(1, np.max(T_shuffled)+2))[0]
+			ax1[1].plot(np.arange(1,np.max(T_shuffled)+1),tdf_shuffled/np.sum(tdf_shuffled), marker = 'o', markersize = 3, linestyle = 'None', color = 'slategrey', alpha = 0.2)
+			x_s = np.arange(tMin,tMax+1);
+			y_s = np.size(np.where(T_shuffled == tmin+4))/(np.power(tmin+4,-beta))*np.power(x_s,-beta)
+			y_s = y_s/np.sum(tdf_shuffled)
+				# ax1[1].plot(x_s,y_s, color = 'bisque')
 		 ############### Plot fitted PDF #################
 		x = np.arange(tMin,tMax+1);
 		y = np.size(np.where(T == tmin+4))/(np.power(tmin+4,-beta))*np.power(x,-beta)

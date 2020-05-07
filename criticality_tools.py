@@ -1,12 +1,15 @@
 from sahara_work import Criticality as cr 
 import musclebeachtools_hlab.musclebeachtools as mbt 
+import neuraltoolkit as ntk
 import numpy as np 
 import matplotlib
 # matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
+import matplotlib.backends.backend_pdf as mpdf
+import seaborn as sns
 import csv
 import os
-
+import glob
 
 def FR_plot(cells, binsz, rec_len, color=False):
     plt.ion()
@@ -27,6 +30,7 @@ def FR_plot(cells, binsz, rec_len, color=False):
         a
 
 def ratio_to_csv(alpha, beta, block, filename):
+
     if(os.path.exists(filename)):
         with open(filename, mode='a+') as ratio_file:
             writer = csv.writer(ratio_file, delimiter=',' , quotechar='"')
@@ -43,6 +47,59 @@ def ratio_to_csv(alpha, beta, block, filename):
             c=str(beta/alpha)
             writer.writerow([block, a,b,c])
 
+def pdf_output(neurons, rawdatdir, hstype, saveloc):
+    base_time = neurons[0].rstart_time
+    first_file = glob.glob(f'{rawdatdir}*_int16_{base_time}.bin')[0]
+    num_channels = int(first_file[first_file.rfind("Headstages_")+11:first_file.rfind('_Channels')])
+    raw = ntk.load_raw_binary_gain_chmap(first_file, num_channels, hstype)
+
+    for cell in neurons:
+        if(cell.rstart_time!=base_time):
+            "loading new raw data file"
+            new_file = glob.glob(f'{rawdatdir}*_int16_{cell.rstart_time}.bin')[0]
+            raw = ntk.load_raw_binary_gain_chmap(first_file, num_channels, hstype)
+
+
+def Genshuffle(neurons, nrn_time, ava_binsz, perc, binary = 1, frame = 0):
+
+	spks = mbt.n_getspikes(neurons, 0, 3600*nrn_time)
+
+	spks_shuffle = []
+
+	if frame == 0:
+	# generate random spiketimes (Uniform distribution, keep the same FR for each neuron)
+		print('generate random spiketimes')
+		for i in np.arange(0,len(spks)):
+			spikes = spks[i]
+			numspk = np.shape(spikes)[0]
+			spikes_shuffle = np.random.random(size = numspk) * nrn_time * 3600
+			spks_shuffle.append(spikes_shuffle)
+	
+	else:
+	# frame shuffling; For each neuron, swap all spikes in one time bin (30s window) with spikes at another randomly chosen time bin.
+		print('Frame Shuffling')
+
+		endtime = nrn_time*3600
+		for i in np.arange(0,len(spks)): 
+			spikes = spks[i] 
+			spikes_shuffle = frameshuffle(spikes,endtime) 
+			spks_shuffle.append(spikes_shuffle)
+	
+	data_T = cr.spiketimes_to_spikewords(spks_shuffle,0,3600*nrn_time,ava_binsz*1000,binary) # 1 for binary
+	data_shuffle = data_T.T
+
+	return data_shuffle
+
+def frameshuffle(spks,endtime):
+    for j in np.arange(0,1000):
+        frame1 = np.random.rand() * endtime
+        frame2 = np.random.rand() * endtime
+        idx1 = np.where(np.logical_and(spks <= frame1 + 30, spks >= frame1 ))[0]
+        idx2 = np.where(np.logical_and(spks <= frame2 + 30, spks >= frame2 ))[0]
+        spks[idx1] = spks[idx1] - frame1 + frame2
+        spks[idx2] = spks[idx2] - frame2 + frame1
+    spks = np.sort(spks)  
+    return spks
 
 def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
     """
@@ -155,7 +212,7 @@ def crit_plots(dcc, p_b, p_t, labels, params, save=False):
     
     return reshaped_array
 
-def looped_crit(FR_mat, params, plot=True):
+def looped_crit(FR_mat, shuffled_FR_mat, params, plot_shuffled=True, plot=False):
     """
     FR_mat: binarized firing matrix binned by miliseconds and then reshaped into chunks
     binsz: how the binarized matrix is binned (in ms)
@@ -217,16 +274,28 @@ def looped_crit(FR_mat, params, plot=True):
         print(f"working on block {idx+1} of {num_bins}")
         
         if idx == num_bins-1:
-            exec(f"data{idx+1}=FR_mat[:, (idx*bin_len):]")
+            # exec(f"data{idx+1}=FR_mat[:, (idx*bin_len):]")
             data=FR_mat[:, (idx*bin_len):]
+            if plot_shuffled:
+                data_shuffled = shuffled_FR_mat[:, (idx*bin_len):]
         else:
-            exec(f"data{idx+1}=FR_mat[:, (idx*bin_len) : ((idx+1)*bin_len)]")
+            # exec(f"data{idx+1}=FR_mat[:, (idx*bin_len) : ((idx+1)*bin_len)]")
             data=FR_mat[:, (idx*bin_len) : ((idx+1)*bin_len)]
+            if plot_shuffled:
+                data_shuffled = shuffled_FR_mat[:, (idx*bin_len) : ((idx+1)*bin_len)]
 
         Result = cr.AV_analysis_BurstT(data, perc=perc)
+        if plot_shuffled:
+            Result_shuffled = cr.AV_analysis_BurstT(data_shuffled, perc=perc)
+            burst_shuffled=Result_shuffled['S']
+            time_shuffled=Result_shuffled['T']
+            
+        else:
+            burst_shuffled=None
+            time_shuffled=None
 
         Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 2, EX_burst=1, EX_time=1)
-        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 3)
+        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 3, burst_shuffled=burst_shuffled, T_shuffled=time_shuffled, plot_shuffled=plot_shuffled)
         
         ratio_to_csv(Result3['alpha'][0], Result3['beta'][0], f'{time_frame}_{idx+1}', csv_filename)
         master_dict["Result_block"+str(idx)] = Result2
@@ -275,18 +344,18 @@ def looped_crit(FR_mat, params, plot=True):
 params = {
     'ava_binsz': 0.045,
     'hour_bins': 4,
-    'total_time':13,
+    'total_time':12,
     'perc': 0.25,
     'burstM': 10,
     'tM': 4,
     'quality': [1,2],
     'time_frame': '0420',
     'animal' : 'caf19',
-    'notes': 'new recording, trying new params'
+    'notes': 'local field test'
 }
 
 
-def lilo_and_stitch(paths, params, overlap=0, plot=False):
+def lilo_and_stitch(paths, params, overlap=0, plot=False, plot_shuffled=True):
     """
     paths: list of paths to neuron objects from clustering, full paths recomended
     params: dictionary with necessary parameters:
@@ -326,7 +395,11 @@ def lilo_and_stitch(paths, params, overlap=0, plot=False):
         cells = np.load(path, allow_pickle=True)
         good_cells = [cell for cell in cells if cell.quality in quality]
         data = mbt.n_spiketimes_to_spikewords(good_cells, binsz=ava_binsz, binarize=1)
-        
+
+        if plot_shuffled:
+            data_shuffled = Genshuffle(good_cells, total_time, ava_binsz, perc, binary = 1, frame = 0)
+        else:
+            data_shuffled=None
         # if overlap:
         #     ms_in_overlap = overlap * 3600 * 1000
         #     bins_in_overlap = ms_in_overlap/(ava_binsz*1000)
@@ -336,8 +409,7 @@ def lilo_and_stitch(paths, params, overlap=0, plot=False):
         #     fr_mat_reshaped = break_up_mat(fr_mat, ava_binsz, hour_bins)
         #     data = fr_mat_reshaped
         
-        master_dict = looped_crit(data, params, plot=False)
-
+        master_dict = looped_crit(data, data_shuffled, params, plot_shuffled=plot_shuffled, plot=False)
 
         qual_str = '_'.join(map(str,quality))
         np.save(f'{base_path}{animal}_dict_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc*100))}_binsz{str(int(ava_binsz*1000))}ms_bm{str(burstM)}_tm{str(tM)}_q{qual_str}', master_dict)
