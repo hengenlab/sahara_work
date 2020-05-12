@@ -23,7 +23,7 @@ def run_model_data(model_data_path, params):
     plt_name = model_data_path[model_data_path.rfind('/')+1:model_data_path.rfind('.npy')]
 
     model_data_seconds = model_data/1000
-    data = cr.spiketimes_to_spikewords(model_data_seconds, startime=params['model_start_time'], stoptime=params['model_stop_time'], binsize=params['ava_binsz'], binarize=1).T
+    data = cr.spiketimes_to_spikewords(model_data_seconds, startime=params['model_start_time'], stoptime=params['model_stop_time'], binsize=params['ava_binsz'], binarize=1)
     r = cr.AV_analysis_BurstT(data, perc = params['perc'])
     burst = r['S'] 
     duration = r['T'] 
@@ -35,7 +35,7 @@ def run_model_data(model_data_path, params):
 
     Result2 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=2, pltname=plt_name)
     Result3 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=3, pltname=plt_name)
-    print(r3[0]['df'][0])
+    print(Result3[0]['df'][0])
 
     return Result2, Result3
 
