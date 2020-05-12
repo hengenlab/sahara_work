@@ -11,6 +11,32 @@ import csv
 import os
 import glob
 
+params={
+    'model_start_time' : 0,
+    'model_stop_time' : 100,
+    'ava_binsz' : 1, # in ms
+    'perc' : .65
+}
+def run_model_data(model_data_path, params):
+
+    model_data = np.load(model_data_path, allow_pickle=True)
+    plt_name = model_data_path[model_data_path.rfind('/')+1:model_data_path.rfind('.npy')]
+
+    model_data_seconds = model_data/1000
+    data = cr.spiketimes_to_spikewords(model_data_seconds, startime=params['model_start_time'], stoptime=params['model_stop_time'], binsize=params['ava_binsz'], binarize=1)
+    r = cr.AV_analysis_BurstT(data, perc = params['perc'])
+    burst = r['S'] 
+    duration = r['T'] 
+
+    burstM = int(np.max(burst)/20)
+    tM = int(np.max(duration)/20)
+
+    Result2 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=2, pltname=plt_name)
+    Result3 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=3, pltname=plt_name)
+
+    return Result2, Result3
+
+
 def FR_plot(cells, binsz, rec_len, color=False):
     plt.ion()
     fig,ax = plt.subplots(nrows=1, ncols=1)
@@ -135,11 +161,11 @@ def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
     np.save(save_loc+f'/all_params_{animal}_{time_frame}', all_params)
     return all_data, all_params
 
-params={
-    "animal": "caf19",
-    "date": "0409",
-    "time_range":"108-168"
-}
+# params={
+#     "animal": "caf19",
+#     "date": "0409",
+#     "time_range":"108-168"
+# }
 
 def crit_plots(dcc, p_b, p_t, labels, params, save=False):
     """
@@ -341,18 +367,18 @@ def looped_crit(FR_mat, shuffled_FR_mat, params, plot_shuffled=True, plot=False)
     return master_dict
 
 
-params = {
-    'ava_binsz': 0.045,
-    'hour_bins': 4,
-    'total_time':12,
-    'perc': 0.25,
-    'burstM': 10,
-    'tM': 4,
-    'quality': [1,2],
-    'time_frame': '0420',
-    'animal' : 'caf19',
-    'notes': 'local field test'
-}
+# params = {
+#     'ava_binsz': 0.045,
+#     'hour_bins': 4,
+#     'total_time':12,
+#     'perc': 0.25,
+#     'burstM': 10,
+#     'tM': 4,
+#     'quality': [1,2],
+#     'time_frame': '0420',
+#     'animal' : 'caf19',
+#     'notes': 'local field test'
+# }
 
 
 def lilo_and_stitch(paths, params, overlap=0, plot=False, plot_shuffled=True):

@@ -18,8 +18,8 @@ def EXCLUDE(burst, setmin = 10, num = 1, flag = False):
 
 	while KS > np.min([num/np.sqrt(np.size(burst[burst>xmin])), 0.1]) and dKS > 0.0005:
 		alpha, xmin, ks, Loglike = cr.tplfit(burst, setmin)
-		print(xmin)
-		print(alpha)
+		# print(xmin)
+		# print(alpha)
 		alpha = alpha[0]
 		#xmin  = xmin[0]
 		N = np.size(burst)
@@ -41,8 +41,8 @@ def EXCLUDE(burst, setmin = 10, num = 1, flag = False):
 
 		burst = burst[burst < np.max(burst)] # lower the upper boundary by one since here we used '<' but not '<='
 		burstMax = np.max(burst)
-		print(KS)
+		# print(KS)
 
 	burstMin = xmin
-	print('This is new')
+	# print('This is new')
 	return burstMax, burstMin, alpha

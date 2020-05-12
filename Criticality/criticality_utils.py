@@ -36,7 +36,7 @@ def spiketimes_to_spikewords(spiketimes,startime,stoptime,binsize,binarize):
 			counts[counts>0] = 1
         # print(counts.astype(np.int))
 		spikewords_array[i,:] = counts
-	return(spikewords_array.astype(np.int8).T)
+	return(spikewords_array.astype(np.int8))
 
 def Genshuffle(neurons, nrn_time, ava_binsz, perc, binary = 1, frame = 0):
 

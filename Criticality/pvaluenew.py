@@ -11,8 +11,8 @@ def pvaluenew(burst,boundary):
 # Usually, we use 0.05 as criteria.
 
 	alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
-	print(xmin)
-	print(alpha)
+	# print(xmin)
+	# print(alpha)
 	xmax = np.max(burst)
 	N   = np.size(burst)
 	k   = 0

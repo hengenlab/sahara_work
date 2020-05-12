@@ -1,5 +1,5 @@
 import numpy as np
-import Criticality as cr
+from sahara_work import Criticality as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
 def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_burst = 1, EX_time = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False):
@@ -7,6 +7,9 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 # scaling relation. When flag == 1 (default),
 # Tranlsated by Lizzie Tilden 5/29/19
 # Edited by Yifan Xu 11/18/19
+
+#burstM and tM are the maximum possible value that will be excluded during cr.EXCLUDE 
+#should be the maximum size and the duration divided by 20
 
 	Result = {}
 
@@ -26,10 +29,14 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		burstMin = bm
 		idx_burst = np.where(np.logical_and(burst >= burstMin,burst <= burstMax))[0]
 		
-	alpha, xmin, xmax, L = cr.tplfit(burst[idx_burst], burstMin) 
+	alpha, xmin, tplfit_ks, L = cr.tplfit(burst[idx_burst], burstMin) 
+
+	print("burst min: ", burstMin)
+	print("xmin: ", xmin)
+	print("burst max:", burstMax)
 	
 	if burstMin > xmin:
-		print('burstMin is larger than xmin in tplfit for burst')
+		print('burstMin is larger than xmin in tplfit for burst --- shits wack yo')
 
 	Result['burst'] = burst
 	Result['alpha'] = alpha
@@ -38,10 +45,11 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 	
 	if flag == 2:
 	    ##### calculate pvalue for null hypothesis test #####
-		sizelimit = bm
-		if bm < 40:
-			sizelimit = 40
-		Result['P_burst'], ks, hax_burst = cr.pvaluenew(burst[idx_burst],sizelimit)
+		# sizelimit = bm
+		# if bm < 40:
+		# 	sizelimit = 40
+
+		Result['P_burst'], ks, hax_burst = cr.pvaluenew(burst[idx_burst], burstMin)
 		hax_burst.axes[0].set_xlabel('Size (S)', fontsize = 16)
 		hax_burst.axes[0].set_ylabel('Prob(size < S)', fontsize = 16)
 		hax_burst.savefig(pltname+'pvalue_burst')
@@ -64,7 +72,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 			y_s = (np.size(np.where(burst_shuffled == xmin+6)[0])/np.power(xmin+6, -alpha))*np.power(x_s, -alpha)
 			y_s = y_s/np.sum(pdf_shuffled)
 				# ax1[0].plot(x_s,y_s, color = 'bisque');
-
+	
 		############### Plot fitted PDF #################
 		
 		x = np.arange(burstMin, burstMax+1)
@@ -84,9 +92,9 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 			tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
 			
 			if tMax < 40:
-				tMax = np.floor(np.power(np.max(T),0.9))
-				print("tMax < 40, use new tMax")
-				print(tMax)
+				print(f"tMax < 40 - {tMax} -  redoing the exclude function at 90th percentile")
+				tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.9)],setmin = tm)
+				print(f'new tMax: {tMax}')
 
 			idx_time = np.where(np.logical_and(T >= tMin,T <= tMax + 1))[0]
 		except ValueError:
@@ -99,10 +107,13 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		tMin = tm
 		idx_time = np.where(np.logical_and(T >= tMin,T <= tMax))[0]
 	
-	beta, tmin, tmax, L = cr.tplfit(T[idx_time], tMin);
+	beta, new_tmin, tplfit_ks_time, L = cr.tplfit(T[idx_time], tMin);
 
-	if tMin > tmin:
-		print('TMin is larger than tmin in tplfit for burst')
+	print(f'time min: {tMin}')
+	print(f'new tmin: {new_tmin}')
+	print(f'time max: {tMax}')
+	if tMin > new_tmin:
+		print('TMin is larger than tmin in tplfit for burst -- shits wack yo')
 
 	Result['T'] = T
 	Result['beta'] = beta
@@ -111,10 +122,10 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 
 	if flag == 2:
     	##### calculate pvalue for null hypothesis test #####
-		durationlimit = tm
-		if bm < 30:
-			durationlimit = 30
-		Result['P_t'], ks, hax_time  = cr.pvaluenew(T[idx_time],durationlimit)
+		# durationlimit = tm
+		# if tm < 30:
+		# 	durationlimit = 30
+		Result['P_t'], ks, hax_time  = cr.pvaluenew(T[idx_time],tMin)
 		hax_time.axes[0].set_xlabel('Duration (D)', fontsize = 16)
 		hax_time.axes[0].set_ylabel('Prob(size < D)', fontsize = 16)
 		hax_time.savefig(pltname+'pvalue_time')
@@ -130,16 +141,16 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		ax1[1].set_xscale('log')
 		sns.despine()
 
-		if plot_shuffled:
+		if plot_shuffled: # if we want to plot the fit of the shuffled the t_min needs to be calculated again
 			tdf_shuffled = np.histogram(T_shuffled,bins = np.arange(1, np.max(T_shuffled)+2))[0]
 			ax1[1].plot(np.arange(1,np.max(T_shuffled)+1),tdf_shuffled/np.sum(tdf_shuffled), marker = 'o', markersize = 3, linestyle = 'None', color = 'slategrey', alpha = 0.2)
 			x_s = np.arange(tMin,tMax+1);
-			y_s = np.size(np.where(T_shuffled == tmin+4))/(np.power(tmin+4,-beta))*np.power(x_s,-beta)
+			y_s = np.size(np.where(T_shuffled == new_tmin+4))/(np.power(new_tmin+4,-beta))*np.power(x_s,-beta)
 			y_s = y_s/np.sum(tdf_shuffled)
 				# ax1[1].plot(x_s,y_s, color = 'bisque')
 		 ############### Plot fitted PDF #################
 		x = np.arange(tMin,tMax+1);
-		y = np.size(np.where(T == tmin+4))/(np.power(tmin+4,-beta))*np.power(x,-beta)
+		y = np.size(np.where(T == new_tmin+4))/(np.power(new_tmin+4,-beta))*np.power(x,-beta)
 		y = y/np.sum(tdf)
 		ax1[1].plot(x,y, color = '#c5c9c7')
 		ax1[1].set_xlabel('AVduration')
