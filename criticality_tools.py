@@ -3,7 +3,7 @@ import musclebeachtools_hlab.musclebeachtools as mbt
 import neuraltoolkit as ntk
 import numpy as np 
 import matplotlib
-# matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
 import matplotlib.backends.backend_pdf as mpdf
 import seaborn as sns
@@ -23,16 +23,19 @@ def run_model_data(model_data_path, params):
     plt_name = model_data_path[model_data_path.rfind('/')+1:model_data_path.rfind('.npy')]
 
     model_data_seconds = model_data/1000
-    data = cr.spiketimes_to_spikewords(model_data_seconds, startime=params['model_start_time'], stoptime=params['model_stop_time'], binsize=params['ava_binsz'], binarize=1)
+    data = cr.spiketimes_to_spikewords(model_data_seconds, startime=params['model_start_time'], stoptime=params['model_stop_time'], binsize=params['ava_binsz'], binarize=1).T
     r = cr.AV_analysis_BurstT(data, perc = params['perc'])
     burst = r['S'] 
     duration = r['T'] 
 
-    burstM = int(np.max(burst)/20)
+    burstM = int(np.max(burst)/40)
     tM = int(np.max(duration)/20)
+    if tM == 0:
+        tM = int(np.percentile(duration,10))
 
     Result2 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=2, pltname=plt_name)
     Result3 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=3, pltname=plt_name)
+    print(r3[0]['df'][0])
 
     return Result2, Result3
 
