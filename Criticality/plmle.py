@@ -80,7 +80,7 @@
 import sys
 import numpy as np
 import numpy.matlib
-import Criticality as cr
+from sahara_work import Criticality as cr
 def plmle(x, tauRange = [1,5], precision = 1e-3, xmin = False, xmax = False):
 	
 	if xmin == False:

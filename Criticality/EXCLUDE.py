@@ -1,5 +1,5 @@
 import numpy as np
-import Criticality as cr
+from sahara_work import Criticality as cr
 from copy import deepcopy as cdc
 def EXCLUDE(burst, setmin = 10, num = 1, flag = False):
 # [burstMax, burstMin, alpha] = EXCLUDE(burst, varargin) is a function that

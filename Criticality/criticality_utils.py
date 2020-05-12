@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
-import Criticality as cr
+from sahara_work import Criticality as cr
 
 def spiketimes_to_spikewords(spiketimes,startime,stoptime,binsize,binarize): 
     ### ARGUMENTS

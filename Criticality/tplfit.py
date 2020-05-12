@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy as cdc
 import scipy.optimize
-import Criticality as cr
+from sahara_work import Criticality as cr
 def tplfit(burst,limit):
 	KS = []
 	alpha = []
