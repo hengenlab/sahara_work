@@ -3,7 +3,7 @@ import musclebeachtools_hlab.musclebeachtools as mbt
 import neuraltoolkit as ntk
 import numpy as np 
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
 import matplotlib.backends.backend_pdf as mpdf
 import seaborn as sns
@@ -15,31 +15,43 @@ params={
     'model_start_time' : 0,
     'model_stop_time' : 100,
     'ava_binsz' : 1, # in ms
-    'perc' : .65
+    'perc' : 0
 }
+
 def run_model_data(model_data_path, params):
 
     model_data = np.load(model_data_path, allow_pickle=True)
     plt_name = model_data_path[model_data_path.rfind('/')+1:model_data_path.rfind('.npy')]
 
+    print(f'\n---running model data: {plt_name}---')
     model_data_seconds = model_data/1000
     data = cr.spiketimes_to_spikewords(model_data_seconds, startime=params['model_start_time'], stoptime=params['model_stop_time'], binsize=params['ava_binsz'], binarize=1)
     r = cr.AV_analysis_BurstT(data, perc = params['perc'])
     burst = r['S'] 
     duration = r['T'] 
 
-    burstM = int(np.max(burst)/40)
+    burstM = int(np.max(burst)/20)
     tM = int(np.max(duration)/20)
     if tM == 0:
         tM = int(np.percentile(duration,10))
 
-    Result2 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=2, pltname=plt_name)
-    Result3 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=3, pltname=plt_name)
-    print(Result3[0]['df'][0])
+    Result2={}
+    # Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=2, pltname=plt_name)
+    Result3, ax3 = cr.AV_analysis_ExponentErrorComments(burst, duration, burstM, tM, flag=3, pltname=plt_name)
+    # print(f"P_Val burst: {Result2['P_burst']}")
+    # print(f"P_Val durration: {Result2['P_t']}")
+    print("DCC:" , Result3['df'][0])
 
-    return Result2, Result3
+    return Result2, Result3, plt_name
 
+def looped_model_data(paths, params):
+    all_dccs={}
+    for path in paths:
+        Result2, Result3, plt_name = run_model_data(path, params)
+        all_dccs[plt_name] = Result3['df'][0]
+    return all_dccs
 
+#  NOT DONE YET
 def FR_plot(cells, binsz, rec_len, color=False):
     plt.ion()
     fig,ax = plt.subplots(nrows=1, ncols=1)
@@ -76,6 +88,7 @@ def ratio_to_csv(alpha, beta, block, filename):
             c=str(beta/alpha)
             writer.writerow([block, a,b,c])
 
+# NOT DONE YET
 def pdf_output(neurons, rawdatdir, hstype, saveloc):
     base_time = neurons[0].rstart_time
     first_file = glob.glob(f'{rawdatdir}*_int16_{base_time}.bin')[0]
@@ -130,47 +143,7 @@ def frameshuffle(spks,endtime):
     spks = np.sort(spks)  
     return spks
 
-def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
-    """
-    takes in an array of dictionaries and pulls all the dcc and p_value data, appends all that data into a nice block and saves it where you want
-    """
-    all_dicts_obj=[]
 
-    if paths:
-        for path in all_dicts:
-            print (f'loading dict: {path}')
-            all_dicts_obj.append(np.load(path, allow_pickle=True).item())
-    else:
-        all_dicts_obj=all_dicts
-
-    all_dccs=[]
-    all_p_t=[]
-    all_p_b=[]
-    all_params=[]
-    for i, data in enumerate(all_dicts_obj):
-        print(f"working on block: {i}")
-        all_dccs.append(np.array(data['all_dcc_values']))
-        all_p_t.append(np.array(data['all_p_values_t']))
-        all_p_b.append(np.array(data['all_p_values_burst']))
-        all_params.append(data['parameters'])
-    
-    all_dccs = np.array(all_dccs).flatten()
-    all_p_t = np.array(all_p_t).flatten()
-    all_p_b = np.array(all_p_b).flatten()
-
-    all_data = [all_dccs, all_p_b, all_p_t]
-
-    np.save(save_loc+f"/dcc_pb_pt_{animal}_{time_frame}", all_data)
-    np.save(save_loc+f'/all_params_{animal}_{time_frame}', all_params)
-    return all_data, all_params
-
-# params={
-#     "animal": "caf19",
-#     "date": "0409",
-#     "time_range":"108-168"
-# }
-
-def crit_plots(dcc, p_b, p_t, labels, params, save=False):
     """
     makes pretty plots from arrays of all dcc and p value data. not from the dictionaries - make sure theres an extra 0 in the labels
     """

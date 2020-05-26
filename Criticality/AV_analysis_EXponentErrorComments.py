@@ -19,9 +19,15 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 			print('Trying to exclude outliers from size data....')
 			burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.8)],setmin=bm) # get burstMin and burstMax
 			idx_burst = np.where(np.logical_and(burst >= burstMin,burst <= burstMax+1))[0]
+
+			if burstMax < 40:
+				print(f"burstMax < 40 - {burstMax} -  redoing the exclude function at 90th percentile")
+				burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.9)],setmin=bm) # get burstMin and burstMax
+				print(f'new tMax: {burstMax}')
+
 		except ValueError:
 			print('could not minimize KS for burst size...wants to exclude all data.')
-			burstMax = np.power(np.max(burst),0.8)
+			burstMax = int(np.power(np.max(burst),0.8))
 			burstMin = bm
 			idx_burst = np.where(np.logical_and(burst >= burstMin,burst < burstMax))[0]
 	else:
@@ -89,7 +95,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 		#calculate exponent and other parameters for AVdura.
 		try:
 			print('Trying to exclude outliers from duration data....')
-			tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
+			tMax, tMin, beta = cr.EXCLUDE(T,setmin = tm) # in the OG matlab this line uses the entire T distribution, so i'm trying that -> our original code -> tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
 			
 			if tMax < 40:
 				print(f"tMax < 40 - {tMax} -  redoing the exclude function at 90th percentile")
@@ -99,7 +105,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 			idx_time = np.where(np.logical_and(T >= tMin,T <= tMax + 1))[0]
 		except ValueError:
 			print('could not minimize KS for burst size...wants to exclude all data.')
-			tMax = np.power(np.max(T),0.8)
+			tMax = int(np.power(np.max(T),0.8))
 			tMin = tm
 			idx_time = np.where(np.logical_and(T >= tMin,T < tMax))[0]
 	else:
@@ -170,8 +176,8 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, flag = 1, EX_bu
 	TT=TT[Loc]
 	Sm=Sm[Loc]
 	
-	fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), 1);
-	
+	fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+30)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+30)[0])]), 1); # OG matlab had +30 instead of +60 	fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), 1);
+
 	sigma = (beta - 1)/(alpha - 1)
 
 	Result['pre'] = sigma

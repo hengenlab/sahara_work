@@ -10,7 +10,7 @@ def pvaluenew(burst,boundary):
 # the Null hypothesis that the distribution of burst follows power law.
 # Usually, we use 0.05 as criteria.
 
-	alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
+	alpha, xmin, ks, Loglike = cr.tplfit(burst,40) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
 	# print(xmin)
 	# print(alpha)
 	xmax = np.max(burst)
@@ -19,7 +19,7 @@ def pvaluenew(burst,boundary):
 	z   = cdc(burst)
 	z   = z[z>=xmin]
 	n   = np.size(z)
-	cdf = np.cumsum(np.histogram(z,np.arange(xmin,xmax+2))[0]/n)
+	cdf = np.cumsum(np.histogram(z,np.arange(xmin,xmax+2))[0]/n) 
 
 	idx = np.where(np.logical_and(xmin<=burst, burst<=xmax))[0]
 	s = np.unique(burst[idx])
@@ -57,9 +57,9 @@ def pvaluenew(burst,boundary):
 
 		########################## Inverse Method  #############################################
 
-		N = 10*np.size(burst[burst>=xmin])
+		N = 20*np.size(burst[burst>=xmin]) #N = 10*np.size(burst[burst>=xmin]) OG matlab has 20
 		syn_data = np.floor((xmin-1/2)*np.power((1-np.random.uniform(0,1,N)), (1/(1-alpha[0]))) + 1/2)
-		syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data)
+		syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data) #syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data) OG  matlab doesnt have a second parameter but i think its necessary for python
 		syn_data = np.delete(syn_data, np.where(syn_data == 0)[0])
 		syn_data = syn_data[0:np.size(burst[burst>=xmin])]
 
@@ -77,9 +77,13 @@ def pvaluenew(burst,boundary):
 		# syn_data = syn_data(Ind(1:length(burst(burst>=xmin))))
 
 		############################################################################################
-		idx_syn = np.where(np.logical_and(xmin<=syn_data, syn_data<=xmax))[0]
-		X = syn_data[idx_syn]
 
+		## OKAY SO --- OG matlab doesnt index into the syn_data at all. So i'm commenting it out and trying it
+		# idx_syn = np.where(np.logical_and(xmin<=syn_data, syn_data<=xmax))[0]
+		# X = syn_data[idx_syn]
+
+		# THIS IS BASED OFF THE MATLAB
+		X = syn_data
 		alpha_syn, xmin_syn, ks_syn, Loglike_syn = cr.tplfit(syn_data,xmin) #calculate exponent for surrogated data 
 		a = alpha_syn[0]   
 		
