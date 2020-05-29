@@ -123,3 +123,26 @@ def crit_plots(dcc, p_b, p_t, labels, params, save=False):
         print(f"your final bin is of length: {final_bin_len} hours")
     
     return reshaped_array
+
+
+def large_plot(start_folder, end_folder, animal, save=False, save_loc=None):
+    """
+    this function is the main wrapper function for the large crit plot
+
+    takes a start and an end folder, goes through every folder in-between
+    and pulls out all the completed criticality data and plots it 
+
+    any folder without crit data gets added as "..." in the plot until theres a completed folder 
+
+
+    PARAMETERS:
+
+    start_folder: first folder to pull crit data from 
+    end_folder: last folder to pull crit data from 
+    save: do you want to save the figure?
+    save_loc: where to save it?
+    animal: animal name
+
+    """
+
+    

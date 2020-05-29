@@ -214,7 +214,7 @@ def frameshuffle(spks,endtime):
     
     return reshaped_array
 
-def looped_crit(FR_mat, shuffled_FR_mat, params, plot_shuffled=True, plot=False):
+def looped_crit(FR_mat, shuffled_FR_mat, params,basepath, plot_shuffled=True, plot=False):
     """
     FR_mat: binarized firing matrix binned by miliseconds and then reshaped into chunks
     binsz: how the binarized matrix is binned (in ms)
@@ -295,9 +295,12 @@ def looped_crit(FR_mat, shuffled_FR_mat, params, plot_shuffled=True, plot=False)
         else:
             burst_shuffled=None
             time_shuffled=None
+        
+        burstM = int(np.max(Result['S'])/20)
+        tM = int(np.max(Result['T'])/20)
 
-        Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 2, EX_burst=1, EX_time=1)
-        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx), flag = 3, burst_shuffled=burst_shuffled, T_shuffled=time_shuffled, plot_shuffled=plot_shuffled)
+        Result2, ax1, ax2 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx),saveloc=basepath, flag = 2, EX_burst=1, EX_time=1)
+        Result3, ax3 = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx),saveloc=basepath, flag = 3, burst_shuffled=burst_shuffled, T_shuffled=time_shuffled, plot_shuffled=plot_shuffled)
         
         ratio_to_csv(Result3['alpha'][0], Result3['beta'][0], f'{time_frame}_{idx+1}', csv_filename)
         master_dict["Result_block"+str(idx)] = Result2
@@ -343,18 +346,18 @@ def looped_crit(FR_mat, shuffled_FR_mat, params, plot_shuffled=True, plot=False)
     return master_dict
 
 
-# params = {
-#     'ava_binsz': 0.045,
-#     'hour_bins': 4,
-#     'total_time':12,
-#     'perc': 0.25,
-#     'burstM': 10,
-#     'tM': 4,
-#     'quality': [1,2],
-#     'time_frame': '0420',
-#     'animal' : 'caf19',
-#     'notes': 'local field test'
-# }
+params = {
+    'ava_binsz': 0.045,
+    'hour_bins': 4,
+    'total_time':12,
+    'perc': 0.0,
+    'burstM': 10,
+    'tM': 4,
+    'quality': [1,2],
+    'time_frame': '0524',
+    'animal' : 'caf22',
+    'notes': 'caf22 0524 run2'
+}
 
 
 def lilo_and_stitch(paths, params, overlap=0, plot=False, plot_shuffled=True):
@@ -411,7 +414,7 @@ def lilo_and_stitch(paths, params, overlap=0, plot=False, plot_shuffled=True):
         #     fr_mat_reshaped = break_up_mat(fr_mat, ava_binsz, hour_bins)
         #     data = fr_mat_reshaped
         
-        master_dict = looped_crit(data, data_shuffled, params, plot_shuffled=plot_shuffled, plot=False)
+        master_dict = looped_crit(data, data_shuffled, params,base_path, plot_shuffled=plot_shuffled, plot=False)
 
         qual_str = '_'.join(map(str,quality))
         np.save(f'{base_path}{animal}_dict_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc*100))}_binsz{str(int(ava_binsz*1000))}ms_bm{str(burstM)}_tm{str(tM)}_q{qual_str}', master_dict)
