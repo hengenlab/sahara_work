@@ -17,7 +17,8 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, saveloc, flag =
 	if EX_burst:       
 		try:
 			print('Trying to exclude outliers from size data....')
-			burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.8)],setmin=bm) # get burstMin and burstMax
+			#burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.8)],setmin=bm) # get burstMin and burstMax
+			burstMax, burstMin, alpha = cr.EXCLUDE(burst,setmin=bm) # get burstMin and burstMax
 			idx_burst = np.where(np.logical_and(burst >= burstMin,burst <= burstMax+1))[0]
 
 			if burstMax < 40:
@@ -95,8 +96,8 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, saveloc, flag =
 		#calculate exponent and other parameters for AVdura.
 		try:
 			print('Trying to exclude outliers from duration data....')
-			#tMax, tMin, beta = cr.EXCLUDE(T,setmin = tm) # in the OG matlab this line uses the entire T distribution, so i'm trying that -> our original code -> tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
-			tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
+			tMax, tMin, beta = cr.EXCLUDE(T,setmin = tm) # in the OG matlab this line uses the entire T distribution, so i'm trying that -> our original code -> tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
+			#tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)],setmin = tm)
 
 			if tMax < 40:
 				print(f"tMax < 40 - {tMax} -  redoing the exclude function at 90th percentile")
