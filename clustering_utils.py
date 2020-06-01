@@ -184,13 +184,13 @@ def make_pdf(qualed_cell_paths, testing_params=True):
                                             'total':[total,
                                                     'percentages:'],
                                             'ones':[len(ones),
-                                                    round(len_ones*100/total,1)],
+                                                    round(len(ones)*100/total,1)],
                                             'twos':[len(twos),
-                                                    round(len_twos*100/total,1)],
+                                                    round(len(twos)*100/total,1)],
                                             'threes':[len(threes),
-                                                    round(len_threes*100/total,1)],
+                                                    round(len(threes)*100/total,1)],
                                             'fours':[len(fours),
-                                                    round(len_fours*100/total,1)]})
+                                                    round(len(fours)*100/total,1)]})
             else:
                 small_panda = pd.DataFrame({
                                             'total':[total,
