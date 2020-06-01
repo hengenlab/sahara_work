@@ -68,11 +68,11 @@ def AV_analysis_BurstT(data, perc = 0.25):
 	burst = []
 	for i in np.arange(0,np.size(J)-1):
 		#print(J[i+1]-J[i]-2)
-		fired = np.sum(avalanches[J[i]+1:J[i+1]]) - threshold2*(J[i+1]-J[i]-2)
+		fired = np.sum(avalanches[J[i]+1:J[i+1]]) - threshold2*(J[i+1]-J[i]-1)
 		burst.append(fired)
 
 	######### Duration Distribution ########################################
-	T = np.diff(J)+1 # AVduration
+	T = np.diff(J)-1 # AVduration
 	T1 = np.diff(J1)
 	T = T[T>0] # Duration should be positive
 
