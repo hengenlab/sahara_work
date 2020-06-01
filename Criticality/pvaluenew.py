@@ -57,9 +57,11 @@ def pvaluenew(burst,boundary):
 
 		########################## Inverse Method  #############################################
 
-		N = 20*np.size(burst[burst>=xmin]) #N = 10*np.size(burst[burst>=xmin]) OG matlab has 20
+		#N = 20*np.size(burst[burst>=xmin]) #N = 10*np.size(burst[burst>=xmin]) OG matlab has 20
+		N = 10*np.size(burst[burst>=xmin])
 		syn_data = np.floor((xmin-1/2)*np.power((1-np.random.uniform(0,1,N)), (1/(1-alpha[0]))) + 1/2)
-		syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data) #syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data) OG  matlab doesnt have a second parameter but i think its necessary for python
+		#syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data) #syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data) OG  matlab doesnt have a second parameter but i think its necessary for python
+		syn_data = np.floor(np.heaviside(xmax-syn_data, 1/2) * syn_data)
 		syn_data = np.delete(syn_data, np.where(syn_data == 0)[0])
 		syn_data = syn_data[0:np.size(burst[burst>=xmin])]
 
