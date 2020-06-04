@@ -47,11 +47,11 @@ def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
     np.save(save_loc+f'/all_params_{animal}_{time_frame}', all_params)
     return all_data, all_params
 
-# params={
-#     "animal": "caf19",
-#     "date": "0409",
-#     "time_range":"108-168"
-# }
+params={
+    "animal": "caf22",
+    "date": "0526",
+    "time_range":"0-36_P2"
+}
 
 def crit_plots(dcc, p_b, p_t, labels, params, save=False):
     """

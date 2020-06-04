@@ -126,7 +126,7 @@ def make_pdf(qualed_cell_paths, testing_params=True):
                 first_p = qn.rfind('5p')
                 probe = int(qn[first_p+2:first_p+3])
                 first_filt = qn.rfind('_1_')
-                filt = qn[first_filt+3:first_thresh-1]
+                filt = 'average'
 
                 title_string = f'Thresh: {thresh} CZP: {czp} TOTAL: {total}'
             else:
@@ -209,6 +209,8 @@ def make_pdf(qualed_cell_paths, testing_params=True):
             plt.close()
             # small_panda_fig.savefig(tabledata, format='png')
             big_panda = big_panda.append(small_panda)
-
+        big_panda_fig,big_panda_ax = render_mpl_table(big_panda,col_width=2)
+        pdf.savefig()
+        plt.close()
         big_panda.to_pickle('caf22_average_big_panda.pkl')
 

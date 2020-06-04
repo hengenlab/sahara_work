@@ -347,7 +347,7 @@ def looped_crit(FR_mat, shuffled_FR_mat, params,basepath, plot_shuffled=True, pl
 
 
 params = {
-    'ava_binsz': 0.05,
+    'ava_binsz': 0.03,
     'hour_bins': 4,
     'total_time':12,
     'perc': 0.25,
@@ -355,8 +355,8 @@ params = {
     'tM': 4,
     'quality': [1,2],
     'time_frame': '0524',
-    'animal' : 'caf22',
-    'notes': 'caf22 0524 run2'
+    'animal' : 'caf19',
+    'notes': 'trying all data'
 }
 
 
@@ -394,9 +394,15 @@ def lilo_and_stitch(paths, params, overlap=0, plot=False, plot_shuffled=True):
         last_slash = path.rfind("/")
         base_path = path[0:last_slash+1]
         
-        time_frame = base_path[0:base_path.find("/probe")]
+        time_frame_1 = base_path[0:base_path.find("/probe")]
+        time_frame = time_frame_1[time_frame_1.find('/')+1:]
         params['time_frame']=time_frame
-        
+
+        start_time = int(time_frame[0:time_frame.find('_')])
+        stop_time = int(time_frame[time_frame.find('_')+1:])
+        total_time = stop_time-start_time
+        params['total_time'] = total_time
+
         cells = np.load(path, allow_pickle=True)
         good_cells = [cell for cell in cells if cell.quality in quality]
         data = mbt.n_spiketimes_to_spikewords(good_cells, binsz=ava_binsz, binarize=1)
