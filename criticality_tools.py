@@ -347,16 +347,16 @@ def looped_crit(FR_mat, shuffled_FR_mat, params,basepath, plot_shuffled=True, pl
 
 
 params = {
-    'ava_binsz': 0.03,
+    'ava_binsz': 0.02,
     'hour_bins': 4,
     'total_time':12,
-    'perc': 0.25,
+    'perc': 0.0,
     'burstM': 10,
     'tM': 4,
     'quality': [1,2],
     'time_frame': '0524',
-    'animal' : 'caf19',
-    'notes': 'trying all data'
+    'animal' : 'caf22',
+    'notes': 'small binsizes again'
 }
 
 

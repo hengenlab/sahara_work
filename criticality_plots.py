@@ -5,6 +5,10 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt 
 import matplotlib.backends.backend_pdf as mpdf
+from matplotlib.patches import Rectangle
+from matplotlib.collections import PatchCollection
+import seaborn as sns
+from copy import deepcopy as cdc
 import seaborn as sns
 import csv
 import os
@@ -144,5 +148,69 @@ def large_plot(start_folder, end_folder, animal, save=False, save_loc=None):
     animal: animal name
 
     """
+
+
+def raster_avalanches(cells, av_binsize, perc, trange=10):
+    '''
+    returns a plot with the binarized spikes organized into avalanches
+
+    cells: cells to look at (only good ones that would be used in crit)
+    av_binsize: how they should be binarized
+    perc: threshold for avalanche
+    range: seconds to dispaly
+
+    returns: plot and ax 
+    '''
+    FR_mat = mbt.n_spiketimes_to_spikewords(cells, binsz=av_binsize, binarize=1)
+    end_bin = trange/av_binsize
+    sm_fr = FR_mat[:,0:end_bin]
+    n,m = np.shape(sm_fr)
+
+
+    positions =[]
+    for cell in sm_fr:
+        positions.append(np.where(cell>0)[0])
+    network = np.nansum(sm_fr, axis=0)
+    sortN = np.sort(network)
+    threshold = sortN[round(m*perc)]
+
+
+    thresh_max = np.ma.masked_where(network<=threshold, network)
+
+    zdata = cdc(network)
+    zdata[~thresh_max.mask] = 1 #avalanches
+    zdata[thresh_max.mask] = 0 #intervals
+
+    
+    edges = np.diff(zdata)
+    ontimes = np.where(edges>0)[0]
+    offtimes = np.where(edges<0)[0]
+
+    if zdata[0]==1:
+        ontimes = np.insert(ontimes, 0, 0)
+    if zdata[-1]==1:
+        offtimes =np.append(offtimes,len(edges))
+   
+    xys=[]
+    widths=[]
+    heights=[]
+    for i, on in enumerate(ontimes):
+        xys.append((on,0))
+        widths.append(offtimes[i]-on)
+
+    boxes = [Rectangle(xy, width, n) for xy, width in zip(xys, widths)]
+    pc = PatchCollection(boxes,facecolor='moccasin', alpha=0.7, edgecolor='firebrick')
+
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(11,8))
+    ax.eventplot(positions, orientation="horizontal")
+    ax.set_ylabel("Cell")
+    ax.set_xlabel("Bin")
+    ax.set_title(f'Avalanches over {trange} seconds')
+    
+    ax.add_collection(pc)
+        
+    plt.show()
+
+    return fig, ax
 
     

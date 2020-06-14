@@ -52,8 +52,8 @@ def qual_cells(h_neurons_clust_out):
     for h_n in h_neurons_clust_out:
         cells = np.load(h_n,allow_pickle=True)
         for cell in cells:
-            cell.remove_large_amplitude_spikes(4,lplot=False)
-        mbt.autoqual(cells,'/media/HlabShare/models/xgb_model')
+            cell.remove_large_amplitude_spikes(2,lplot=False)
+        mbt.autoqual(cells,'/Volumes/HlabShare/models/xgb_model')
         front_letter = h_n.rfind('H_')
         end_letter = h_n.rfind('.npy')
         np.save(h_n[:end_letter] + 'qualed',cells)
