@@ -56,7 +56,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, saveloc, flag =
 		# if bm < 40:
 		# 	sizelimit = 40
 
-		Result['P_burst'], ks, hax_burst = cr.pvaluenew(burst[idx_burst], burstMin)
+		Result['P_burst'], ks, hax_burst, ptest_bmin = cr.pvaluenew(burst[idx_burst], burstMin)
 		hax_burst.axes[0].set_xlabel('Size (S)', fontsize = 16)
 		hax_burst.axes[0].set_ylabel('Prob(size < S)', fontsize = 16)
 		hax_burst.savefig(saveloc+"/"+pltname+'pvalue_burst')
@@ -133,7 +133,7 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, saveloc, flag =
 		# durationlimit = tm
 		# if tm < 30:
 		# 	durationlimit = 30
-		Result['P_t'], ks, hax_time  = cr.pvaluenew(T[idx_time],tMin)
+		Result['P_t'], ks, hax_time, ptest_tmin  = cr.pvaluenew(T[idx_time],tMin)
 		hax_time.axes[0].set_xlabel('Duration (D)', fontsize = 16)
 		hax_time.axes[0].set_ylabel('Prob(size < D)', fontsize = 16)
 		hax_time.savefig(saveloc+"/"+pltname+'pvalue_time')

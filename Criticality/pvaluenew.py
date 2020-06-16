@@ -9,8 +9,12 @@ def pvaluenew(burst,boundary):
 # Null hypothesis test. When P_value is very large, we could not reject
 # the Null hypothesis that the distribution of burst follows power law.
 # Usually, we use 0.05 as criteria.
+	if boundary > 40:
+		alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
+	else:
+		alpha, xmin, ks, Loglike = cr.tplfit(burst,40)
+	print(f"xmin from pval test: {xmin}")
 
-	alpha, xmin, ks, Loglike = cr.tplfit(burst,40) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
 	# print(xmin)
 	# print(alpha)
 	xmax = np.max(burst)
@@ -122,7 +126,7 @@ def pvaluenew(burst,boundary):
 
 	AA = [P_value, KS]
 
-	return P_value, ks, hfig
+	return P_value, ks, hfig, xmin
 
 
 
