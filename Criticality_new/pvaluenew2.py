@@ -7,6 +7,7 @@ import seaborn as sns
 import math
 
 def pvaluenew(burst, alpha, xmin, ks, Loglike):
+    
     xmax = np.max(burst) # not truly the max, cause we pass in the truncated dataset
     n   = np.size(burst)
     cdf = np.cumsum(np.histogram(z,np.arange(xmin,xmax+2))[0]/n) 

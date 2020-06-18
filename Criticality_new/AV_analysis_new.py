@@ -54,7 +54,7 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin,tMax, beta, 
 
 def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False, plot=True):
     Result = {}
-    burstMax, burstMin, alpha = cr.EXCLUDE(burst, bm)
+    burstMax, burstMin, alpha = cr.EXCLUDE(burst[butst < np.power(np.max(burst),0.8), bm)
     idx_burst = np.where(np.logical_and(burst<=burstMax, burst>=burstMin))[0]
 
     alpha, xmin, ks, L = cr.tplfit(burst[idx_burst], burstMin)
@@ -99,7 +99,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     TT=TT[Loc]
     Sm=Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1);
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1)
     sigma = (beta - 1)/(alpha - 1)
 
     Result['pre'] = sigma
