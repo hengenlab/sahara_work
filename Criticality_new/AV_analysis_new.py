@@ -29,7 +29,7 @@ def scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma
 
     x = np.arange(tMin,tMax+1)
     y = np.size(np.where(T == tMin))/(np.power(tMin,-beta))*np.power(x,-beta)
-	y = y/np.sum(tdf)
+    y = y/np.sum(tdf)
     ax1[1].plot(x,y, color = '#c5c9c7')
     ax1[1].set_xlabel('AVduration')
     ax1[1].set_ylabel('PDF(D)')
@@ -45,10 +45,10 @@ def scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma
     ax1[2].set_yscale('log')
     ax1[2].set_ylabel('<S>')
     ax1[2].set_title('Difference = ' + str(np.round(Result['df'][0], 3)))
-
-	plt.tight_layout()
-	plt.legend()
-	plt.savefig(saveloc+"/"+pltname+'scaling_relations')
+    
+    plt.tight_layout()
+    plt.legend()
+    plt.savefig(saveloc+"/"+pltname+'scaling_relations')
 
     return fig1
 
@@ -59,13 +59,13 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     alpha, xmin, ks, L = cr.tplfit(burst[idx_burst], burstMin)
 
     print("burst min: ", burstMin)
-	print("xmin: ", xmin)
-	print("burst max:", burstMax)
+    print("xmin: ", xmin)
+    print("burst max:", burstMax)
 
-	Result['burst'] = burst
-	Result['alpha'] = alpha
-	Result['xmin'] = burstMin
-	Result['xmax'] = burstMax
+    Result['burst'] = burst
+    Result['alpha'] = alpha
+    Result['xmin'] = burstMin
+    Result['xmax'] = burstMax
 
     if flag == 2 :
         # pvalue test
@@ -76,13 +76,13 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     beta, new_tmin, tplfit_ks_time, L = cr.tplfit(T[idx_time], tMin)
     
     print(f'time min: {tMin}')
-	print(f'new tmin: {new_tmin}')
-	print(f'time max: {tMax}')
+    print(f'new tmin: {new_tmin}')
+    print(f'time max: {tMax}')
 
     Result['T'] = T
-	Result['beta'] = beta
-	Result['tmin'] = tMin
-	Result['tmax'] = tMax
+    Result['beta'] = beta
+    Result['tmin'] = tMin
+    Result['tmax'] = tMax
 
     if flag == 2:
         #pvalue for time
@@ -90,22 +90,22 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
    
     # scaling relation 
     TT = np.arange(1, np.max(T)+1)
-	Sm = []
-	for i in np.arange(0,np.size(TT)):
-		Sm.append(np.mean(burst[np.where(T==TT[i])[0]]))
-	Sm = np.asarray(Sm)
-	Loc=np.where(Sm>0)[0]
-	TT=TT[Loc]
-	Sm=Sm[Loc]
+    Sm = []
+    for i in np.arange(0,np.size(TT)):
+        Sm.append(np.mean(burst[np.where(T==TT[i])[0]]))
+    Sm = np.asarray(Sm)
+    Loc=np.where(Sm>0)[0]
+    TT=TT[Loc]
+    Sm=Sm[Loc]
 
     fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1);
-	sigma = (beta - 1)/(alpha - 1)
+    sigma = (beta - 1)/(alpha - 1)
 
-	Result['pre'] = sigma
-	Result['fit'] = fit_sigma
-	Result['df'] = np.abs(sigma - fit_sigma[0])
-	Result['TT'] = TT
-	Result['Sm'] = Sm
+    Result['pre'] = sigma
+    Result['fit'] = fit_sigma
+    Result['df'] = np.abs(sigma - fit_sigma[0])
+    Result['TT'] = TT
+    Result['Sm'] = Sm
 
     m = fit_sigma[0]
     c = fit_sigma[1]
