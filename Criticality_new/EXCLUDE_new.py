@@ -32,8 +32,8 @@ import powerlaw as plaw
 
 def EXCLUDE(burst, setmin, num=1):
     KS = 1
-	dKS = 1
-	xmin = 1
+    dKS = 1
+    xmin = 1
 
     while KS > np.min([num/np.sqrt(np.size(burst[burst>xmin])), 0.1]) and dKS > 0.0005:
         alpha, xmin, ks, Loglike = cr.tplfit(burst, setmin)

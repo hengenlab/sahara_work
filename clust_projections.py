@@ -15,6 +15,7 @@ import matplotlib.backends.backend_pdf as mpdf
 
 rawdat_dir = '/Volumes/carina/EAB00050/block3/'
 save_loc = '/Volumes/HlabShare/clayton_sahara_work/clustering/'
+animal_name = 'EAB50'
 
 # rawdat_dir = '/Volumes/bs006r/CAF00022/CAF00022_2020-06-05_08-47-46/'
 # save_loc = '/Volumes/HlabShare/clayton_sahara_work/clustering/caf22/'
@@ -23,7 +24,7 @@ chan_map = 'EAB50chmap_00'
 probe_num = 0
 num_chans = 512
 #cells = ''
-loc = 25000
+loc = 1
 fs=25000
 window_len = 25000
 
@@ -50,14 +51,10 @@ def clust_projections_loc(rawdat_dir, save_loc, chan_map, probe_num, num_chans, 
                                 lraw=1, ts=ts%(300*fs), te=te%(300*fs),
                                 probenum=probe_num, probechans=64)
 
-    # t, dat = ntk.load_raw_gain_chmap_1probe(this_file, num_chans,
-    #                             chan_map_full, nprobes=int(num_chans/64),
-    #                             lraw=1, ts=0, te=window_len,
-    #                             probenum=probe_num, probechans=64)
 
     clust_groups = np.reshape(np.arange(0,64), (16,4))
 
-    with mpdf.PdfPages(os.path.join(save_loc + f"/clust_projections_sec{loc}.pdf")) as pdf:
+    with mpdf.PdfPages(os.path.join(save_loc + f"/clust_projections_{animal_name}_sec{loc}.pdf")) as pdf:
         for thesechans in clust_groups:
 
             figc, ax = plt.subplots(ncols=1, nrows=len(thesechans),figsize=[16, 10], sharex=True,gridspec_kw={'hspace': 0})

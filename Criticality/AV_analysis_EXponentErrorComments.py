@@ -179,7 +179,9 @@ def AV_analysis_ExponentErrorComments(burst, T, bm, tm, pltname, saveloc, flag =
 	Sm=Sm[Loc]
 	
 	#fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+30)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+30)[0])]), 1); # OG matlab had +30 instead of +60 	fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), 1);
-	fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), 1);
+	#fit_sigma = np.polyfit(np.log(TT[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), np.log(Sm[np.intersect1d(np.where(TT>tMin)[0], np.where(TT<tMin+60)[0])]), 1);
+	fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1);
+	
 	sigma = (beta - 1)/(alpha - 1)
 
 	Result['pre'] = sigma

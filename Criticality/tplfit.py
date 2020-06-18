@@ -37,7 +37,7 @@ def tplfit(burst,limit):
 
 	xmin = int(np.where(KS==np.min(KS))[0])
 	alpha = alpha[xmin]
-	Loglike = Loglike[xmin];
+	Loglike = Loglike[xmin]
 	ks = np.min(KS)
 	xmin = xmin + 1
 

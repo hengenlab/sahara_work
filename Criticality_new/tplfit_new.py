@@ -1,7 +1,7 @@
 import numpy as np
 from copy import deepcopy as cdc
 import scipy.optimize
-import scipy.stats.powerlaw as plaw
+from scipy.stats import powerlaw
 from sahara_work import Criticality_new as cr
 def tplfit(burst,limit):
     """
@@ -12,9 +12,9 @@ def tplfit(burst,limit):
         only going to use for determining the minima, not anything else 
     """
     KS = []
-	alpha = []
-	Loglike = []
-	alpha = []
+    alpha = []
+    Loglike = []
+    alpha = []
     xmax = np.max(burst)
 
     for xmin in np.arange(1, limit+1):
@@ -34,7 +34,7 @@ def tplfit(burst,limit):
         alpha.append(a)
         fit = np.cumsum(A*np.power(np.arange(xmin,xmax+1), -a))
         KS.append(np.max(np.abs(cdf-fit)))
-    
+
     xmin = int(np.where(KS==np.min(KS))[0])
     alpha = alpha[xmin]
     Loglike = Loglike[xmin] 

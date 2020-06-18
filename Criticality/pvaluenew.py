@@ -9,10 +9,10 @@ def pvaluenew(burst,boundary):
 # Null hypothesis test. When P_value is very large, we could not reject
 # the Null hypothesis that the distribution of burst follows power law.
 # Usually, we use 0.05 as criteria.
-	if boundary > 40:
-		alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
-	else:
-		alpha, xmin, ks, Loglike = cr.tplfit(burst,40)
+	
+	alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
+	
+		
 	print(f"xmin from pval test: {xmin}")
 
 	# print(xmin)
@@ -85,11 +85,11 @@ def pvaluenew(burst,boundary):
 		############################################################################################
 
 		## OKAY SO --- OG matlab doesnt index into the syn_data at all. So i'm commenting it out and trying it
-		# idx_syn = np.where(np.logical_and(xmin<=syn_data, syn_data<=xmax))[0]
-		# X = syn_data[idx_syn]
+		idx_syn = np.where(np.logical_and(xmin<=syn_data, syn_data<=xmax))[0]
+		X = syn_data[idx_syn]
 
 		# THIS IS BASED OFF THE MATLAB
-		X = syn_data
+		# X = syn_data
 		alpha_syn, xmin_syn, ks_syn, Loglike_syn = cr.tplfit(syn_data,xmin) #calculate exponent for surrogated data 
 		a = alpha_syn[0]   
 		
