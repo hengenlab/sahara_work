@@ -79,11 +79,11 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
         Result['P_burst'], ks, hax_burst, ptest_bmin  = cr.pvaluenew(burst[idx_burst], alpha, xmin, ks, L)
 
     #tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
-    tMax, tMin, beta = cr.EXCLUDE(T, tm)
+    #tMax, tMin, beta = cr.EXCLUDE(T, tm)
 
     # this is for testing, esentially canceling out the exclude function 
-    #tMax = np.max(burst)
-    #tMin=tm
+    tMax = np.max(burst)
+    tMin=tm
     
     idx_time = np.where(np.logical_and(T >= tMin,T <= tMax + 1))[0]
     beta, new_tmin, tplfit_ks_time, L_t = cr.tplfit(T[idx_time], tMin)
