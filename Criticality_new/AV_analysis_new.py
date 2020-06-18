@@ -112,7 +112,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     c = fit_sigma[1]
 
     if plot:
-        fig1 = scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma, fit_sigma, plt_name, saveloc)
+        fig1 = scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma, fit_sigma, pltname, saveloc)
         if flag == 2 :
             hax_burst.axes[0].set_xlabel('Size (S)', fontsize = 16)
             hax_burst.axes[0].set_ylabel('Prob(size < S)', fontsize = 16)
