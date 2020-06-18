@@ -54,7 +54,9 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin,tMax, beta, 
 
 def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False, plot=True):
     Result = {}
-    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.8)], bm)
+    # burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.8)], bm)
+    burstMax, burstMin, alpha = cr.EXCLUDE(burst, bm)
+    
     idx_burst = np.where(np.logical_and(burst<=burstMax, burst>=burstMin))[0]
 
     alpha, xmin, ks, L = cr.tplfit(burst[idx_burst], burstMin)
@@ -72,7 +74,9 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
         # pvalue test
         Result['P_burst'], ks, hax_burst, ptest_bmin  = cr.pvaluenew(burst[idx_burst], burstMin)
 
-    tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
+    # tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
+    tMax, tMin, beta = cr.EXCLUDE(T, tm)
+    
     idx_time = np.where(np.logical_and(T >= tMin,T <= tMax + 1))[0]
     beta, new_tmin, tplfit_ks_time, L = cr.tplfit(T[idx_time], tMin)
     
