@@ -3,7 +3,7 @@ from sahara_work import Criticality_new as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma, fit_sigma, plt_name, saveloc):
+def scaling_plots(burst, burstMin, burstMax, alpha, T, tMin,tMax, beta, TT, Sm, sigma, fit_sigma, plt_name, saveloc):
     # burst PDF
     fig1, ax1 = plt.subplots(nrows = 1, ncols = 3, figsize = [10, 6])
     pdf = np.histogram(burst, bins = np.arange(1, np.max(burst)+2))[0]
@@ -112,7 +112,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     c = fit_sigma[1]
 
     if plot:
-        fig1 = scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma, fit_sigma, pltname, saveloc)
+        fig1 = scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, tMax, beta, TT, Sm, sigma, fit_sigma, pltname, saveloc)
         if flag == 2 :
             hax_burst.axes[0].set_xlabel('Size (S)', fontsize = 16)
             hax_burst.axes[0].set_ylabel('Prob(size < S)', fontsize = 16)
