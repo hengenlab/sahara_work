@@ -53,6 +53,7 @@ def scaling_plots(burst, burstMin, burstMax, alpha, T, tMin, beta, TT, Sm, sigma
     return fig1
 
 def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False, plot=True):
+    Result = {}
     burstMax, burstMin, alpha = cr.EXCLUDE(burst, bm)
     idx_burst = np.where(np.logical_and(burst<=burstMax, burst>=burstMin))[0]
 
