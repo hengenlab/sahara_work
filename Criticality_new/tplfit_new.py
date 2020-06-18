@@ -19,7 +19,7 @@ def tplfit(burst,limit):
 
     for xmin in np.arange(1, limit+1):
         idx = np.where(np.logical_and(burst >= xmin, burst <= xmax))[0]
-        n = size(burst[idx])
+        n = np.size(burst[idx])
         s=np.unique(burst[idx])
         smin=np.min(s)
         smax=np.max(s)
