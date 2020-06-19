@@ -78,7 +78,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     if flag == 2 :
         # pvalue test
         # Result['P_burst'], ks, hax_burst, ptest_bmin  = cr.pvaluenew(burst[idx_burst], alpha, xmin, ks, L)
-        Result['P_burst'], ks, hax_burst, ptest_bmin  = cr_old.pvaluenew(burst[idx_time], bm)
+        Result['P_burst'], ks, hax_burst, ptest_bmin  = cr_old.pvaluenew(burst[idx_burst], bm)
     tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
     #tMax, tMin, beta = cr.EXCLUDE(T, tm)
 

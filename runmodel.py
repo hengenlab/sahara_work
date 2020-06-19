@@ -36,4 +36,4 @@ for m in np.arange(1,2):
         Result3  = cr.AV_analysis_new(x, y, burstM, tM, pltname, flag = 2, saveloc='/media/bs001s/caf/model_stuff/', plot=True) 
         
         DCC[m-1,n-1] = Result3['df']
-np.save('super_eig1_p_vals.npy',DCC)
+np.save('super_eig1_pvals.npy',DCC)
