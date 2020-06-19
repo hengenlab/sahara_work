@@ -101,7 +101,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     if flag == 2:
         #pvalue for time
         # Result['P_t'], ks, hax_time, ptest_tmin  = cr.pvaluenew(T[idx_time], beta, tMin, tplfit_ks_time, L_t)
-        Result['P_t'], ks, hax_time, ptest_tmin =  cr_old.pvaluenew(T[idx_time, tm])
+        Result['P_t'], ks, hax_time, ptest_tmin =  cr_old.pvaluenew(T[idx_time], tm)
     # scaling relation 
     TT = np.arange(1, np.max(T)+1)
     Sm = []
