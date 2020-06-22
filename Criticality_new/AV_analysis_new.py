@@ -77,8 +77,8 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
 
     if flag == 2 :
         # pvalue test
-        # Result['P_burst'], ks, hax_burst, ptest_bmin  = cr.pvaluenew(burst[idx_burst], alpha, xmin, ks, L)
-        Result['P_burst'], ks, hax_burst, ptest_bmin  = cr_old.pvaluenew(burst[idx_burst], bm)
+        Result['P_burst'], ks, hax_burst, ptest_bmin  = cr.pvaluenew(burst[idx_burst], alpha, xmin, ks, L)
+        #Result['P_burst'], ks, hax_burst, ptest_bmin  = cr_old.pvaluenew(burst[idx_burst], bm)
     tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
     #tMax, tMin, beta = cr.EXCLUDE(T, tm)
 
@@ -100,8 +100,8 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
 
     if flag == 2:
         #pvalue for time
-        # Result['P_t'], ks, hax_time, ptest_tmin  = cr.pvaluenew(T[idx_time], beta, tMin, tplfit_ks_time, L_t)
-        Result['P_t'], ks, hax_time, ptest_tmin =  cr_old.pvaluenew(T[idx_time], tm)
+        Result['P_t'], ks, hax_time, ptest_tmin  = cr.pvaluenew(T[idx_time], beta, tMin, tplfit_ks_time, L_t)
+        #Result['P_t'], ks, hax_time, ptest_tmin =  cr_old.pvaluenew(T[idx_time], tm)
     # scaling relation 
     TT = np.arange(1, np.max(T)+1)
     Sm = []
