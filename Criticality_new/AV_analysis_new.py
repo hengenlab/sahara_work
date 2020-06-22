@@ -112,7 +112,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     TT=TT[Loc]
     Sm=Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1)
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMin+60))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMin+60))[0]]), 1)
     sigma = (beta - 1)/(alpha - 1)
 
     Result['pre'] = sigma

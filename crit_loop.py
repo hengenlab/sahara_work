@@ -141,11 +141,11 @@ def looped_crit(FR_mat, shuffled_FR_mat, params,basepath, plot_shuffled=True):
 
 params = {
     'ava_binsz': 0.045,
-    'hour_bins': 12,
+    'hour_bins': 4,
     'perc': 0.25,
     'quality': [1,2],
     'animal' : 'EAB26',
-    'notes': 'ground truth testing'
+    'notes': 'testing'
 }
 
 def lilo_and_stitch(paths, params, overlap=0, plot_shuffled=True):
