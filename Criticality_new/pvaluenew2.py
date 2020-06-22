@@ -10,7 +10,7 @@ def pvaluenew(burst, alpha, xmin, ks, Loglike):
     
     xmax = np.max(burst) # not truly the max, cause we pass in the truncated dataset
     n   = np.size(burst)
-    cdf = np.cumsum(np.histogram(z,np.arange(xmin,xmax+2))[0]/n) 
+    cdf = np.cumsum(np.histogram(burst,np.arange(xmin,xmax+2))[0]/n) 
     s = np.unique(burst)
     smin = np.min(s)
     A = 1/np.sum(np.power(s, -alpha[0]))
