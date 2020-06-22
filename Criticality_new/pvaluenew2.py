@@ -18,10 +18,10 @@ def pvaluenew(burst, alpha, xmin, ks, Loglike):
     KS = np.max(np.abs(cdf-fit))
 
 
-	hfig, hax = plt.subplots(ncols = 1, nrows = 1)
-	sns.despine()
-	plt.yticks(fontsize = 13)
-	plt.xticks(fontsize = 13)
+    hfig, hax = plt.subplots(ncols = 1, nrows = 1)
+    sns.despine()
+    plt.yticks(fontsize = 13)
+    plt.xticks(fontsize = 13)
 
     hax.plot(np.arange(xmin,xmax+1), fit, zorder = 10000, label = 'Power law CDF', color = '#0504aa')
     hax.plot(np.arange(xmin,xmax+1), cdf, zorder = 10005, label = 'Experimental CDF', color = '#80013f')
