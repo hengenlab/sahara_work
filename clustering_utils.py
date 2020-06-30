@@ -49,16 +49,25 @@ def qual_cells(h_neurons_clust_out):
 
         returns: nothing, just creates the qualed files in each directory
     '''
-    for h_n in h_neurons_clust_out:
+    for i, h_n in enumerate(h_neurons_clust_out):
+        print(f'Block {i} of {len(h_neurons_clust_out)}')
         cells = np.load(h_n,allow_pickle=True)
         for cell in cells:
-            cell.remove_large_amplitude_spikes(2,lplot=False)
+            cell.remove_large_amplitude_spikes(3.5,lplot=False)
         mbt.autoqual(cells,'/Volumes/HlabShare/models/xgb_model')
         front_letter = h_n.rfind('H_')
         end_letter = h_n.rfind('.npy')
         np.save(h_n[:end_letter] + 'qualed',cells)
 
-
+def scrub_cells(qualed_neurons):
+    for i, block in enumerate(qualed_neurons):
+        print(f'block {i} of {len(qualed_neurons)}')
+        cells = np.load(block, allow_pickle=True)
+        for cell in cells:
+            if cell.quality in [1,2]:
+                cell.checkqual()
+        np.save(block, cells)
+    
 
 def determine_shape(num_cells):
     if num_cells>15:

@@ -144,8 +144,8 @@ params = {
     'hour_bins': 4,
     'perc': 0.25,
     'quality': [1,2],
-    'animal' : 'EAB26',
-    'notes': 'testing'
+    'animal' : 'EAB52',
+    'notes': 'testing probe2'
 }
 
 def lilo_and_stitch(paths, params, overlap=0, plot_shuffled=True):

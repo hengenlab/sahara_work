@@ -55,7 +55,7 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin,tMax, beta, 
 
 def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False, plot=True):
     Result = {}
-    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),0.8)], bm)
+    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),.9)], bm)
     #burstMax, burstMin, alpha = cr.EXCLUDE(burst, bm)
     
     # for testing, exclude burst turned off
@@ -79,8 +79,12 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
         # pvalue test
         #Result['P_burst'], ks, hax_burst, ptest_bmin  = cr.pvaluenew(burst[idx_burst], alpha, xmin, ks, L)
         Result['P_burst'], ks, hax_burst, ptest_bmin  = cr_old.pvaluenew(burst[idx_burst], bm)
-    tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
-    #tMax, tMin, beta = cr.EXCLUDE(T, tm)
+
+
+
+
+    #tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
+    tMax, tMin, beta = cr.EXCLUDE(T, tm)
 
     # this is for testing, esentially canceling out the exclude function 
     # tMax = np.max(burst)
@@ -112,7 +116,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     TT=TT[Loc]
     Sm=Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMin+60))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMin+60))[0]]), 1)
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1)
     sigma = (beta - 1)/(alpha - 1)
 
     Result['pre'] = sigma
