@@ -1,15 +1,16 @@
-from sahara_work import Criticality as cr 
-import musclebeachtools_hlab.musclebeachtools as mbt 
+from sahara_work import Criticality_new as cr
+import musclebeachtools_hlab.musclebeachtools as mbt
 import neuraltoolkit as ntk
-import numpy as np 
+import numpy as np
 import matplotlib
 # matplotlib.use('Agg')
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as mpdf
 import seaborn as sns
 import csv
 import os
 import glob
+
 
 def get_timeframe(path):
     last_slash = path.rfind("/")
@@ -21,11 +22,13 @@ def get_timeframe(path):
     time_frame = time_frame_1[time_frame_1.rfind('/')+1:]
     return time_frame, base_path
 
+
 def get_totaltime(time_frame):
     start_time = int(time_frame[0:time_frame.find('_')])
     stop_time = int(time_frame[time_frame.find('_')+1:])
     total_time = stop_time-start_time
     return total_time
+
 
 def ratio_to_csv(alpha, beta, block, filename):
 
@@ -119,7 +122,7 @@ def looped_crit(FR_mat, shuffled_FR_mat, params,basepath, plot_shuffled=True):
         burstM = int(np.max(Result['S'])/20)
         tM = int(np.max(Result['T'])/20)
 
-        Result = cr.AV_analysis_ExponentErrorComments(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx),saveloc=basepath, flag = 2, EX_burst=1, EX_time=1, burst_shuffled=burst_shuffled, T_shuffled=time_shuffled, plot_shuffled=plot_shuffled, plot=True)
+        Result = cr.AV_analysis_new(Result["S"], Result["T"], burstM, tM, param_str+'_'+str(idx),saveloc=basepath, flag = 2, burst_shuffled=burst_shuffled, T_shuffled=time_shuffled, plot_shuffled=plot_shuffled, plot=True)
         ratio_to_csv(Result['alpha'][0], Result['beta'][0], f'{time_frame}_{idx+1}', csv_filename)
         master_dict["Result_block"+str(idx)] = Result
         all_p_values_burst.append(Result["P_burst"])
@@ -138,11 +141,11 @@ def looped_crit(FR_mat, shuffled_FR_mat, params,basepath, plot_shuffled=True):
 
 params = {
     'ava_binsz': 0.045,
-    'hour_bins': 12,
-    'perc': 0.0,
+    'hour_bins': 4,
+    'perc': 0.25,
     'quality': [1,2],
-    'animal' : 'caf22',
-    'notes': 'test changes'
+    'animal' : 'EAB52',
+    'notes': 'testing probe2'
 }
 
 def lilo_and_stitch(paths, params, overlap=0, plot_shuffled=True):

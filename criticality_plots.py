@@ -21,11 +21,11 @@ def pull_crit_data(all_dicts, save_loc, animal, time_frame, paths=False):
 
     takes in an array of dictionaries and pulls all the dcc and p_value data, appends all that data into a nice block and saves it where you want
     """
-    all_dicts_obj=[]
+    all_dicts_obj = []
 
     if paths:
         for path in all_dicts:
-            print (f'loading dict: {path}')
+            print(f'loading dict: {path}')
             all_dicts_obj.append(np.load(path, allow_pickle=True).item())
     else:
         all_dicts_obj=all_dicts

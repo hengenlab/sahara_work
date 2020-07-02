@@ -10,7 +10,7 @@ def pvaluenew(burst,boundary):
 # the Null hypothesis that the distribution of burst follows power law.
 # Usually, we use 0.05 as criteria.
 	
-	alpha, xmin, ks, Loglike = cr.tplfit(burst,40) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
+	alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary) #OG matlab hardcodes this to 40. I think that's correct. I'm going to do this. alpha, xmin, ks, Loglike = cr.tplfit(burst,boundary)
 	
 		
 	print(f"xmin from pval test: {xmin}")
