@@ -55,13 +55,14 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin,tMax, beta, 
 
 def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled=None, T_shuffled=None, plot_shuffled=False, plot=True):
     Result = {}
-    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),.9)], bm)
+    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst),.8)], bm)
     #burstMax, burstMin, alpha = cr.EXCLUDE(burst, bm)
+    #burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.percentile(burst, 95)], int(np.max(burst)/20))
     
     # for testing, exclude burst turned off
     # burstMax = np.max(burst)
     # burstMin = bm
-
+    
     idx_burst = np.where(np.logical_and(burst<=burstMax, burst>=burstMin))[0]
 
     alpha, xmin, ks, L = cr.tplfit(burst[idx_burst], burstMin)
@@ -85,12 +86,14 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
 
     #tMax, tMin, beta = cr.EXCLUDE(T[T < np.power(np.max(T),0.8)], tm)
     tMax, tMin, beta = cr.EXCLUDE(T, tm)
+    #tMax, tMin, beta = cr.EXCLUDE(T[T < np.percentile(T, 95)], tm)
+
 
     # this is for testing, esentially canceling out the exclude function 
     # tMax = np.max(burst)
     # tMin=tm
     
-    idx_time = np.where(np.logical_and(T >= tMin,T <= tMax + 1))[0]
+    idx_time = np.where(np.logical_and(T >= tMin,T <= tMax))[0]
     beta, new_tmin, tplfit_ks_time, L_t = cr.tplfit(T[idx_time], tMin)
     
     print(f'time min: {tMin}')
@@ -107,6 +110,7 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
         #Result['P_t'], ks, hax_time, ptest_tmin  = cr.pvaluenew(T[idx_time], beta, tMin, tplfit_ks_time, L_t)
         Result['P_t'], ks, hax_time, ptest_tmin =  cr_old.pvaluenew(T[idx_time], tm)
     # scaling relation 
+
     TT = np.arange(1, np.max(T)+1)
     Sm = []
     for i in np.arange(0,np.size(TT)):
@@ -116,7 +120,8 @@ def AV_analysis_new(burst, T, bm, tm, pltname, saveloc, flag = 1, burst_shuffled
     TT=TT[Loc]
     Sm=Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMax))[0]]), 1)
+    end = tMin + ((tMax-tMin)/2)
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT>tMin, TT<tMin+60))[0]]), np.log(Sm[np.where(np.logical_and(TT>tMin, TT<tMin+60))[0]]), 1)
     sigma = (beta - 1)/(alpha - 1)
 
     Result['pre'] = sigma

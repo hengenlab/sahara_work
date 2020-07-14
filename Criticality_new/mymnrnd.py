@@ -63,6 +63,8 @@ translated by sahara to python 6/26/2020
 '''
 
 import numpy as np 
+from math import log
+import math
 
 def mymnrnd(n,p):
     # constraints for the threshold between Poisson and normal 
@@ -75,6 +77,9 @@ def mymnrnd(n,p):
 
     # rank the probabilities
     sortedp = np.sort(p)
+    idx = np.argsort(p)
+
+    unsortidx = np.argsort(idx)
 
     y = np.zeros(np.size(p))
 
@@ -82,7 +87,7 @@ def mymnrnd(n,p):
 
     # set initial values
     iSmProb = 1
-    iBgProb = k 
+    iBgProb = k -1
     nTemp = n 
     renormFactor = 1 
     
@@ -90,4 +95,48 @@ def mymnrnd(n,p):
         if nTemp >= 1000: # use Poisson or Gaussian approximations
 
             #calculate the threshold between Poisson and normal distribution
-            threshold = (2**coeff(2))
+            threshold = (2**coeff[1]) * (nTemp**coeff[0])/log(10,2)
+
+            if sortedp[iBgProb]/renormFactor >= threshold and sortedp[iBgProb]/renormFactor <= (1-threshold):
+                # use a normal distribution to approximate the pargest p
+                mu = (nTemp * sortedp[iBgProb])/renormFactor
+                sig = np.sqrt(nTemp * (sortedp[iBgProb]/renormFactor) * (1- (sortedp[iBgProb]/renormFactor)))
+                y[iBgProb] = round(np.random.normal(mu, sig))
+
+                # recalculate nTemp
+                nTemp = nTemp - y[iBgProb]
+
+                # adjust the index for the highest prob 
+                iBgProb = iBgProb -1
+            else: # use a poisson distribution to approximate the smalled p
+                y[iSmProb] = np.random.poisson(nTemp*sortedp[iSmProb] / renormFactor)
+
+                # recalculate nTemp
+                nTemp = nTemp - y[iSmProb]
+
+                # adjust the renomalization factor
+                renormFactor = renormFactor - sortedp[iSmProb]
+
+                # adjust the index for the lowest prob
+                iSmProb = iSmProb + 1
+            
+        
+        elif nTemp < 1000:
+            y[iSmProb] = numpy.random.binomial(nTemp, sprtedp[iSmProb]/renormFactor)
+
+            # recalculate nTemp
+            nTemp = nTemp - y[iSmProb]
+
+            # adjust the renomalization factor
+            renormFactor = renormFactor - sortedp[iSmProb]
+
+            # adjust the index for the lowest prob
+            iSmProb = iSmProb =1
+    # fill in the last random number    
+    y[iSmProb] = nTemp
+
+    # reorder the counts
+    y = y[unsortidx]
+
+    return y
+

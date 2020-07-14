@@ -118,7 +118,7 @@ translated from NCC MATLAB toolbox to python - Sahara Ensley 6/26/2020
 '''
 import numpy as np
 import scipy.stats
-def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e-3)
+def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e-3):
     if xmin < 0 :
         xmin = np.min(x)
     if xmax < 0:
@@ -127,7 +127,7 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
     # ensure data is vertical 
     x = np.reshape(x, [np.size(x), 1])
 
-    diff = list(set(x) - set(np.floor(x)))
+    diff = list(set(x.flatten()) - set(np.floor(x.flatten())))
 
     if len(diff) == 0: # integer data
 
@@ -194,13 +194,13 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
 
             # generate sample dara using fit of the real data
             xSampleNo = cr.mymnrnd(nSupportEvents, pdfFit)
-            xSample = rldecode(xSampleNo, np.arange(xmin, xmax+1))
+            xSample = cr.rldecode(xSampleNo, np.arange(xmin, xmax+1))
 
             # computer sample pdf using unique bins
             pdfsample = np.histogram(xSample, bins = np.arange(xmin, xmax+1))[0] / nSupportEvents
 
             #fit sample to pre-determined support range (only compute if we'll use it)
-            if pCrit == 1
+            if pCrit == 1:
                 thisTau = cr.plmle(xSample, xmin=xmin, xmax=xmax)
                 sampleTau[iSample] = thisTau
             
@@ -231,7 +231,7 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
             binomialFlag = False 
         
         # update likelihood if critical threshold less than 1
-        if pCrit not 1:
+        if pCrit not in [1]:
             thisLikelihood = 1 - scipy.stats.binom.cdf(criticalThreshold - nSuccesses -1, nSamples-iSample, pCrit)
         
         iSample+=1
