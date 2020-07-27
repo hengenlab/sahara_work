@@ -137,7 +137,7 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
         pdfX = pdfX / nSupportEvents
 
         # calculate pdf of fit
-        pdfFit = np.arange(xmin, xmax+1)**-tau
+        pdfFit = np.arange(xmin, xmax)**-tau
         pdfFit = pdfFit / np.sum(pdfFit)
 
         # caclulate cdfs of empirical data and spliced data
@@ -176,7 +176,7 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
 
     #### calculate the p-value
     
-    successCounts = np.zeros(1, nSamples)
+    successCounts = np.zeros(nSamples)
 
     # computation reduces to binomial process
     # carry out conditional on the likelihood of the number of succesess given the number of trials
@@ -187,14 +187,14 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
     criticalThreshold = nSamples*pCrit
 
     iSample = 0
-    sampleTau = np.zeros(nSamples, 1)
+    sampleTau = np.zeros(nSamples)
 
     while iSample <= nSamples and thisLikelihood > likelihood and binomialFlag:
         if len(diff) == 0: # integer data
 
             # generate sample dara using fit of the real data
-            xSampleNo = cr.mymnrnd(nSupportEvents, pdfFit)
-            xSample = cr.rldecode(xSampleNo, np.arange(xmin, xmax+1))
+            xSampleNo = mymnrnd(nSupportEvents, pdfFit)
+            xSample = cr.rldecode(xSampleNo, np.arange(xmin, xmax))
 
             # computer sample pdf using unique bins
             pdfsample = np.histogram(xSample, bins = np.arange(xmin, xmax+1))[0] / nSupportEvents

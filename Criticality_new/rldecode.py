@@ -28,8 +28,8 @@ def rldecode(l, val):
 
     # now perform the actual run-length decoding 
     i = np.cumsum(l)
-    j = np.zeros(1, i[-1])
-    j[i[0:-2]+1] = 1
+    j = np.zeros(int(i[-1]))
+    j[int(i[0:-2]+1)] = 1
     j[0] = 1
     x = val[np.cumsum[j]]
 

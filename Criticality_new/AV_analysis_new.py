@@ -1,6 +1,5 @@
 import numpy as np
 from sahara_work import Criticality_new as cr
-from sahara_work import Criticality as cr_old
 import matplotlib.pyplot as plt
 import seaborn as sns
 
