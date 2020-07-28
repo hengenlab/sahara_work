@@ -108,7 +108,7 @@ def AV_analysis(burst, T, params):
 
     if params['flag'] == 2:
         # pvalue for time
-        Result['P_t'], ks, hax_time, ptest_tmin = cr.pvaluenew2(T[idx_time], beta, tMin)
+        Result['P_t'], ks, hax_time, ptest_tmin = cr.pvaluenew(T[idx_time], beta, tMin)
 
     TT = np.arange(1, np.max(T) + 1)
     Sm = []
