@@ -1,5 +1,6 @@
 import numpy as np
 from sahara_work import Criticality_final as cr
+from sahara_work import Criticality_new as NCC
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -87,7 +88,10 @@ def AV_analysis(burst, T, params):
         bm = params['bm']
 
     Result = {}
-    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst), .8)], bm)
+    alpha, burstMin, burstMax, _, p, _, ks = NCC.plparams(burst)
+    alpha = alpha[0]
+    Result['ncc_p_b'] = p
+    #burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst), .8)], bm)
     idx_burst = np.where(np.logical_and(burst <= burstMax, burst >= burstMin))[0]
 
     print("burst min: ", burstMin)
@@ -107,7 +111,10 @@ def AV_analysis(burst, T, params):
     else:
         tm = params['tm']
 
-    tMax, tMin, beta = cr.EXCLUDE(T, tm)
+    #tMax, tMin, beta = cr.EXCLUDE(T, tm)
+    beta, tMin, tMax, _, p_t, _, ks_t = NCC.plparams(T)
+    beta = beta[0]
+    Result['ncc_p_t'] = p_t
     idx_time = np.where(np.logical_and(T >= tMin, T <= tMax))[0]
 
     print(f'time min: {tMin}')

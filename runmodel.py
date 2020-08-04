@@ -24,7 +24,7 @@ params = {
     'flag': 1,
     'bm': None,
     'tm': None,
-    'pltname': "test_landa12",
+    'pltname': "testing_ncc",
     'saveloc': "/media/bs001s/caf/model_stuff/figures/output_figs/",
     'burst_shuffled': None,
     'T_shuffled': None,
@@ -37,7 +37,7 @@ for m in np.arange(1,20):
     for n in np.arange(1,5):
         
         name = "2000_cells/super_2000_long_eig" + str(m) + "_num" + str(n) + ".mat"
-        pltname = "super_2000_long_eig" + str(m) + "_num" + str(n)
+        pltname = "super_2000_long_NCCTEST_eig" + str(m) + "_num" + str(n)
         params['pltname'] = pltname
         datamat = sio.loadmat(name)
         datamat = datamat['Data']
@@ -53,7 +53,7 @@ for m in np.arange(1,20):
         # except:
         #     print(f'no avalanches for eig {m}')
         #     DCC[m-1,n-1] = np.nan
-np.save('super_2000_long.npy',DCC)
+np.save('super_2000_long_NCCTEST.npy',DCC)
 
 # single file
 name = '500_lambda11_long.mat'

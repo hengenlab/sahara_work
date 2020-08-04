@@ -118,6 +118,8 @@ translated from NCC MATLAB toolbox to python - Sahara Ensley 6/26/2020
 '''
 import numpy as np
 import scipy.stats
+from sahara_work import Criticality_new as cr
+
 def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e-3):
     if xmin < 0 :
         xmin = np.min(x)
