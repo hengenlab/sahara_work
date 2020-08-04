@@ -105,6 +105,7 @@ adapted from NCC MATLAB toolbox - translated 6/26/2020 by Sahara Ensley
 import numpy as np
 from itertools import combinations
 from sahara_work import Criticality_new as cr
+
 def plparams(x, nSamples=500, pCrit=.05, likelihood=10e-3):
     #ensure data is oriented vertically
     nX = np.size(x)
@@ -154,7 +155,7 @@ def plparams(x, nSamples=500, pCrit=.05, likelihood=10e-3):
         tau, _ , _ , _ = cr.plmle(x, xmin=xmin, xmax=xmax)
 
         # p-value for MLE
-        p,_,_ = pvcalc(x, tau, xmin=xmin, xmax=xmax, nSamples=nSamples, pCrit=pCrit, likelihood=likelihood)
+        p,_,_ = cr.pvcalc(x, tau, xmin=xmin, xmax=xmax, nSamples=nSamples, pCrit=pCrit, likelihood=likelihood)
 
         # halt search if p-value reaches critical p-value
         if p>= pCrit:
@@ -163,7 +164,8 @@ def plparams(x, nSamples=500, pCrit=.05, likelihood=10e-3):
             iSupport = iSupport + 1
     
     # final statistics and full p-value
-    p, ks, sigmaTau = pvcalc(x, tau, xmin=xmin, xmax=xmax, nSamples=nSamples, pCrit=1)
+    print("final stat testing")
+    p, ks, sigmaTau = cr.pvcalc(x, tau, xmin=xmin, xmax=xmax, nSamples=nSamples, pCrit=1)
 
     return tau, xmin, xmax, sigmaTau, p, pCrit, ks
 

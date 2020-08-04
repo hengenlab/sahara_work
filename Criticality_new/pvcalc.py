@@ -191,18 +191,22 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
 
     while iSample <= nSamples and thisLikelihood > likelihood and binomialFlag:
         if len(diff) == 0: # integer data
-
             # generate sample dara using fit of the real data
-            xSampleNo = mymnrnd(nSupportEvents, pdfFit)
+            xSampleNo = cr.mymnrnd(nSupportEvents, pdfFit)
             xSample = cr.rldecode(xSampleNo, np.arange(xmin, xmax))
 
             # computer sample pdf using unique bins
-            pdfsample = np.histogram(xSample, bins = np.arange(xmin, xmax+1))[0] / nSupportEvents
+            pdfSample = np.histogram(xSample, bins = np.arange(xmin, xmax+1))[0] / nSupportEvents
 
             #fit sample to pre-determined support range (only compute if we'll use it)
             if pCrit == 1:
-                thisTau = cr.plmle(xSample, xmin=xmin, xmax=xmax)
-                sampleTau[iSample] = thisTau
+
+                try:
+                    thisTau, _ , _ , _  = cr.plmle(xSample, xmin=xmin, xmax=xmax)
+                    sampleTau[iSample] = thisTau
+                except ValueError:
+                    print("generated weird model data - gonna continue and hope that fixes it")
+                    continue
             
             # compute cdf of sample
             cdfSample = 1 - np.cumsum(pdfSample)
@@ -211,7 +215,7 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
             cdfSample = np.reshape(cdfSample, [np.size(cdfSample), 1])
 
         else: # continuous 
-            print(" i'm pretty sure this should never happen and for the love of god i don't want to translate another \
+            print(" i'm pretty sure this should never happen and for fucks sake i don't want to translate another \
                     matlab script so if you get this message sucks for you -- go back to the matlab and translate this section\
                     -- Sahara")
 
@@ -219,7 +223,7 @@ def pvcalc(x, tau, xmin=-1, xmax=-1, nSamples=500, pCrit = .05, likelihood = 10e
         sampleKS = np.max(np.abs(cdfSample - cdfFit))
 
         # record sample ks
-        ks['samples_ks'][iSample] = sampleKS
+        ks['samples_KS'][iSample] = sampleKS
 
         # record a success if the empirical KS is bounded above by the sample KS
         if empiricalKS <= sampleKS:

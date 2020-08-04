@@ -1,5 +1,5 @@
 import numpy as np
-from sahara_work import Criticality_new as cr
+from sahara_work import Criticality_final as cr
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -18,14 +18,19 @@ params = {
 
 def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin, tMax, beta, TT, Sm, sigma, fit_sigma, pltname, saveloc):
     # burst PDF
+    burstMax = int(burstMax)
+    burstMin = int(burstMin)
     fig1, ax1 = plt.subplots(nrows = 1, ncols = 3, figsize = [10, 6])
     pdf = np.histogram(burst, bins = np.arange(1, np.max(burst) + 2))[0]
-    ax1[0].plot(np.arange(1, np.max(burst) + 1), pdf / np.sum(pdf), marker = 'o', markersize = 3, linestyle = 'None', color = '#2138ab', alpha = 0.75)
+    p = pdf / np.sum(pdf)
+    ax1[0].plot(np.arange(1, np.max(burst) + 1), p, marker = 'o', markersize = 5, fillstyle = 'none', mew = .5, linestyle = 'none', color = 'darkorchid', alpha = 0.75)
+    ax1[0].plot(np.arange(1, np.max(burst) + 1)[burstMin:burstMax], p[burstMin:burstMax], marker = 'o', markersize = 5, fillstyle = 'full', linestyle = 'none', color = 'darkorchid', alpha = 0.75)
     ax1[0].set_yscale('log')
     ax1[0].set_xscale('log')
 
+
     x = np.arange(burstMin, burstMax + 1)
-    y = (np.size(np.where(burst == burstMin)[0]) / np.power(burstMin, -alpha)) * np.power(x, -alpha)
+    y = (np.size(np.where(burst == burstMin+6)[0]) / np.power(burstMin+6, -alpha)) * np.power(x, -alpha)
     y = y / np.sum(pdf)
 
     ax1[0].plot(x, y, color = '#c5c9c7')
@@ -35,7 +40,9 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin, tMax, beta,
 
     # time pdf
     tdf = np.histogram(T, bins = np.arange(1, np.max(T) + 2))[0]
-    ax1[1].plot(np.arange(1, np.max(T) + 1), tdf / np.sum(tdf), marker = 'o', markersize = 3, linestyle = 'None', color = '#7bfdc7', alpha = 0.75)
+    t = tdf / np.sum(tdf)
+    ax1[1].plot(np.arange(1, np.max(T) + 1), t, marker = 'o', markersize = 5, fillstyle = 'none', mew = .5, linestyle = 'None', color = 'mediumseagreen', alpha = 0.75)
+    ax1[1].plot(np.arange(1, np.max(T) + 1)[tMin:tMax], t[tMin:tMax], marker = 'o', markersize = 5, fillstyle = 'full', linestyle = 'none', color = 'mediumseagreen', alpha = 0.75)
     ax1[1].set_yscale('log')
     ax1[1].set_xscale('log')
     sns.despine()
@@ -51,9 +58,14 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin, tMax, beta,
     # figure out how to plot shuffled data
 
     # scaling relation
+    i = np.where(TT == tMax) # just getting the last value we use, getting rid of the hard codes
     ax1[2].plot(TT, ((np.power(TT, sigma) / np.power(TT[7], sigma)) * Sm[7]), label = 'pre', color = '#4b006e')
-    ax1[2].plot(TT, (np.power(TT, fit_sigma[0]) / np.power(TT[7], fit_sigma[0]) * Sm[7]), 'b', label = 'fit', linestyle = '--', color = '#826d8c')
-    ax1[2].plot(TT, Sm, 'o', color = '#fb7d07', alpha = 0.75)
+    ax1[2].plot(TT, (np.power(TT, fit_sigma[0]) / np.power(TT[7], fit_sigma[0]) * Sm[i]), 'b', label = 'fit', linestyle = '--', color = '#826d8c')
+    ax1[2].plot(TT, Sm, 'o', color = '#fb7d07', markersize = 5, mew = .5, fillstyle = 'none', alpha = 0.75)
+
+    locs = np.where(np.logical_and(TT < tMax, TT > tMin))[0]
+
+    ax1[2].plot(TT[locs], Sm[locs], 'o', markersize = 5, mew = .5, color = '#fb7d07', fillstyle = 'full', alpha = 1)
     ax1[2].set_xscale('log')
     ax1[2].set_yscale('log')
     ax1[2].set_ylabel('<S>')
@@ -119,7 +131,7 @@ def AV_analysis(burst, T, params):
     TT = TT[Loc]
     Sm = Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT > tMin, TT < tMin + 60))[0]]), np.log(Sm[np.where(np.logical_and(TT > tMin, TT < tMin + 60))[0]]), 1)
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT > tMin, TT < tMin+60))[0]]), np.log(Sm[np.where(np.logical_and(TT > tMin, TT < tMin+60))[0]]), 1)
     sigma = (beta - 1) / (alpha - 1)
 
     Result['pre'] = sigma

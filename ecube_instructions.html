@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <title>ECUBE instructions</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+
+<body>
+
+    <div class='container'>
+        <div class='heading'>
+            <h3>How to restart a recording with the ecube</h1>
+            <p>Written 7/8/2020 - updated version of the ecube</p>
+        </div>
+        <div class='row instructions'>
+            <p> SURE WATCHTOWER IS OFF AND NO LONGER SAVING THE CAMERA STREAMS </p> 
+            <p> see the watchtower tab for how to do that </p>
+            <hr>
+            <h4>Is there a recording currently running?</h4>
+            <ol>
+                <li>Click the powershell with the current recording running. (Should be open or minimized, black terminal 
+                    window with lots of text in it.
+                </li>
+                <li>Press Ctrl+C until it stops (usually takes 2-3 tries). You'll know its done cause the command line will be 
+                    back and youll see the working directory, like you're inside a folder and about to ls or something, rather than blank and taking commands.
+                </li>
+                <li>Unplug the ecube (big black brick on the power strip next to the computer on the rack)</li>
+                <li>Wait 10 seconds</li>
+                <li>Plug it back in</li>
+                <li>Wait another 10 seconds</li>
+            </ol>
+            <hr>
+            <h4>Starting a new recording</h4>
+            <ol>
+                <li>Open the UDP_console (black icon on the desktop - one on the right - that says UDP_console)</li>
+                <li>Hit "Scan" until an I.P. address pops up that <em>doesn't</em> end in 1</li>
+                <li>Hit "Start"</li>
+                <li>Open a powershell window</li>
+                <li>Open the text file called "start up"</li>
+                <li>cd into the location in the start up file (the first line of the file)</li>
+                <li>look at the second line of the start up file, find the date in that file and make sure it's today's date (this is the log for the ecube)</li>
+                <li>type the updated command from the second line of the start up file into the command line</li>
+                <li>the command line should now look like its running a program, you can still type commands though</li>
+                <li>typing "list" will show you what ports are availible - digital and analog are usually always there, make sure the headstage you want to connect is also there</li>
+                <li>type "add {port #} {# of channels}" so if I was trying to add a headstage on port 7 with 3 boards I would type "add 7 192"</li>
+                <li>do this for all animals you're trying to connect</li>
+                <li>type "start" when you're done</li>
+                <li>open the open ephys folder on the desktop</li>
+                <li>find the open ephys application in that folder (just called open_ephys) and open it</li>
+                <li>hit run when the pop up comes up</li>
+                <li>drag down 'Ecube' and 'lfp' from the right</li>
+                <li>click 'ip' in the orange ecube box at the bottom and click to the correct ip address that you connected to</li>
+                <li>click 'headstages' in the drop down below the 'ip' dropdown</li>
+                <li>on the right side of the small orange box make sure the correct port is highlighted, click the port until it shows the right number of channels</li>
+                <li>click "ch+"</li>
+                <li>in the lfp box click the sideways hat looking thing to launch that viewer</li>
+                <li>up in the top right of the screen click the 'play' button - look at your data - admire it - or hate it - doesn't matter</li>
+                <li>pause the data visualization (hit the play button again)</li>
+                <li>click the backwards play button in the top right (this is the dropdown button)</li>
+                <li>see those 3 rectangles? Those are naming boxes. In the far left one put the animal name ("CAF00001" e.g.). the middle box auto fills with the date</li>
+                <li>on the far left of the screen click the dropdown and change it to "ecube hub"</li>
+                <li>hit the record button on the right (the circle)</li>
+                <li>Exit open ephys</li>
+                <li>repeat the open ephys steps for every animal you're recording from</li>
+                <
+            </ol>
+        </div>
+    </div>
+
+</body>
+</html>
