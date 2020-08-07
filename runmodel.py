@@ -4,7 +4,7 @@ import scipy.io as sio
 from sahara_work import Criticality_final as cr
 
 DCC = np.zeros((19,4))
-perc = 0.25       
+perc = 0.0
 burstM = 10
 tM = 5
 # m=1
@@ -32,31 +32,33 @@ params = {
     'plot': True
 }
 
-for m in np.arange(1,20):
+for m in np.arange(1,19):
     print(f'EIG {m}')
     for n in np.arange(1,5):
         
-        name = "2000_cells/super_2000_long_eig" + str(m) + "_num" + str(n) + ".mat"
-        pltname = "super_2000_long_NCCTEST_eig" + str(m) + "_num" + str(n)
+        name = "10000_cells/super_10000_long_sparse_eig" + str(m) + "_num" + str(n) + ".mat"
+        pltname = "super_10000_long_sparse_eig" + str(m) + "_num" + str(n)
         params['pltname'] = pltname
         datamat = sio.loadmat(name)
         datamat = datamat['Data']
         data = scipy.sparse.csr_matrix.toarray(datamat)
-        rand_nums = np.random.randint(low=0, high=2000, size=1000)
-        d = data[rand_nums, :]
-        r = cr.get_avalanches(d, perc = perc) 
+        # rand_nums = np.random.randint(low=0, high=2000, size=1000)
+        # d = data[rand_nums, :]
+        r = cr.get_avalanches(data, perc = perc)
         x = r['S']  
         y = r['T'] 
 
         Result3  = AV_analysis(x, y, params)
         DCC[m-1,n-1] = Result3['df']
+        del Result3
+        del data
         # except:
         #     print(f'no avalanches for eig {m}')
         #     DCC[m-1,n-1] = np.nan
-np.save('super_2000_long_NCCTEST.npy',DCC)
+np.save('super_10000_long_spaese.npy',DCC)
 
 # single file
-name = '500_lambda11_long.mat'
+name = '2000_cells/super_2000_long_eig1_num2.mat'
 datamat = sio.loadmat(name)
 datamat = datamat['Data']
 data = scipy.sparse.csr_matrix.toarray(datamat)

@@ -88,10 +88,10 @@ def AV_analysis(burst, T, params):
         bm = params['bm']
 
     Result = {}
-    alpha, burstMin, burstMax, _, p, _, ks = NCC.plparams(burst)
-    alpha = alpha[0]
-    Result['ncc_p_b'] = p
-    #burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst), .8)], bm)
+    #alpha, burstMin, burstMax, _, p, _, ks = NCC.plparams(burst)
+    #alpha = alpha[0]
+    #Result['ncc_p_b'] = p
+    burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst), .8)], bm)
     idx_burst = np.where(np.logical_and(burst <= burstMax, burst >= burstMin))[0]
 
     print("burst min: ", burstMin)
@@ -111,10 +111,10 @@ def AV_analysis(burst, T, params):
     else:
         tm = params['tm']
 
-    #tMax, tMin, beta = cr.EXCLUDE(T, tm)
-    beta, tMin, tMax, _, p_t, _, ks_t = NCC.plparams(T)
-    beta = beta[0]
-    Result['ncc_p_t'] = p_t
+    tMax, tMin, beta = cr.EXCLUDE(T, tm)
+    #beta, tMin, tMax, _, p_t, _, ks_t = NCC.plparams(T)
+    # beta = beta[0]
+    # Result['ncc_p_t'] = p_t
     idx_time = np.where(np.logical_and(T >= tMin, T <= tMax))[0]
 
     print(f'time min: {tMin}')
@@ -138,7 +138,7 @@ def AV_analysis(burst, T, params):
     TT = TT[Loc]
     Sm = Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT > tMin, TT < tMin+60))[0]]), np.log(Sm[np.where(np.logical_and(TT > tMin, TT < tMin+60))[0]]), 1)
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT > tMin, TT < tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT > tMin, TT < tMax))[0]]), 1)
     sigma = (beta - 1) / (alpha - 1)
 
     Result['pre'] = sigma
