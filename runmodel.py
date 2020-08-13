@@ -1,7 +1,9 @@
 import numpy as np
 import scipy
 import scipy.io as sio
+import h5py
 from sahara_work import Criticality_final as cr
+import time
 
 DCC = np.zeros((19,4))
 perc = 0.0
@@ -19,46 +21,84 @@ tM = 5
 # y = r['T'] 
 # Result3 = cr.AV_analysis_new(x, y, burstM, tM, pltname, saveloc='/media/bs001s/caf/model_stuff/', plot=True) 
 
+def get_data_from_sparse(name):
+    f = h5py.File(name)
+    datamat = f['Data']
+    d = scipy.sparse.csc_matrix((datamat['data'], datamat['ir'], datamat['jc']))
+    data = np.asarray(d.todense())
+    return data
+
+def get_data_normal(name):
+    datamat = sio.loadmat(name)
+    datamat = datamat['Data']
+    data = scipy.sparse.csr_matrix.toarray(datamat)
+    return data
+
 # DCC[m-1,n-1] = Result3['df']
 params = {
     'flag': 1,
-    'bm': None,
-    'tm': None,
-    'pltname': "testing_ncc",
+    'bm': 10,
+    'tm': 4,
+    'pltname': "testing",
     'saveloc': "/media/bs001s/caf/model_stuff/figures/output_figs/",
     'burst_shuffled': None,
     'T_shuffled': None,
     'plot_shuffled': False,
     'plot': True
 }
-
-for m in np.arange(1,19):
+for m in np.arange(19, 20):
     print(f'EIG {m}')
-    for n in np.arange(1,5):
-        
-        name = "10000_cells/super_10000_long_sparse_eig" + str(m) + "_num" + str(n) + ".mat"
-        pltname = "super_10000_long_sparse_eig" + str(m) + "_num" + str(n)
+    for n in np.arange(1, 5):
+        name = "2000_cells/super_2000_eig" + str(m) + "_num" + str(n) + ".mat"
+        pltname = "super_2000_long_eig" + str(m) + "_num" + str(n)
         params['pltname'] = pltname
         datamat = sio.loadmat(name)
         datamat = datamat['Data']
         data = scipy.sparse.csr_matrix.toarray(datamat)
-        # rand_nums = np.random.randint(low=0, high=2000, size=1000)
-        # d = data[rand_nums, :]
+        rand_nums = np.random.randint(low = 0, high = 2000, size = 1000)
+        d = data[rand_nums, :]
         r = cr.get_avalanches(data, perc = perc)
-        x = r['S']  
-        y = r['T'] 
+        x = r['S']
+        y = r['T']
 
-        Result3  = AV_analysis(x, y, params)
-        DCC[m-1,n-1] = Result3['df']
+        Result3 = AV_analysis(x, y, params)
+        DCC[m - 1, n - 1] = Result3['df']
         del Result3
         del data
         # except:
         #     print(f'no avalanches for eig {m}')
         #     DCC[m-1,n-1] = np.nan
-np.save('super_10000_long_spaese.npy',DCC)
+np.save('super_2000_long.npy', DCC)
+
+
+for m in np.arange(19, 20):
+    print(f'EIG {m}')
+    for n in np.arange(1, 5):
+        name = "2000_cells/super_2000_eig" + str(m) + "_num" + str(n) + ".mat"
+        pltname = "super_2000_long_eig" + str(m) + "_num" + str(n)
+        params['pltname'] = pltname
+        datamat = sio.loadmat(name)
+        datamat = datamat['Data']
+        data = scipy.sparse.csr_matrix.toarray(datamat)
+        rand_nums = np.random.randint(low = 0, high = 2000, size = 1000)
+        d = data[rand_nums, :]
+        r = cr.get_avalanches(data, perc = perc)
+        x = r['S']
+        y = r['T']
+
+        Result3 = AV_analysis(x, y, params)
+        DCC[m - 1, n - 1] = Result3['df']
+        del Result3
+        del data
+        # except:
+        #     print(f'no avalanches for eig {m}')
+        #     DCC[m-1,n-1] = np.nan
+np.save('super_2000_long.npy', DCC)
+
+
 
 # single file
-name = '2000_cells/super_2000_long_eig1_num2.mat'
+name = '500_lambda11_long.mat'
 datamat = sio.loadmat(name)
 datamat = datamat['Data']
 data = scipy.sparse.csr_matrix.toarray(datamat)
@@ -115,19 +155,48 @@ for i, n in enumerate(np.arange(10,2000, 10)):
 
 
 # <CV> plot
+mean_cvs_super = np.zeros(19)
+for m in np.arange(1,20):
+        print(f"eig {m}")
+        tic = time.time()
+        name = "10000_cells/super_10000_long_sparse_eig" + str(m) + "_num1" + ".mat"
+        try:
+            data = get_data_from_sparse(name)
+        except OSError:
+            data = get_data_normal(name)
+        data = data.astype(np.int8)
+        print('loaded')
+        bool_spikes = (data == 1)
+        spks = [np.where(x)[0] for x in bool_spikes]
+        isi = [np.diff(x) for x in spks]
+        cvs = [scipy.stats.variation(x) for x in isi]
+
+        mean_cvs_super[m-1] = np.mean(cvs)
+        toc = time.time()
+        print(f'T: {tic-toc}')
+
+#overnight code to run
 mean_cvs_sub = np.zeros(19)
 for m in np.arange(1,20):
         print(f"eig {m}")
-        name = "5000_cells/sub_5000_eig" + str(m) + "_num1" + ".mat"
-        datamat = sio.loadmat(name)
-        datamat = datamat['Data']
-        data = scipy.sparse.csr_matrix.toarray(datamat)
-
-        spks = [np.where(x==1)[0] for x in data]
+        tic = time.time()
+        name = "10000_cells/sub_10000_long_sparse_eig" + str(m) + "_num1" + ".mat"
+        try:
+            data = get_data_from_sparse(name)
+        except OSError:
+            data = get_data_normal(name)
+        data = data.astype(np.int8)
+        print('loaded')
+        bool_spikes = (data == 1)
+        spks = [np.where(x)[0] for x in bool_spikes]
         isi = [np.diff(x) for x in spks]
         cvs = [scipy.stats.variation(x) for x in isi]
 
         mean_cvs_sub[m-1] = np.mean(cvs)
+        toc = time.time()
+        print(f'T: {tic-toc}')
+np.save("10000_cells_cvs_sub", mean_cvs_sub)
+
 
 
 
@@ -135,4 +204,3 @@ for m in np.arange(1,20):
 
         
         
-np.save('super_2000_long.npy',DCC)

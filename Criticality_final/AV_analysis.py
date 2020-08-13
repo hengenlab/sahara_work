@@ -61,7 +61,7 @@ def scaling_plots(Result, burst, burstMin, burstMax, alpha, T, tMin, tMax, beta,
     # scaling relation
     i = np.where(TT == tMax) # just getting the last value we use, getting rid of the hard codes
     ax1[2].plot(TT, ((np.power(TT, sigma) / np.power(TT[7], sigma)) * Sm[7]), label = 'pre', color = '#4b006e')
-    ax1[2].plot(TT, (np.power(TT, fit_sigma[0]) / np.power(TT[7], fit_sigma[0]) * Sm[i]), 'b', label = 'fit', linestyle = '--', color = '#826d8c')
+    ax1[2].plot(TT, (np.power(TT, fit_sigma[0]) / np.power(TT[7], fit_sigma[0]) * Sm[7]), 'b', label = 'fit', linestyle = '--', color = '#826d8c')
     ax1[2].plot(TT, Sm, 'o', color = '#fb7d07', markersize = 5, mew = .5, fillstyle = 'none', alpha = 0.75)
 
     locs = np.where(np.logical_and(TT < tMax, TT > tMin))[0]
@@ -92,7 +92,11 @@ def AV_analysis(burst, T, params):
     #alpha = alpha[0]
     #Result['ncc_p_b'] = p
     burstMax, burstMin, alpha = cr.EXCLUDE(burst[burst < np.power(np.max(burst), .8)], bm)
+
+    # burstMin = bm
+    # burstMax = np.max(burst)
     idx_burst = np.where(np.logical_and(burst <= burstMax, burst >= burstMin))[0]
+    #alpha, _, _, _ = cr.tplfit(burst[idx_burst], bm)
 
     print("burst min: ", burstMin)
     print("burst max:", burstMax)
@@ -115,7 +119,11 @@ def AV_analysis(burst, T, params):
     #beta, tMin, tMax, _, p_t, _, ks_t = NCC.plparams(T)
     # beta = beta[0]
     # Result['ncc_p_t'] = p_t
+    # tMin = tm
+    # tMax = np.max(T)
     idx_time = np.where(np.logical_and(T >= tMin, T <= tMax))[0]
+    # beta, _, _, _ = cr.tplfit(T[idx_time], tm)
+
 
     print(f'time min: {tMin}')
     print(f'time max: {tMax}')
@@ -138,7 +146,7 @@ def AV_analysis(burst, T, params):
     TT = TT[Loc]
     Sm = Sm[Loc]
 
-    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT > tMin, TT < tMax))[0]]), np.log(Sm[np.where(np.logical_and(TT > tMin, TT < tMax))[0]]), 1)
+    fit_sigma = np.polyfit(np.log(TT[np.where(np.logical_and(TT > tMin, TT < tMin+60))[0]]), np.log(Sm[np.where(np.logical_and(TT > tMin, TT < tMin+60))[0]]), 1)
     sigma = (beta - 1) / (alpha - 1)
 
     Result['pre'] = sigma
