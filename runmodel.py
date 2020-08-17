@@ -46,16 +46,17 @@ params = {
     'plot_shuffled': False,
     'plot': True
 }
-for m in np.arange(19, 20):
+for m in np.arange(1, 20):
     print(f'EIG {m}')
     for n in np.arange(1, 5):
-        name = "2000_cells/super_2000_eig" + str(m) + "_num" + str(n) + ".mat"
-        pltname = "super_2000_long_eig" + str(m) + "_num" + str(n)
+        name = "10000_cells/sub_10000_long_sparse_eig" + str(m) + "_num" + str(n) + ".mat"
+        pltname = "sub_10000_long_sparse_eig" + str(m) + "_num" + str(n)
         params['pltname'] = pltname
-        datamat = sio.loadmat(name)
-        datamat = datamat['Data']
-        data = scipy.sparse.csr_matrix.toarray(datamat)
-        rand_nums = np.random.randint(low = 0, high = 2000, size = 1000)
+        try:
+            data = get_data_from_sparse(name)
+        except OSError:
+            data = get_data_normal(name)
+        rand_nums = np.random.randint(low = 0, high = 10000, size = 1000)
         d = data[rand_nums, :]
         r = cr.get_avalanches(data, perc = perc)
         x = r['S']
@@ -65,10 +66,7 @@ for m in np.arange(19, 20):
         DCC[m - 1, n - 1] = Result3['df']
         del Result3
         del data
-        # except:
-        #     print(f'no avalanches for eig {m}')
-        #     DCC[m-1,n-1] = np.nan
-np.save('super_2000_long.npy', DCC)
+np.save('sub_10000_long_sparse_1000subsampled.npy', DCC)
 
 
 for m in np.arange(19, 20):
