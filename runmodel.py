@@ -21,17 +21,22 @@ tM = 5
 # y = r['T'] 
 # Result3 = cr.AV_analysis_new(x, y, burstM, tM, pltname, saveloc='/media/bs001s/caf/model_stuff/', plot=True) 
 
-def get_data_from_sparse(name):
+def get_data_from_sparse(name, idxs):
     f = h5py.File(name)
     datamat = f['Data']
     d = scipy.sparse.csc_matrix((datamat['data'], datamat['ir'], datamat['jc']))
+    if idxs is not None:
+        d = d[idxs,:]
     data = np.asarray(d.todense())
     return data
 
-def get_data_normal(name):
+def get_data_normal(name, idxs):
     datamat = sio.loadmat(name)
     datamat = datamat['Data']
-    data = scipy.sparse.csr_matrix.toarray(datamat)
+    data = scipy.sparse.csr_matrix(datamat)
+    if idxs is not None:
+        data = data[idxs,:]
+    data = data.toarray()
     return data
 
 # DCC[m-1,n-1] = Result3['df']
@@ -49,24 +54,24 @@ params = {
 for m in np.arange(1, 20):
     print(f'EIG {m}')
     for n in np.arange(1, 5):
-        name = "10000_cells/sub_10000_long_sparse_eig" + str(m) + "_num" + str(n) + ".mat"
-        pltname = "sub_10000_long_sparse_eig" + str(m) + "_num" + str(n)
+        name = "10000_cells/sub_10000_5mil_sparse_eig" + str(m) + "_num" + str(n) + ".mat"
+        pltname = "sub_10000_5mil_sparse_eig" + str(m) + "_num" + str(n)
         params['pltname'] = pltname
+        rand_nums = np.random.randint(low = 0, high = 10000, size = 300)
         try:
-            data = get_data_from_sparse(name)
+            data = get_data_from_sparse(name, rand_nums)
         except OSError:
-            data = get_data_normal(name)
-        rand_nums = np.random.randint(low = 0, high = 10000, size = 1000)
-        d = data[rand_nums, :]
+            data = get_data_normal(name, rand_nums)
+        d = data
         r = cr.get_avalanches(data, perc = perc)
         x = r['S']
         y = r['T']
 
-        Result3 = AV_analysis(x, y, params)
+        Result3 = AV_analysis(x, y, params, nfactor_bm_tail=0.8, nfactor_tm_tail=1.0)
         DCC[m - 1, n - 1] = Result3['df']
         del Result3
         del data
-np.save('sub_10000_long_sparse_1000subsampled.npy', DCC)
+np.save('sub_10000_5mil_sparse_300subsampled.npy', DCC)
 
 
 for m in np.arange(19, 20):
@@ -109,19 +114,17 @@ Result3  = AV_analysis(x, y, params)
 
 
 
-DCC = np.zeros(len(np.arange(10,2000,10)))
-name = "2000_cells/sub_2000_long_eig1_num1.mat"
-datamat = sio.loadmat(name)
-datamat = datamat['Data']
-data = scipy.sparse.csr_matrix.toarray(datamat)
+DCC = np.zeros(len(np.arange(100,10000,100)))
+name = "10000_cells/sub_10000_5mil_sparse_eig3_num1.mat"
 
-for i, n in enumerate(np.arange(10,2000, 10)):
+
+for i, n in enumerate(np.arange(10,10000, 100)):
     print(i)
     pltname = "num_subsample_subtest_"+str(n)+"_"
     params['pltname'] = pltname
-    rand_nums = np.random.randint(low=0, high=2000, size=n)
-    d = data[rand_nums, :]
-    r = cr.get_avalanches(d, perc = perc) 
+    rand_nums = np.random.randint(low=0, high=10000, size=n)
+    data = get_data_from_sparse(name, rand_nums)
+    r = cr.get_avalanches(data, perc = perc)
     x = r['S']  
     y = r['T'] 
     try:
@@ -129,26 +132,31 @@ for i, n in enumerate(np.arange(10,2000, 10)):
         DCC[i] = Result3['df']
     except ValueError:
         print('no avs')
-        DCC[i] = np.NaN
+        DCC[i] = np.nan
+    except RuntimeError:
+        print("optimize not successful - no avs")
+        DCC[i] = np.nan
+
+np.save("subsample_test_subcritical_10000_5mil_60.npy", DCC)
     
 
-# name = "matlab_files/super_subsampled.mat"
-# datamat = sio.loadmat(name)
-# datamat = datamat['Data']
-# data = scipy.sparse.csc_matrix.toarray(datamat)
+name = "matlab_files/super_subsampled.mat"
+datamat = sio.loadmat(name)
+datamat = datamat['Data']
+data = scipy.sparse.csc_matrix.toarray(datamat)
 
-# for m in np.arange(1,20):
-#     print(f'EIG {m}')
-#     for n in np.arange(1,5):
-#         pltname = "super_subsample300_perc0_eig" + str(m) + "_num" + str(n)
-#         d = data[m+n, :]
-#         r = cr.AV_analysis_BurstT(d, perc = perc)
-#         x = r['S']  
-#         y = r['T'] 
-#         Result3  = AV_analysis_new(x, y, burstM, tM, pltname, flag = 1, saveloc='/media/bs001s/caf/model_stuff/figures/output_figs/', plot=True) 
+for m in np.arange(1,20):
+    print(f'EIG {m}')
+    for n in np.arange(1,5):
+        pltname = "super_subsample300_perc0_eig" + str(m) + "_num" + str(n)
+        d = data[m+n, :]
+        r = cr.AV_analysis_BurstT(d, perc = perc)
+        x = r['S']
+        y = r['T']
+        Result3  = AV_analysis_new(x, y, burstM, tM, pltname, flag = 1, saveloc='/media/bs001s/caf/model_stuff/figures/output_figs/', plot=True)
         
-#         DCC[m-1,n-1] = Result3['df']
-# np.save('super_subsampled_spikes.npy',DCC)
+        DCC[m-1,n-1] = Result3['df']
+np.save('super_subsampled_spikes.npy',DCC)
 
 
 
