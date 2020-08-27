@@ -8,7 +8,7 @@ import time
 DCC = np.zeros((19,4))
 perc = 0.0
 burstM = 10
-tM = 5
+tM = 10
 # m=1
 # n=1
 # name = "sub_eig" + str(m) + "_num" + str(n) + ".mat"
