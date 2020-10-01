@@ -2,7 +2,7 @@ import numpy as np
 import scipy
 import scipy.io as sio
 import h5py
-from sahara_work import Criticality_final as cr
+import criticality_hlab.criticality as cr
 import time
 
 DCC = np.zeros((19,4))
@@ -39,11 +39,20 @@ def get_data_normal(name, idxs):
     data = data.toarray()
     return data
 
+def get_txt_data(name):
+    data = []
+    with open(name, 'r') as f:
+        for line in f:
+            data.append(int(float(line.strip())))
+
+    data = np.asarray(data)
+    return data
+
 # DCC[m-1,n-1] = Result3['df']
 params = {
     'flag': 1,
     'bm': 10,
-    'tm': 4,
+    'tm': 10,
     'pltname': "testing",
     'saveloc': "/media/bs001s/caf/model_stuff/figures/output_figs/",
     'burst_shuffled': None,
@@ -97,6 +106,23 @@ for m in np.arange(19, 20):
         #     print(f'no avalanches for eig {m}')
         #     DCC[m-1,n-1] = np.nan
 np.save('super_2000_long.npy', DCC)
+
+# run mauricio's data
+
+name = 'subsampled_n_100_g_1.485.txt'
+data = get_txt_data(name)
+r = cr.get_avalanches(data, perc = perc, ncells=100)
+x = r['S']
+y = r['T']
+
+params['bm'] = int(np.max(x)/20)
+params['tm'] = int(np.max(y)/20)
+Result3 = AV_analysis(x, y, params, nfactor_bm_tail=0.8, nfactor_tm_tail=0.8)
+
+
+
+
+
 
 
 
