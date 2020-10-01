@@ -10,7 +10,7 @@ from traits.api import HasTraits, Str, Enum, Range, Directory
 from traitsui.api import View, Item, Handler
 import pdb
 
-def connectclusterdb (user, pwd):
+def connectclusterdb (user = "root", pwd = "N3tw0rks#!"):
     ''' CONNECTCLUSTERDB. Connect to the clusteringdb database.
     Inputs:
         USER: username
@@ -25,9 +25,8 @@ def connectclusterdb (user, pwd):
         DB: Database connection.
      '''
     # connect to the clustering database
-    pwd = "N3tw0rks#!"
-    usr = "root"
-    db = pymysql.connect(user   = usr,
+
+    db = pymysql.connect(user   = user,
                                 passwd  = pwd,
                                 host    = "localhost",
                                 database= "lab_db")
