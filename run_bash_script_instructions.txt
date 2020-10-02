@@ -1,0 +1,27 @@
+I realized not everybody in our group knows how to run long jobs without our cluster, for example in rig221If you want to run a long python job for example
+
+
+python script.py0.
+Login to rig221
+
+1. 
+Just create a file (jobscript.sh)
+with content
+python script.py
+
+To make sure
+cat jobscript.sh
+python script.py
+
+2.
+Change permission to executable
+chmod 700 jobscript.sh
+
+3.
+nohup ./jobscript.sh > jobscript.log 2>&1 &
+Now even if your ssh login crash, you close laptop (ssh connection closed)
+job will be running in background in rig221
+
+
+to monitor job run
+top command or just check jobscript.log file
