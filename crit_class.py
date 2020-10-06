@@ -219,7 +219,6 @@ params = {
     'nfactor_tm_tail': .8, # upper bound to start exclude for time
     'quality': [1,3], # all qualities would be [1,2,3]
     'cell_type': ['FS', 'RSU'], 
-    'saveloc' : "/media/HlabShare/clayton_sahara_work/criticality/caf46/1001/",
     'plot' : True
     }
 
@@ -234,6 +233,9 @@ def lilo_and_stitch(paths, params):
             animal, date, time_frame = get_info_from_path(path)
             print(f'INFO: {animal} -- {date} -- {time_frame}')
             total_time = __get_totaltime(time_frame)
+            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/'
+            if not os.path.exists(saveloc):
+                os.makedirs(saveloc)
 
             num_bins = int(total_time/params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
@@ -255,7 +257,7 @@ def lilo_and_stitch(paths, params):
 
                     param_str = __get_paramstr(animal,date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], params['quality'], params['cell_type'], idx)
                     crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
-                                nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = params['saveloc'],
+                                nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                                 pltname=param_str, plot = params['plot'])
 
                     crit.run_crit(flag = params['flag'])
@@ -272,7 +274,7 @@ def lilo_and_stitch(paths, params):
 
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
                     to_save = np.array([crit])
-                    np.save(f'{params["saveloc"]}Crit_{param_str}', to_save)
+                    np.save(f'{saveloc}Crit_{param_str}', to_save)
                     all_objs.append(crit)
                 except Exception:
                     print('TIMEOUT or ERROR')
