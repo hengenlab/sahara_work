@@ -6,7 +6,7 @@ from sahara_work import lilo_and_stitch
 from datetime import date
 import signal 
 
-paths = ['/media/HlabShare/clayton_sahara_work/clustering/caf46_1001_1/80_88/probe1/co/H_2020-10-04_18-49-12_2020-10-05_02-44-12_neurons_group0_scored_clayton_spks_rm_new_mbt_caf.npy']
+paths = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy')
 
 params = {
     'rerun' : False,
