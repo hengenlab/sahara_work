@@ -2,6 +2,9 @@ import numpy as np
 import criticality as cr
 import musclebeachtools as mbt
 import re
+import os 
+import glob
+import signal
 
 class Crit:
     """
@@ -173,10 +176,26 @@ def save_obj(crit):
     to_save = np.array([crit])
     np.save(f'{crit.saveloc}Crit_{crit.pltname}', to_save)
 
+def finalize_all_paths(paths):
+    for c in objs: 
+        crit = np.load(c, allow_pickle=True)[0] 
+        try: 
+            if not crit.final: 
+                crit.finalize() 
+                print(f'{crit.time_frame} - finalized') 
+                save_obj(crit) 
+        except AttributeError: 
+            print(f'{crit.time_frame} - old version no cells') 
+
+def signal_handler(signum, frame):
+    print("timeout")
+    raise Exception('timeout')
+
+
 def get_info_from_path(path):
-    animal_pattern = '(caf|eab)\d{2}'
+    animal_pattern = '((caf|eab)\d{2})'
     matches = re.findall(animal_pattern, path)
-    animal = matches[0]
+    animal = matches[0][0]
 
     date_pattern = '\d{4}'
     matches = re.findall(date_pattern, path)
@@ -187,7 +206,9 @@ def get_info_from_path(path):
     time_frame = matches[0][1:]
 
     return animal, date, time_frame
+
 params = {
+    'rerun' : False,
     'flag': 2, # 1 is DCC 2 is p_val and DCC
     'ava_binsz': 0.04, # in seconds
     'hour_bins': 4,# durration of block to look at
@@ -198,71 +219,69 @@ params = {
     'nfactor_tm_tail': .8, # upper bound to start exclude for time
     'quality': [1,3], # all qualities would be [1,2,3]
     'cell_type': ['FS', 'RSU'], 
-    'animal' : 'caf22',
-    'saveloc' : "/media/HlabShare/clayton_sahara_work/criticality/caf40/0914/",
-    'notes': 'using the new class',
-    'time_frame_list':['24_32', '48_56', '56_64', '64_72', '8_16'], 
-    'date': "0508",
-    'plot' : True
-    }
-    params = {
-    'flag': 2, # 1 is DCC 2 is p_val and DCC
-    'ava_binsz': 0.04, # in seconds
-    'hour_bins': 4,# durration of block to look at
-    'perc': 0.35,
-    'nfactor_bm':0, 
-    'nfactor_tm':0,
-    'nfactor_bm_tail':.8, # upper bound to start exclude for burst
-    'nfactor_tm_tail': .8, # upper bound to start exclude for time
-    'quality': [1,2,3], # all qualities would be [1,2,3]
-    'cell_type': ['FS', 'RSU'], 
-    'saveloc' : "/media/HlabShare/clayton_sahara_work/criticality/caf40/0914/",
+    'saveloc' : "/media/HlabShare/clayton_sahara_work/criticality/caf46/1001/",
     'plot' : True
     }
 
 def lilo_and_stitch(paths, params):
     all_objs = []
+    errors = []
     for idx, path in enumerate(paths):
-        print(f'Working on ---- {path}')
-        animal, date, time_frame = get_info_from_path(path)
-        
-        total_time = __get_totaltime(time_frame)
+        basepath = path[:path.rfind('/')]
+        if not os.path.exists(f'{basepath}/done.txt') or params['rerun']:
+            
+            print(f'\n\nWorking on ---- {path}')
+            animal, date, time_frame = get_info_from_path(path)
+            print(f'INFO: {animal} -- {date} -- {time_frame}')
+            total_time = __get_totaltime(time_frame)
 
-        num_bins = int(total_time/params['hour_bins'])
-        bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
+            num_bins = int(total_time/params['hour_bins'])
+            bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
-        cells = np.load(path, allow_pickle = True)
-        good_cells = [cell for cell in cells if cell.quality in params['quality'] and cell.cell_type in params['cell_type']]
+            cells = np.load(path, allow_pickle = True)
+            good_cells = [cell for cell in cells if cell.quality in params['quality'] and cell.cell_type in params['cell_type']]
 
-        spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
+            spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
 
-        for idx in np.arange(0, num_bins):
-            if idx == num_bins - 1:
-                data = spikewords[:, (idx * bin_len):]
-            else:
-                data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
+            for idx in np.arange(0, num_bins):
+                signal.signal(signal.SIGALRM, signal_handler)
+                signal.alarm(600)
+                try:
+                    print(f'Working on block {idx} --- hours {idx*params["hour_bins"]}-{(idx+1)*params["hour_bins"]}')
+                    if idx == num_bins - 1:
+                        data = spikewords[:, (idx * bin_len):]
+                    else:
+                        data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
-            param_str = __get_paramstr(animal,date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], params['quality'], params['cell_type'], idx)
-            crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
-                        nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = params['saveloc'],
-                        pltname=param_str, plot = params['plot'])
+                    param_str = __get_paramstr(animal,date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], params['quality'], params['cell_type'], idx)
+                    crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
+                                nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = params['saveloc'],
+                                pltname=param_str, plot = params['plot'])
 
-            crit.run_crit(flag = params['flag'])
-            crit.time_frame = time_frame
-            crit.block_num = idx
-            crit.qualities = params['quality']
-            crit.cell_types = params['cell_type']
-            crit.hour_bins = params['hour_bins']
-            crit.ava_binsize = params['ava_binsz']
-            crit.animal = animal
-            crit.date = date
-            crit.final = False
-            crit.cells = [cell for cell in cells if cell.quality < 4]
+                    crit.run_crit(flag = params['flag'])
+                    crit.time_frame = time_frame
+                    crit.block_num = idx
+                    crit.qualities = params['quality']
+                    crit.cell_types = params['cell_type']
+                    crit.hour_bins = params['hour_bins']
+                    crit.ava_binsize = params['ava_binsz']
+                    crit.animal = animal
+                    crit.date = date
+                    crit.final = False
+                    crit.cells = [cell for cell in cells if cell.quality < 4]
 
-            print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
-            to_save = np.array([crit])
-            np.save(f'{params["saveloc"]}Crit_{param_str}', to_save)
-            all_objs.append(crit)
+                    print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
+                    to_save = np.array([crit])
+                    np.save(f'{params["saveloc"]}Crit_{param_str}', to_save)
+                    all_objs.append(crit)
+                except Exception:
+                    print('TIMEOUT or ERROR')
+                    errors.append(f'{animal} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                signal.alarm(0)
+            with open(f'{basepath}/done.txt', 'w+') as f:
+                f.write('done')
+        else:
+            print(f'\n\n{path} -- ALREADY DONE')
 
-    return all_objs
+    return all_objs, errors
 
