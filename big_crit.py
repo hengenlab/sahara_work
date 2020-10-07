@@ -24,12 +24,12 @@ params = {
     }
 bins = np.arange(0,len(paths),10)
 
-for i in bins:
+for i,b in enumerate(bins):
     print(f"\n\n{i} ---- PATHS COMPLETE \n\n")
-    if i == bins[-1]:
-        ps = paths[i:]
+    if b == bins[-1]:
+        ps = paths[b:]
     else:
-        ps = paths[i:(i+1)]
+        ps = paths[b: bins[i+1]]
 
     all_objs, errors = lilo_and_stitch(ps, params)
 
