@@ -3,7 +3,7 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-from datetime import date
+from datetime import date as dt
 import signal 
 
 paths = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy')
@@ -52,7 +52,7 @@ for i in bins:
         strs.append(s)
 
     with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
-        f.write(f'{date.today()} ------------ \n')
+        f.write(f'{dt.today()} ------------ \n')
         for s in strs:
             f.write(f'{s}\n')
         f.write('\tERRORS:\n')
