@@ -6,7 +6,7 @@ from sahara_work import lilo_and_stitch
 from datetime import datetime as dt
 import signal 
 
-paths = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy')
+paths = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/caf48*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy')
 paths = [p for p in paths if 'caf19' not in p]
 print(f'# of paths to analyze: {len(paths)}')
 
