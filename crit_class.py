@@ -59,6 +59,7 @@ class Crit:
         self.date = None
         self.final = False
         self.cells = []
+        self.probe = None
 
     def __repr__(self):
         '''
@@ -207,7 +208,9 @@ def get_info_from_path(path):
     matches = re.findall(time_frame_pattern, path)
     time_frame = matches[0][1:]
 
-    return animal, date, time_frame
+    probe = path[path.find('probe'):path.find('probe')+6]
+
+    return animal, date, time_frame, probe
 
 params = {
     'rerun' : False,
@@ -271,10 +274,10 @@ def lilo_and_stitch(paths, params):
         if not os.path.exists(f'{basepath}/done.txt') or params['rerun']:
             
             print(f'\n\nWorking on ---- {path}')
-            animal, date, time_frame = get_info_from_path(path)
-            print(f'INFO: {animal} -- {date} -- {time_frame}')
+            animal, date, time_frame, probe = get_info_from_path(path)
+            print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
             total_time = __get_totaltime(time_frame)
-            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/'
+            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}'
             if not os.path.exists(saveloc):
                 os.makedirs(saveloc)
 
@@ -312,6 +315,7 @@ def lilo_and_stitch(paths, params):
                     crit.date = date
                     crit.final = False
                     crit.cells = [cell for cell in cells if cell.quality < 4]
+                    crit.probe = probe
 
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
                     to_save = np.array([crit])
