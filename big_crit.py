@@ -8,7 +8,9 @@ import signal
 import sys
 
 def run(animal=''):
-    paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy')
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
+    print(s)
+    paths = glob.glob(s)
     print(f'# of paths to analyze: {len(paths)}')
 
     params = {
