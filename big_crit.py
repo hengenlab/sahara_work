@@ -68,9 +68,9 @@ def run(animal=''):
 
 if __name__ == "__main__":
     l = len(sys.argv)
-    if l>0:
+    if l>1:
         print('specifying animal')
-        run(sys.argv[0])
+        run(sys.argv[1])
     else:
         run()
 
