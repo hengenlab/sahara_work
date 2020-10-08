@@ -57,6 +57,8 @@ class Crit:
         self.ava_binsize = None
         self.animal = None
         self.date = None
+        self.final = False
+        self.cells = []
 
     def __repr__(self):
         '''
@@ -131,7 +133,6 @@ class Crit:
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
 
-
 def run_crit_from_start(obj, flag = 2, save=True):
     if obj.final:
         print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
@@ -154,6 +155,7 @@ def run_crit_from_start(obj, flag = 2, save=True):
     if save:
         to_save = np.array([obj])
         np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
+    return obj
 
 def __get_totaltime(time_frame):
     start_time = int(time_frame[0:time_frame.find('_')])
@@ -221,6 +223,45 @@ params = {
     'cell_type': ['FS', 'RSU'], 
     'plot' : True
     }
+
+def lilo_and_stitch_the_sequel(paths, params, save=True, delete=True):
+    all_objs = []
+    errors = []
+    for p in paths:
+        c = np.load(p, allow_pickle = True)
+        from_start = False
+        if c.cell_types != params['cell_type'] or c.qualities != params['quality'] or c.ava_binsize != params['ava_binsz'] or c.hour_bins != params['hour_bins']:
+            from_start = True
+            c.ava_binsize = params['ava_binsz']
+            c.hour_bins = params['hour_bins']
+            c.qualities = params['quality']
+            c.cell_types = params['cell_type']
+        c.perc = params['perc']
+        c.nfactor_bm = params['nfactor_bm']
+        c.nfactor_tm = params['nfactor_tm']
+        c.nfactor_bm_tail = params['nfactor_bm_tail']
+        c.nfactor_tm_tail = params['nfactor_tm_tail']
+
+        signal.signal(signal.SIGALRM, signal_handler)
+        signal.alarm(600)
+        try:
+            if from_start:
+                c_new = run_crit_from_start(obj, flag = params['flag'], save=save)
+                all_objs.append(c_new)
+                
+            else:
+                c.run_crit()
+                if save:
+                    save_obj(c)
+                all_objs.append(c)
+            if delete:
+                os.remove(p)
+        except Exception:
+            print('TIMEOUT or ERROR')
+            errors.append(f'{c.animal} -- {c.date} -- {c.time_frame} -- {c.block_num} --- ERRORED')
+
+    return all_objs, errors
+
 
 def lilo_and_stitch(paths, params):
     all_objs = []
