@@ -3,10 +3,12 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-from datetime import date as dt
+from datetime import datetime as dt
 import signal 
 
 paths = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy')
+paths = [p for p in paths if 'caf19' not in p]
+print(f'# of paths to analyze: {len(paths)}')
 
 params = {
     'rerun' : False,
@@ -25,7 +27,7 @@ params = {
 bins = np.arange(0,len(paths),10)
 
 for i,b in enumerate(bins):
-    print(f"\n\n{i} ---- PATHS COMPLETE \n\n")
+    print(f"\n\n{b} ---- PATHS COMPLETE \n\n")
     if b == bins[-1]:
         ps = paths[b:]
     else:
@@ -51,8 +53,9 @@ for i,b in enumerate(bins):
         s = f'{str(animal)} -- {date} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
         strs.append(s)
 
+    now = dt.now()
     with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
-        f.write(f'{dt.today()} ------------ \n')
+        f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
         for s in strs:
             f.write(f'{s}\n')
         f.write('\tERRORS:\n')
