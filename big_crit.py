@@ -125,8 +125,8 @@ def run(animal='', rerun=False):
 if __name__ == "__main__":
     l = len(sys.argv)
     if l > 1:
-        animal = argv[1]
-        rerun = argv[2]
+        animal = sys.argv[1]
+        rerun = True if sys.argv[2] == 'True' else False
         print(f'specifying animal -- {animal}')
         print(f'rerun -- {rerun}')
         run(sys.argv[1], sys.argv[2])
