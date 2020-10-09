@@ -292,6 +292,7 @@ def lilo_and_stitch(paths, params, rerun=False):
             for idx in np.arange(0, num_bins):
                 signal.signal(signal.SIGALRM, signal_handler)
                 signal.alarm(600)
+                noerr = True
                 try:
                     print(f'Working on block {idx} --- hours {idx*params["hour_bins"]}-{(idx+1)*params["hour_bins"]}')
                     if idx == num_bins - 1:
@@ -317,17 +318,13 @@ def lilo_and_stitch(paths, params, rerun=False):
                     crit.cells = [cell for cell in cells if cell.quality < 4]
                     crit.probe = probe
                     
-
-                    print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
-                    to_save = np.array([crit])
-                    np.save(f'{saveloc}Crit_{param_str}', to_save)
-                    all_objs.append(crit)
                 except Exception:
                     print('TIMEOUT or ERROR')
                     errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                    noerr=False
                 signal.alarm(0)
 
-                if rerun:
+                if rerun and noerr:
                     while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
                         signal.signal(signal.SIGALRM, signal_handler)
                         signal.alarm(600)
@@ -349,6 +346,11 @@ def lilo_and_stitch(paths, params, rerun=False):
                             signal.alarm(0)
                             break
                         signal.alarm(0)
+                
+                print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
+                to_save = np.array([crit])
+                np.save(f'{saveloc}Crit_{param_str}', to_save)
+                all_objs.append(crit)
 
             with open(f'{basepath}/done.txt', 'w+') as f:
                 f.write('done')
