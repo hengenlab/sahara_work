@@ -277,7 +277,7 @@ def lilo_and_stitch(paths, params, rerun=False):
             animal, date, time_frame, probe = get_info_from_path(path)
             print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
             total_time = __get_totaltime(time_frame)
-            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}'
+            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
             if not os.path.exists(saveloc):
                 os.makedirs(saveloc)
 
