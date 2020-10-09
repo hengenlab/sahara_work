@@ -62,7 +62,7 @@ def rerun(p):
                 f.write(f'\t{e}\n')
 
 
-def run(animal=''):
+def run(animal='', rerun=False):
     s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
     print(s)
     paths = glob.glob(s)
@@ -91,15 +91,15 @@ def run(animal=''):
         else:
             ps = paths[b: bins[i+1]]
 
-        all_objs, errors = lilo_and_stitch(ps, params)
+        all_objs, errors = lilo_and_stitch(ps, params, rerun=rerun)
 
         results = []
         for o in all_objs:
-            results.append([o.animal, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
+            results.append([o.animal, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
 
-        df = pd.DataFrame(results, columns = ['animal', 'date', 'time_frame', 'block_num', 'p_value_burst', 'p_value_t', 'dcc', 'passed'])
+        df = pd.DataFrame(results, columns = ['animal', 'probe','date', 'time_frame', 'block_num', 'p_value_burst', 'p_value_t', 'dcc', 'passed'])
 
-        group = df.groupby(['animal', 'date'])
+        group = df.groupby(['animal','probe', 'date'])
 
         strs = []
         for i, row in group:
@@ -108,7 +108,8 @@ def run(animal=''):
             avg_dcc = row.mean()['dcc']
             animal = row['animal'].to_numpy()[0]
             date = row['date'].to_numpy()[0]
-            s = f'{str(animal)} -- {date} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
+            probe = row['probe'].to_numpy()[0]
+            s = f'{str(animal)} -- {probe} -- {date} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
 
         now = dt.now()
@@ -123,12 +124,12 @@ def run(animal=''):
 
 if __name__ == "__main__":
     l = len(sys.argv)
-    if l == 2:
-        print('specifying animal')
-        run(sys.argv[1])
-    elif l == 3:
-        print('rerunning animal')
-        rerun(sys.argv[1])
+    if l > 1:
+        animal = argv[1]
+        rerun = argv[2]
+        print(f'specifying animal -- {animal}')
+        print(f'rerun -- {rerun}')
+        run(sys.argv[1], sys.argv[2])
     else:
         run()
 

@@ -266,7 +266,7 @@ def lilo_and_stitch_the_sequel(paths, params, save=True, delete=True):
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params):
+def lilo_and_stitch(paths, params, rerun=False):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -317,13 +317,26 @@ def lilo_and_stitch(paths, params):
                     crit.cells = [cell for cell in cells if cell.quality < 4]
                     crit.probe = probe
 
+                    if rerun:
+                        while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
+                            print('\nRERUNNING BLOCK')
+                            if crit.nfactor_tm_tail < 0.70 or crit.nfactor_bm_tail < 0.7:
+                                print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
+                                break
+                            if crit.p_value_burst < 0.05:
+                                crit.nfactor_bm_tail -= 0.05
+                            if crit.p_value_t < 0.05:
+                                crit.nfactor_tm_tail -= 0.05
+                            crit.run_crit()
+                    
+
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
                     to_save = np.array([crit])
                     np.save(f'{saveloc}Crit_{param_str}', to_save)
                     all_objs.append(crit)
                 except Exception:
                     print('TIMEOUT or ERROR')
-                    errors.append(f'{animal} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                    errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
                 signal.alarm(0)
             with open(f'{basepath}/done.txt', 'w+') as f:
                 f.write('done')
