@@ -164,10 +164,10 @@ def __get_totaltime(time_frame):
     total_time = stop_time-start_time
     return total_time
 
-def __get_paramstr(animal,date, time_frame, hour_bins, perc, ava_binsize, quals, cells, idx):
+def __get_paramstr(animal,probe, date, time_frame, hour_bins, perc, ava_binsize, quals, cells, idx):
     qual_str = '_'.join(map(str, quals))
     cell_str = '_'.join(cells)
-    s = f'{animal}_{date}_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc*100))}_binsz{str(int(ava_binsize*1000))}ms_q{qual_str}_cells{cell_str}_{idx}'
+    s = f'{animal}_{probe}_{date}_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc*100))}_binsz{str(int(ava_binsize*1000))}ms_q{qual_str}_cells{cell_str}_{idx}'
     return s
 
 def generate_timeframes(start, end, blocksize):
@@ -299,7 +299,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                     else:
                         data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
-                    param_str = __get_paramstr(animal,date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], params['quality'], params['cell_type'], idx)
+                    param_str = __get_paramstr(animal,probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], params['quality'], params['cell_type'], idx)
                     crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                                 nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                                 pltname=param_str, plot = params['plot'])
@@ -316,18 +316,6 @@ def lilo_and_stitch(paths, params, rerun=False):
                     crit.final = False
                     crit.cells = [cell for cell in cells if cell.quality < 4]
                     crit.probe = probe
-
-                    if rerun:
-                        while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
-                            print('\nRERUNNING BLOCK')
-                            if crit.nfactor_tm_tail < 0.70 or crit.nfactor_bm_tail < 0.7:
-                                print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
-                                break
-                            if crit.p_value_burst < 0.05:
-                                crit.nfactor_bm_tail -= 0.05
-                            if crit.p_value_t < 0.05:
-                                crit.nfactor_tm_tail -= 0.05
-                            crit.run_crit()
                     
 
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
@@ -338,6 +326,30 @@ def lilo_and_stitch(paths, params, rerun=False):
                     print('TIMEOUT or ERROR')
                     errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
                 signal.alarm(0)
+
+                if rerun:
+                    while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
+                        signal.signal(signal.SIGALRM, signal_handler)
+                        signal.alarm(600)
+                        print('\nRERUNNING BLOCK')
+                        if crit.nfactor_tm_tail < 0.70 or crit.nfactor_bm_tail < 0.7:
+                            print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
+                            signal.alarm(0)
+                            break
+                        if crit.p_value_burst < 0.05:
+                            crit.nfactor_bm_tail -= 0.05
+                        if crit.p_value_t < 0.05:
+                            crit.nfactor_tm_tail -= 0.05
+                        try:
+                            crit.run_crit()
+                        
+                        except Exception:
+                            print('TIMEOUT or ERROR')
+                            errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                            signal.alarm(0)
+                            break
+                        signal.alarm(0)
+
             with open(f'{basepath}/done.txt', 'w+') as f:
                 f.write('done')
         else:
