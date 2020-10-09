@@ -134,6 +134,29 @@ class Crit:
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
 
+    def run_crit_from_start(self, flag = 2):
+        if obj.final:
+            print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
+            return
+        total_time = __get_totaltime(self.time_frame)
+        num_bins = int(total_time/self.hour_bins)
+        bin_len = int((self.hour_bins * 3600) / self.ava_binsize)
+        good_cells = [cell for cell in self.cells if self.quality in self.qualities and self.cell_type in self.cell_types]
+        spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = self.ava_binsize, binarize = 1)
+        idx = self.block_num
+        if idx == num_bins - 1:
+            data = spikewords[:, (idx * bin_len):]
+        else:
+            data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
+        self.spikewords = data
+        param_str = __get_paramstr(self.animal, self.probe, self.date, self.time_frame, self.hour_bins, self.perc, self.ava_binsize, self.qualities, self.cell_types, idx)
+        self.pltname = param_str
+        self.run_crit(flag = flag)
+        print(f'BLOCK RESULTS: P_vals - {self.p_value_burst}   {self.p_value_t} \n DCC: {self.dcc}')
+        if save:
+            to_save = np.array([obj])
+            np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
+
 def run_crit_from_start(obj, flag = 2, save=True):
     if obj.final:
         print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
@@ -193,7 +216,6 @@ def finalize_all_paths(paths):
 def signal_handler(signum, frame):
     print("timeout")
     raise Exception('timeout')
-
 
 def get_info_from_path(path):
     animal_pattern = '((caf|eab)\d{2})'
@@ -344,13 +366,15 @@ def lilo_and_stitch(paths, params, rerun=False):
                             print('TIMEOUT or ERROR')
                             errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
                             signal.alarm(0)
+                            noerr=False
                             break
                         signal.alarm(0)
                 
-                print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
-                to_save = np.array([crit])
-                np.save(f'{saveloc}Crit_{param_str}', to_save)
-                all_objs.append(crit)
+                if noerr:
+                    print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
+                    to_save = np.array([crit])
+                    np.save(f'{saveloc}Crit_{param_str}', to_save)
+                    all_objs.append(crit)
 
             with open(f'{basepath}/done.txt', 'w+') as f:
                 f.write('done')
