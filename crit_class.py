@@ -306,11 +306,14 @@ def lilo_and_stitch(paths, params, rerun=False):
             num_bins = int(total_time/params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
-            cells = np.load(path, allow_pickle = True)
-            good_cells = [cell for cell in cells if cell.quality in params['quality'] and cell.cell_type in params['cell_type']]
+            try:
+                cells = np.load(path, allow_pickle = True)
+                good_cells = [cell for cell in cells if cell.quality in params['quality'] and cell.cell_type in params['cell_type']]
 
-            spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
-
+                spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
+            except Exception:
+                print("Neuron File Won't Load")
+                pass
             for idx in np.arange(0, num_bins):
                 signal.signal(signal.SIGALRM, signal_handler)
                 signal.alarm(600)
