@@ -62,7 +62,7 @@ def rerun(p):
                 f.write(f'\t{e}\n')
 
 
-def run(animal='', , probe = '',rerun=False):
+def run(animal='', probe = '',rerun=False):
     s = f'/media/HlabShare/clayton_sahara_work/clustering/*/{animal}*/*/{probe}*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
     print(s)
     paths = [f for f in glob.glob(s) if 'later' not in f]
