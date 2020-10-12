@@ -66,7 +66,7 @@ def run(animal='', probe = '',rerun=False):
     s = f'/media/HlabShare/clayton_sahara_work/clustering/*/{animal}*/*/{probe}*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
     print(s)
     paths = [f for f in glob.glob(s) if 'later' not in f]
-    print(f'# of paths to analyze: {len(paths)}')
+    print(f'# of paths to analyze: {len(paths)}', flush=True)
 
     params = {
         'rerun' : False,
@@ -85,7 +85,7 @@ def run(animal='', probe = '',rerun=False):
     bins = np.arange(0,len(paths),10)
 
     for i,b in enumerate(bins):
-        print(f"\n\n{b} ---- PATHS COMPLETE \n\n")
+        print(f"\n\n{b} ---- PATHS COMPLETE \n\n", flush = True)
         if b == bins[-1]:
             ps = paths[b:]
         else:

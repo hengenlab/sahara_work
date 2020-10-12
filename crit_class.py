@@ -295,7 +295,7 @@ def lilo_and_stitch(paths, params, rerun=False):
         basepath = path[:path.rfind('/')]
         if not os.path.exists(f'{basepath}/done.txt') or params['rerun']:
             
-            print(f'\n\nWorking on ---- {path}')
+            print(f'\n\nWorking on ---- {path}', flush = True)
             animal, date, time_frame, probe = get_info_from_path(path)
             print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
             total_time = __get_totaltime(time_frame)
@@ -319,7 +319,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                 signal.alarm(600)
                 noerr = True
                 try:
-                    print(f'Working on block {idx} --- hours {idx*params["hour_bins"]}-{(idx+1)*params["hour_bins"]}')
+                    print(f'Working on block {idx} --- hours {idx*params["hour_bins"]}-{(idx+1)*params["hour_bins"]}', flush = True)
                     if idx == num_bins - 1:
                         data = spikewords[:, (idx * bin_len):]
                     else:
@@ -344,7 +344,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                     crit.probe = probe
                     
                 except Exception:
-                    print('TIMEOUT or ERROR')
+                    print('TIMEOUT or ERROR', flush = True)
                     errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
                     noerr=False
                 signal.alarm(0)
@@ -353,7 +353,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                     while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
                         signal.signal(signal.SIGALRM, signal_handler)
                         signal.alarm(600)
-                        print('\nRERUNNING BLOCK')
+                        print('\nRERUNNING BLOCK', flush = True)
                         if crit.nfactor_tm_tail < 0.70 or crit.nfactor_bm_tail < 0.7:
                             print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
                             signal.alarm(0)
@@ -366,7 +366,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                             crit.run_crit()
                         
                         except Exception:
-                            print('TIMEOUT or ERROR')
+                            print('TIMEOUT or ERROR', flush = True)
                             errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
                             signal.alarm(0)
                             noerr=False
@@ -374,7 +374,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                         signal.alarm(0)
                 
                 if noerr:
-                    print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}')
+                    print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
                     to_save = np.array([crit])
                     np.save(f'{saveloc}Crit_{param_str}', to_save)
                     all_objs.append(crit)
