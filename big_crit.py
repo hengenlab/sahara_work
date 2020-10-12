@@ -62,8 +62,8 @@ def rerun(p):
                 f.write(f'\t{e}\n')
 
 
-def run(animal='', rerun=False):
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/*/{animal}*/*/probe*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
+def run(animal='', , probe = '',rerun=False):
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/*/{animal}*/*/{probe}*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
     print(s)
     paths = [f for f in glob.glob(s) if 'later' not in f]
     print(f'# of paths to analyze: {len(paths)}')
@@ -126,10 +126,12 @@ if __name__ == "__main__":
     l = len(sys.argv)
     if l > 1:
         animal = sys.argv[1]
-        rerun = True if sys.argv[2] == 'True' else False
+        probe = sys.argv[2]
+        rerun = True if sys.argv[3] == 'True' else False
         print(f'specifying animal -- {animal}')
+        print(f'specifying probe -- {probe}')
         print(f'rerun -- {rerun}')
-        run(sys.argv[1], sys.argv[2])
+        run(animal, probe, rerun)
     else:
         run()
 
