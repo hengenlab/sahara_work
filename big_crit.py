@@ -78,7 +78,7 @@ def run(animal='', rerun=False):
         'nfactor_tm':0,
         'nfactor_bm_tail':.8, # upper bound to start exclude for burst
         'nfactor_tm_tail': .8, # upper bound to start exclude for time
-        'quality': [1,3], # all qualities would be [1,2,3]
+        'quality': [1,2,3], # all qualities would be [1,2,3]
         'cell_type': ['FS', 'RSU'], 
         'plot' : True
         }
