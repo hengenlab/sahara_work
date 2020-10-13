@@ -63,7 +63,7 @@ def rerun(p):
 
 
 def run(animal='', probe = '',rerun=False):
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/*/{animal}*/*/{probe}*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
     print(s)
     paths = [f for f in glob.glob(s) if 'later' not in f]
     print(f'# of paths to analyze: {len(paths)}', flush=True)
