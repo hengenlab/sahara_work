@@ -134,7 +134,7 @@ class Crit:
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
 
-    def run_crit_from_start(self, flag = 2):
+    def run_crit_from_start(self, flag = 2, save=False):
         if obj.final:
             print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
             return
@@ -172,7 +172,7 @@ def run_crit_from_start(obj, flag = 2, save=True):
     else:
         data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
     obj.spikewords = data
-    param_str = __get_paramstr(obj.animal, obj.date, obj.time_frame, obj.hour_bins, obj.perc, obj.ava_binsize, obj.qualities, obj.cell_types, idx)
+    param_str = __get_paramstr(obj.animal, obj.probe, obj.date, obj.time_frame, obj.hour_bins, obj.perc, obj.ava_binsize, obj.qualities, obj.cell_types, idx)
     obj.pltname = param_str
     obj.run_crit(flag = flag)
     print(f'BLOCK RESULTS: P_vals - {obj.p_value_burst}   {obj.p_value_t} \n DCC: {obj.dcc}')
@@ -288,7 +288,7 @@ def lilo_and_stitch_the_sequel(paths, params, save=True, delete=True):
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params, rerun=False):
+def lilo_and_stitch(paths, params, rerun=False, save=True):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -354,7 +354,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                         signal.signal(signal.SIGALRM, signal_handler)
                         signal.alarm(600)
                         print('\nRERUNNING BLOCK', flush = True)
-                        if crit.nfactor_tm_tail < 0.70 or crit.nfactor_bm_tail < 0.7:
+                        if crit.nfactor_tm_tail < 0.75 or crit.nfactor_bm_tail < 0.75:
                             print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
                             signal.alarm(0)
                             break
@@ -373,7 +373,7 @@ def lilo_and_stitch(paths, params, rerun=False):
                             break
                         signal.alarm(0)
                 
-                if noerr:
+                if noerr and save:
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
                     to_save = np.array([crit])
                     np.save(f'{saveloc}Crit_{param_str}', to_save)
