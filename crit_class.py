@@ -135,7 +135,7 @@ class Crit:
         self.alpha = Result['alpha']
 
     def run_crit_from_start(self, flag = 2, save=False):
-        if obj.final:
+        if self.final:
             print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
             return
         total_time = __get_totaltime(self.time_frame)
