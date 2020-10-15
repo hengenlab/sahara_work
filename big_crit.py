@@ -72,7 +72,7 @@ def run(animal='', probe = '',rerun=False):
     paths = []
     for p in og:
         base = p[:p.rfind('/')+1]
-        if not os.exists(base+'done.txt'):
+        if not os.path.exists(base+'done.txt'):
             paths.append(p)
     
     print(f'Number of paths left to analyze: {len(paths)}', flush=True)
