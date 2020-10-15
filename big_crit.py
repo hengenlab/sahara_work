@@ -7,6 +7,7 @@ from sahara_work import lilo_and_stitch_the_sequel
 from datetime import datetime as dt
 import signal 
 import sys
+import os
 
 def rerun(p):
     #passing in end of glob string to rerun specific paths
@@ -65,9 +66,16 @@ def rerun(p):
 def run(animal='', probe = '',rerun=False):
     s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
     print(s)
-    paths = [f for f in glob.glob(s) if 'later' not in f]
-    print(f'# of paths to analyze: {len(paths)}', flush=True)
+    og = [f for f in glob.glob(s) if 'later' not in f]
+    print(f'total # of paths: {len(og)}', flush=True)
 
+    paths = []
+    for p in paths:
+        base = p[:p.rfind('/')+1]
+        if not os.exists(base+'done.txt'):
+            pahts.append(p)
+    
+    print(f'Number of paths left to analyze: {len(paths)}', flush=True)
     params = {
         'rerun' : False,
         'flag': 2, # 1 is DCC 2 is p_val and DCC

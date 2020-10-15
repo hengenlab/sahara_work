@@ -11,7 +11,7 @@ def signal_handler(signum, frame):
 
 caf22_files = ['/media/HlabShare/clayton_sahara_work/criticality/caf22/0512/probe2/Crit_caf22_probe2_0512_0_8_4hrs_perc35_binsz40ms_q1_3_cellsFS_RSU_0.npy', '/media/HlabShare/clayton_sahara_work/criticality/caf22/0512/probe2/Crit_caf22_probe2_0512_0_8_4hrs_perc35_binsz40ms_q1_3_cellsFS_RSU_1.npy']                                                                                                                                                        
 
-caf40_files = ['/media/HlabShare/clayton_sahara_work/criticality/caf40/0905/probe1/Crit_caf40_probe1_0905_24_32_4hrs_perc35_binsz40ms_q1_2_3_cellsFS_RSU_1.npy','/media/HlabShare/clayton_sahara_work/criticality/caf40/0905/probe1/Crit_caf40_probe1_0905_32_40_4hrs_perc35_binsz40ms_q1_2_3_cellsFS_RSU_0.npy']          
+caf40_files = ['/media/HlabShare/clayton_sahara_work/criticality/caf40/0905/probe1/Crit_caf40_probe1_0905_64_72_4hrs_perc35_binsz40ms_q1_3_cellsFS_RSU_0.npy','/media/HlabShare/clayton_sahara_work/criticality/caf40/0905/probe1/Crit_caf40_probe1_0905_64_72_4hrs_perc35_binsz40ms_q1_3_cellsFS_RSU_1.npy']          
 caf22_objs = []
 caf40_objs = []
 
