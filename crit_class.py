@@ -243,8 +243,7 @@ params = {
     'nfactor_bm':0, 
     'nfactor_tm':0,
     'nfactor_bm_tail':.8, # upper bound to start exclude for burst
-    'nfactor_tm_tail': .8, # upper bound to start exclude for time
-    'quality': [1,3], # all qualities would be [1,2,3]
+    'nfactor_tm_tail': .8, # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'], 
     'plot' : True
     }
@@ -305,11 +304,13 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
 
             num_bins = int(total_time/params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
-
+            quals = [1,3]
             try:
                 cells = np.load(path, allow_pickle = True)
-                good_cells = [cell for cell in cells if cell.quality in params['quality'] and cell.cell_type in params['cell_type']]
-
+                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+                if len(good_cells) < 10:
+                    quals = [1,2,3]
+                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
                 spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
             except Exception:
                 print("Neuron File Won't Load")
@@ -325,7 +326,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
                     else:
                         data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
-                    param_str = __get_paramstr(animal,probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], params['quality'], params['cell_type'], idx)
+                    param_str = __get_paramstr(animal,probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                     crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                                 nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                                 pltname=param_str, plot = params['plot'])
@@ -333,7 +334,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
                     crit.run_crit(flag = params['flag'])
                     crit.time_frame = time_frame
                     crit.block_num = idx
-                    crit.qualities = params['quality']
+                    crit.qualities = quals
                     crit.cell_types = params['cell_type']
                     crit.hour_bins = params['hour_bins']
                     crit.ava_binsize = params['ava_binsz']
