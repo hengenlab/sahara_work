@@ -159,12 +159,15 @@ class Crit:
 
 def get_results(paths, save=False, saveloc=''):
     results = []
-    for p in paths:
+    print(f'Total # of paths: {len(paths)}')
+    for i,p in enumerate(paths):
+        if 1%5 == 0:
+            print(f'#paths: {i}')
         crit = np.load(p, allow_pickle=True)[0]
         results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)])
     
     if save:
-        np.save(f'{saveloc}/{crit.animal}_all_results.npy')
+        np.save(f'{saveloc}/{crit.animal}_all_results.npy', results)
     return results
 
 def run_crit_from_start(obj, flag = 2, save=True):
