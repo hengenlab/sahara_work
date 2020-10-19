@@ -157,6 +157,16 @@ class Crit:
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
 
+def get_results(paths, save=False, saveloc=''):
+    results = []
+    for p in paths:
+        crit = np.load(p, allow_pickle=True)[0]
+        results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)])
+    
+    if save:
+        np.save(f'{saveloc}/{crit.animal}_all_results.npy')
+    return results
+
 def run_crit_from_start(obj, flag = 2, save=True):
     if obj.final:
         print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
@@ -235,7 +245,7 @@ def get_info_from_path(path):
     return animal, date, time_frame, probe
 
 params = {
-    'rerun' : False,
+    'rerun' : True,
     'flag': 2, # 1 is DCC 2 is p_val and DCC
     'ava_binsz': 0.04, # in seconds
     'hour_bins': 4,# durration of block to look at
