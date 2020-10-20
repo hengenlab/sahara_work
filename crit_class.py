@@ -170,6 +170,9 @@ class Crit:
         if self.burst is None:
             print("You must run_crit() before you can run this function")
             return
+        if self.xmin is None:
+            print('block failed')
+            return
         n = np.size(self.burst)
         cdf = np.cumsum(np.histogram(self.burst, np.arange(self.xmin, self.xmax+2))[0]/n)
         s = np.unique(self.burst)
