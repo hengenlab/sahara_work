@@ -157,7 +157,9 @@ class Crit:
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
 
-def get_results(paths, save=False, saveloc=''):
+def get_results(animal,probe, paths = None, save=False, saveloc=''):
+    if paths is None:  
+        paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/*/{probe}/Crit*')
     results = []
     print(f'Total # of paths: {len(paths)}')
     for i,p in enumerate(paths):
