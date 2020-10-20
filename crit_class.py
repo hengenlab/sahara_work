@@ -202,17 +202,20 @@ class Crit:
             self.kappa_t = None
         return self.kappa_burst, self.kappa_t
 
-def get_results(animal,probe, paths = None, save=False, saveloc=''):
+def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     if paths is None:  
-        paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/*/{probe}/Crit*')
+        paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/*/{probe}*/Crit*')
     results = []
     print(f'Total # of paths: {len(paths)}')
     for i,p in enumerate(paths):
         if i%5 == 0:
             print(f'#paths: {i}')
         crit = np.load(p, allow_pickle=True)[0]
-        results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
-    
+        try:
+            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
+        except Exception:
+            results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
+
     if save:
         np.save(f'{saveloc}/{crit.animal}_all_results.npy', results)
     return results
