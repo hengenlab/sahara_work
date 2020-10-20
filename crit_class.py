@@ -134,6 +134,7 @@ class Crit:
         self.tmin = Result['tmin']
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
+        self.gen_kappa()
 
     def run_crit_from_start(self, flag = 2, save=False):
         if self.final:
@@ -168,7 +169,7 @@ class Crit:
         A = 1/np.sum(np.power(s, -self.alpha))
         fit = np.cumsum(A*np.power(np.arange(self.xmin, self.xmax+1), -self.alpha)) 
 
-        idxs = np.geomspace(1, np.size(cdf)-1, num=num)
+        idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
         diffs = [fit[i]-cdf[i] for i in idxs]
         mean_diff = np.mean(diffs)
         kappa = 1 + mean_diff
