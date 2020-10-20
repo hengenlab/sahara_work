@@ -134,6 +134,7 @@ class Crit:
         self.tmin = Result['tmin']
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
+        self.beta = Result['beta']
         self.gen_kappa()
 
     def run_crit_from_start(self, flag = 2, save=False):
@@ -159,6 +160,12 @@ class Crit:
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
 
+    def gen_beta(self):
+        tm = int(np.max(self.T)/20)
+        _, _, beta = \
+            cr.EXCLUDE(self.T[self.T < np.power(np.max(self.T), self.nfactor_tm_tail)], tm,
+                   nfactor=self.nfactor_tm)
+        self.beta = beta
     def gen_kappa(self, num = 10):
         if self.burst is None:
             print("You must run_crit() before you can run this function")
@@ -175,20 +182,22 @@ class Crit:
         kappa_burst = 1 + mean_diff
 
         self.kappa_burst = kappa_burst
+        try:
+            n = np.size(self.T)
+            cdf = np.cumsum(np.histogram(self.T, np.arange(self.tmin, self.tmax+2))[0]/n)
+            s = np.unique(self.T)
+            A = 1/np.sum(np.power(s, -self.beta))
+            fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
 
-        n = np.size(self.T)
-        cdf = np.cumsum(np.histogram(self.T, np.arange(self.tmin, self.tmax+2))[0]/n)
-        s = np.unique(self.T)
-        A = 1/np.sum(np.power(s, -self.beta))
-        fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
+            idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+            diffs = [fit[i]-cdf[i] for i in idxs]
+            mean_diff = np.mean(diffs)
+            kappa_t = 1 + mean_diff
 
-        idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
-        diffs = [fit[i]-cdf[i] for i in idxs]
-        mean_diff = np.mean(diffs)
-        kappa_t = 1 + mean_diff
-
-        self.kappa_t = kappa_t
-        return kappa_burst, kappa_t
+            self.kappa_t = kappa_t
+        except AttributeError:
+            self.kappa_t = None
+        return self.kappa_burst, self.kappa_t
 def get_results(animal,probe, paths = None, save=False, saveloc=''):
     if paths is None:  
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/*/{probe}/Crit*')
