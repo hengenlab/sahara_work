@@ -172,10 +172,23 @@ class Crit:
         idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
         diffs = [fit[i]-cdf[i] for i in idxs]
         mean_diff = np.mean(diffs)
-        kappa = 1 + mean_diff
+        kappa_burst = 1 + mean_diff
 
-        self.kappa = kappa
-        return kappa
+        self.kappa_burst = kappa_burst
+
+        n = np.size(self.T)
+        cdf = np.cumsum(np.histogram(self.T, np.arange(self.tmin, self.tmax+2))[0]/n)
+        s = np.unique(self.T)
+        A = 1/np.sum(np.power(s, -self.beta))
+        fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
+
+        idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+        diffs = [fit[i]-cdf[i] for i in idxs]
+        mean_diff = np.mean(diffs)
+        kappa_t = 1 + mean_diff
+
+        self.kappa_t = kappa_t
+        return kappa_burst, kappa_t
 def get_results(animal,probe, paths = None, save=False, saveloc=''):
     if paths is None:  
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/*/{probe}/Crit*')
