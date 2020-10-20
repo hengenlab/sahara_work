@@ -117,6 +117,7 @@ class Crit:
         if flag == 2:
             self.p_value_burst = Result['P_burst']
             self.p_value_t = Result['P_t']
+            self.ks = Result['ks']
 
         self.dcc = Result['df']
 
@@ -157,6 +158,23 @@ class Crit:
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
 
+    def gen_kappa(self, num = 10):
+        if self.burst is None:
+            print("You must run_crit() before you can run this function")
+            return
+        n = np.size(self.burst)
+        cdf = np.cumsum(np.histogram(self.burst, np.arange(self.xmin, self.xmax+2))[0]/n)
+        s = np.unique(self.burst)
+        A = 1/np.sum(np.power(s, -self.alpha))
+        fit = np.cumsum(A*np.power(np.arange(self.xmin, self.xmax+1), -self.alpha)) 
+
+        idxs = np.geomspace(1, np.size(cdf)-1, num=num)
+        diffs = [fit[i]-cdf[i] for i in idxs]
+        mean_diff = np.mean(diffs)
+        kappa = 1 + mean_diff
+
+        self.kappa = kappa
+        return kappa
 def get_results(animal,probe, paths = None, save=False, saveloc=''):
     if paths is None:  
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/*/{probe}/Crit*')
