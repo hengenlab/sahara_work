@@ -117,7 +117,6 @@ class Crit:
         if flag == 2:
             self.p_value_burst = Result['P_burst']
             self.p_value_t = Result['P_t']
-            self.ks = Result['ks']
 
         self.dcc = Result['df']
 
@@ -210,9 +209,9 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     for i,p in enumerate(paths):
         if i%5 == 0:
             print(f'#paths: {i}')
+            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
         crit = np.load(p, allow_pickle=True)[0]
         try:
-            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
         except Exception:
             results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
 
@@ -427,7 +426,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
                         if crit.p_value_t < 0.05:
                             crit.nfactor_tm_tail -= 0.05
                         try:
-                            crit.run_crit()
+                            crit.run_crit(flag = params['flag'])
                         
                         except Exception:
                             print('TIMEOUT or ERROR', flush = True)
