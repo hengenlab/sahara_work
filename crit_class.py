@@ -382,36 +382,36 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
                 signal.signal(signal.SIGALRM, signal_handler)
                 signal.alarm(600)
                 noerr = True
-                #try:
-                print(f'Working on block {idx} --- hours {idx*params["hour_bins"]}-{(idx+1)*params["hour_bins"]}', flush = True)
-                if idx == num_bins - 1:
-                    data = spikewords[:, (idx * bin_len):]
-                else:
-                    data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
+                try:
+                    print(f'Working on block {idx} --- hours {idx*params["hour_bins"]}-{(idx+1)*params["hour_bins"]}', flush = True)
+                    if idx == num_bins - 1:
+                        data = spikewords[:, (idx * bin_len):]
+                    else:
+                        data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
-                param_str = __get_paramstr(animal,probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
-                crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
-                            nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
-                            pltname=param_str, plot = params['plot'])
+                    param_str = __get_paramstr(animal,probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
+                    crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
+                                nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
+                                pltname=param_str, plot = params['plot'])
 
-                crit.run_crit(flag = params['flag'])
-                crit.time_frame = time_frame
-                crit.block_num = idx
-                crit.qualities = quals
-                crit.cell_types = params['cell_type']
-                crit.hour_bins = params['hour_bins']
-                crit.ava_binsize = params['ava_binsz']
-                crit.animal = animal
-                crit.date = date
-                crit.final = False
-                crit.cells = [cell for cell in cells if cell.quality < 4]
-                crit.probe = probe
+                    crit.run_crit(flag = params['flag'])
+                    crit.time_frame = time_frame
+                    crit.block_num = idx
+                    crit.qualities = quals
+                    crit.cell_types = params['cell_type']
+                    crit.hour_bins = params['hour_bins']
+                    crit.ava_binsize = params['ava_binsz']
+                    crit.animal = animal
+                    crit.date = date
+                    crit.final = False
+                    crit.cells = [cell for cell in cells if cell.quality < 4]
+                    crit.probe = probe
                     
-                #except Exception:
-                print('TIMEOUT or ERROR', flush = True)
-                errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
-                noerr=False
-                signal.alarm(0)
+                except Exception:
+                    print('TIMEOUT or ERROR', flush = True)
+                    errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                    noerr=False
+                    signal.alarm(0)
 
                 if rerun and noerr:
                     while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
