@@ -2,6 +2,7 @@ import numpy as np
 import criticality as cr
 import musclebeachtools as mbt
 import re
+import pandas as pd
 import os 
 import glob
 import signal
@@ -135,6 +136,7 @@ class Crit:
         self.alpha = Result['alpha']
         self.beta = Result['beta']
         self.gen_kappa()
+        self.gen_k2()
 
     def run_crit_from_start(self, flag = 2, save=False):
         if self.final:
@@ -165,16 +167,63 @@ class Crit:
             cr.EXCLUDE(self.T[self.T < np.power(np.max(self.T), self.nfactor_tm_tail)], tm,
                    nfactor=self.nfactor_tm)
         self.beta = beta
-    def gen_kappa(self, num = 10):
+    
+    def gen_k2(self, num=100):
+        if self.burst is None:
+            print("You must run_crit() before you can run this function")
+            return
+        if self.xmin is None:
+            print('this block failed while running for some reason')
+            return
+        idx = np.where(np.logical_and(self.burst<=self.xmax, self.burst>=self.xmin)) 
+        b = self.burst[idx]
+        n = np.size(b)
+        cdf = np.cumsum(np.histogram(b, np.arange(self.xmin, self.xmax+2))[0]/n)
+        s = np.unique(b)
+        A = 1/np.sum(np.power(s, -self.alpha))
+        fit = np.cumsum(A*np.power(np.arange(self.xmin, self.xmax+1), -self.alpha)) 
+
+        idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+        half = int(num/2)
+        second_half = idxs[half:]
+        diffs = [cdf[i]-fit[i] for i in second_half]
+        mean_diff = np.mean(diffs)
+        k2b = mean_diff
+
+        self.k2b = k2b
+        try:
+            idx2 = np.where(np.logical_and(self.T<=self.tmax, self.T>=self.tmin)) 
+            t = self.T[idx2]
+            n = np.size(t)
+            cdf = np.cumsum(np.histogram(t, np.arange(self.tmin, self.tmax+2))[0]/n)
+            s = np.unique(t)
+            A = 1/np.sum(np.power(s, -self.beta))
+            fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
+
+            idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+            half = int(num/2)
+            second_half = idxs[half:]
+            diffs = [cdf[i]-fit[i] for i in second_half]
+            mean_diff = np.mean(diffs)
+            k2t = mean_diff
+
+            self.k2t = k2t
+        except AttributeError:
+            self.k2t = None
+        return self.k2b, self.k2t
+            
+    def gen_kappa(self, num = 100):
         if self.burst is None:
             print("You must run_crit() before you can run this function")
             return
         if self.xmin is None:
             print('block failed')
             return
-        n = np.size(self.burst)
-        cdf = np.cumsum(np.histogram(self.burst, np.arange(self.xmin, self.xmax+2))[0]/n)
-        s = np.unique(self.burst)
+        idx = np.where(np.logical_and(self.burst<=self.xmax, self.burst>=self.xmin)) 
+        b = self.burst[idx]
+        n = np.size(b)
+        cdf = np.cumsum(np.histogram(b, np.arange(self.xmin, self.xmax+2))[0]/n)
+        s = np.unique(b)
         A = 1/np.sum(np.power(s, -self.alpha))
         fit = np.cumsum(A*np.power(np.arange(self.xmin, self.xmax+1), -self.alpha)) 
 
@@ -185,9 +234,11 @@ class Crit:
 
         self.kappa_burst = kappa_burst
         try:
-            n = np.size(self.T)
-            cdf = np.cumsum(np.histogram(self.T, np.arange(self.tmin, self.tmax+2))[0]/n)
-            s = np.unique(self.T)
+            idx2 = np.where(np.logical_and(self.T<=self.tmax, self.T>=self.tmin)) 
+            t = self.T[idx2]
+            n = np.size(t)
+            cdf = np.cumsum(np.histogram(t, np.arange(self.tmin, self.tmax+2))[0]/n)
+            s = np.unique(t)
             A = 1/np.sum(np.power(s, -self.beta))
             fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
 
@@ -209,16 +260,20 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     for i,p in enumerate(paths):
         if i%5 == 0:
             print(f'#paths: {i}')
-            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
         crit = np.load(p, allow_pickle=True)[0]
         try:
-            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
+            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
         except Exception:
-            results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t])
-
+            results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
+    df = pd.DataFrame(results, columns = cols)
+    df_clean = df.sort_values(by=['date','time_frame', 'block_num'], key = lambda col: col.astype(int)).drop_duplicates(subset=['date', 'time_frame', 'block_num'], keep = 'last')
     if save:
-        np.save(f'{saveloc}/{crit.animal}_all_results.npy', results)
-    return results
+        if animal='':
+            df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
+        else:
+            df_clean.to_pickle(f'{saveloc}/{crit.animal}_all_results.pkl')
+    return df_clean
 
 def run_crit_from_start(obj, flag = 2, save=True):
     if obj.final:
