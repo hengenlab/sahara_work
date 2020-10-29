@@ -257,6 +257,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
     results = []
     print(f'Total # of paths: {len(paths)}')
+    errs = []
     for i,p in enumerate(paths):
         if i%5 == 0:
             print(f'#paths: {i}')
@@ -264,7 +265,11 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         try:
             results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
         except Exception:
-            results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+            try:
+                results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+            except Exception:
+                print(f"not going to work --- skipping this path {p}")
+                errs.append(p)
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.sort_values(by=['date','time_frame', 'block_num'], key = lambda col: col.astype(int)).drop_duplicates(subset=['date', 'time_frame', 'block_num'], keep = 'last')
@@ -275,7 +280,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         else:
             df_clean.to_pickle(f'{saveloc}/{crit.animal}_all_results.pkl')
 
-    return df_clean
+    return df_clean, errs
 
 def run_crit_from_start(obj, flag = 2, save=True):
     if obj.final:
