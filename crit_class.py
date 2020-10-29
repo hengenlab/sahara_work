@@ -268,11 +268,13 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.sort_values(by=['date','time_frame', 'block_num'], key = lambda col: col.astype(int)).drop_duplicates(subset=['date', 'time_frame', 'block_num'], keep = 'last')
+        
     if save:
         if animal=='':
-            df_clean.to_pickle(f'{saveloc}/{crit.animal}_all_results.pkl')
             df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
         else:
+            df_clean.to_pickle(f'{saveloc}/{crit.animal}_all_results.pkl')
+
     return df_clean
 
 def run_crit_from_start(obj, flag = 2, save=True):
