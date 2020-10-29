@@ -261,8 +261,8 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     for i,p in enumerate(paths):
         if i%5 == 0:
             print(f'#paths: {i}')
-        crit = np.load(p, allow_pickle=True)[0]
         try:
+            crit = np.load(p, allow_pickle=True)[0]
             results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
         except Exception:
             try:
