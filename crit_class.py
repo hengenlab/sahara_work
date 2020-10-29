@@ -259,17 +259,24 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     print(f'Total # of paths: {len(paths)}')
     errs = []
     for i,p in enumerate(paths):
+        good=True
         if i%5 == 0:
             print(f'#paths: {i}')
         try:
             crit = np.load(p, allow_pickle=True)[0]
-            results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
-        except Exception:
+        except Exception as er:
+            print("won't load object")
+            good=False
+            errs.append([p, er])
+        if good:
             try:
-                results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+                results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
             except Exception:
-                print(f"not going to work --- skipping this path {p}")
-                errs.append(p)
+                try:
+                    results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+                except Exception as er:
+                    print(f"not going to work --- skipping this path {p}")
+                    errs.append([p, er])
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.sort_values(by=['date','time_frame', 'block_num'], key = lambda col: col.astype(int)).drop_duplicates(subset=['date', 'time_frame', 'block_num'], keep = 'last')
