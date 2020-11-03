@@ -262,6 +262,8 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         good=True
         if i%5 == 0:
             print(f'#paths: {i}')
+        if i%100==0:
+            gc.collect()
         try:
             crit = np.load(p, allow_pickle=True)[0]
         except Exception as er:
@@ -278,7 +280,6 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
                     print(f"not going to work --- skipping this path {p}")
                     errs.append([p, er])
         del crit
-        gc.collect()
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.sort_values(by=['date','time_frame', 'block_num'], key = lambda col: col.astype(int)).drop_duplicates(subset=['date', 'time_frame', 'block_num'], keep = 'last')
