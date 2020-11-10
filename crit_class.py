@@ -266,6 +266,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
             gc.collect()
         try:
             crit = np.load(p, allow_pickle=True)[0]
+            animal=crit.animal
         except Exception as er:
             print("won't load object")
             good=False
@@ -433,7 +434,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
             animal, date, time_frame, probe = get_info_from_path(path)
             print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
             total_time = __get_totaltime(time_frame)
-            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
+            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/testing/{animal}/{date}/{probe}/'
             if not os.path.exists(saveloc):
                 os.makedirs(saveloc)
 
