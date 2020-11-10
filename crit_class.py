@@ -276,23 +276,26 @@ class Crit:
 
         kprob_b = prob_above/prob_below
         self.kprob_b = kprob_b
+        try:
+            tdf = np.histogram(self.T, bins = np.arange(1, np.max(self.T) + 2))[0]
+            t = tdf / np.sum(tdf)
+            x = np.arange(self.tmin, self.tmax + 1)
+            y = (np.size(np.where(self.T == self.tmin + 6)[0]) / np.power(self.tmin + 6, -self.beta)) *\
+                np.power(x, -self.beta)
+            y = y / np.sum(tdf)
 
-        tdf = np.histogram(self.T, bins = np.arange(1, np.max(self.T) + 2))[0]
-        t = tdf / np.sum(tdf)
-        x = np.arange(self.tmin, self.tmax + 1)
-        y = (np.size(np.where(self.T == self.tmin + 6)[0]) / np.power(self.tmin + 6, -self.beta)) *\
-            np.power(x, -self.beta)
-        y = y / np.sum(tdf)
+            ps=t[self.tmin:self.tmax]
+            diffs = np.diff([ps,y[:-1]],axis=0)
+            above_idx = np.where(diffs<0)[1]
+            below_idx = np.where(diffs>0)[1]
+            prob_above = np.sum(ps[above_idx])
+            prob_below = np.sum(ps[below_idx])
 
-        ps=t[self.tmin:self.tmax]
-        diffs = np.diff([ps,y[:-1]],axis=0)
-        above_idx = np.where(diffs<0)[1]
-        below_idx = np.where(diffs>0)[1]
-        prob_above = np.sum(ps[above_idx])
-        prob_below = np.sum(ps[below_idx])
-
-        kprob_t = prob_above/prob_below
-        self.kprob_t = kprob_t
+            kprob_t = prob_above/prob_below
+            self.kprob_t = kprob_t
+        except Exception:
+            print('kprob_t not working')
+            self.kprob_t = None
 
 
 
