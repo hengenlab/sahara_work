@@ -279,7 +279,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
                 except Exception as er:
                     print(f"not going to work --- skipping this path {p}")
                     errs.append([p, er])
-        del crit
+            del crit
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
