@@ -266,7 +266,6 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
             gc.collect()
         try:
             crit = np.load(p, allow_pickle=True)[0]
-            animal=crit.animal
         except Exception as er:
             print("won't load object")
             good=False
@@ -289,7 +288,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         if animal=='':
             df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
         else:
-            df_clean.to_pickle(f'{saveloc}/{crit.animal}_all_results.pkl')
+            df_clean.to_pickle(f'{saveloc}/{animal}_all_results.pkl')
 
     return df_clean, errs
 
