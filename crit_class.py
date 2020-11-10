@@ -137,6 +137,7 @@ class Crit:
         self.beta = Result['beta']
         self.gen_kappa()
         self.gen_k2()
+        self.gen_kprob()
 
     def run_crit_from_start(self, flag = 2, save=False):
         if self.final:
@@ -320,15 +321,15 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
             errs.append([p, er])
         if good:
             try:
-                results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+                results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
             except Exception:
                 try:
-                    results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t])
+                    results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
                 except Exception as er:
                     print(f"not going to work --- skipping this path {p}")
                     errs.append([p, er])
             del crit
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
         
