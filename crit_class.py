@@ -252,6 +252,51 @@ class Crit:
             self.kappa_t = None
         return self.kappa_burst, self.kappa_t
 
+    def gen_kprob(self):
+        if self.burst is None:
+            print("You must run_crit() before you can run this function")
+            return
+        if self.xmin is None:
+            print('this block failed while running for some reason')
+            return
+
+        pdf = np.histogram(self.burst, bins = np.arange(1, np.max(self.burst) + 2))[0]
+        p = pdf / np.sum(pdf)
+        x = np.arange(self.xmin, self.xmax + 1)
+        y = (np.size(np.where(self.burst == self.xmin + 6)[0]) / np.power(self.xmin + 6, -self.alpha)) *\
+            np.power(x, -self.alpha)
+        y = y / np.sum(pdf)
+
+        ps=p[self.xmin:self.xmax]
+        diffs = np.diff([ps,y[:-1]],axis=0)
+        above_idx = np.where(diffs<0)[1]
+        below_idx = np.where(diffs>0)[1]
+        prob_above = np.sum(ps[above_idx])
+        prob_below = np.sum(ps[below_idx])
+
+        kprob_b = prob_above/prob_below
+        self.kprob_b = kprob_b
+
+        tdf = np.histogram(self.T, bins = np.arange(1, np.max(self.T) + 2))[0]
+        t = tdf / np.sum(tdf)
+        x = np.arange(self.tmin, self.tmax + 1)
+        y = (np.size(np.where(self.T == self.tmin + 6)[0]) / np.power(self.tmin + 6, -self.beta)) *\
+            np.power(x, -self.beta)
+        y = y / np.sum(tdf)
+
+        ps=t[self.tmin:self.tmax]
+        diffs = np.diff([ps,y[:-1]],axis=0)
+        above_idx = np.where(diffs<0)[1]
+        below_idx = np.where(diffs>0)[1]
+        prob_above = np.sum(ps[above_idx])
+        prob_below = np.sum(ps[below_idx])
+
+        kprob_t = prob_above/prob_below
+        self.kprob_t = kprob_t
+
+
+
+
 def get_results(animal,probe='', paths = None, save=False, saveloc=''):
     if paths is None:  
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
