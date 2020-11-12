@@ -312,8 +312,10 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         if i%5 == 0:
             print(f'#paths: {i}')
         if i%100==0:
+            del crit
             gc.collect()
         try:
+            crit = None
             crit = np.load(p, allow_pickle=True)[0]
         except Exception as er:
             print("won't load object")
@@ -328,7 +330,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
                 except Exception as er:
                     print(f"not going to work --- skipping this path {p}")
                     errs.append([p, er])
-            del crit
+            
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
@@ -482,7 +484,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
             animal, date, time_frame, probe = get_info_from_path(path)
             print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
             total_time = __get_totaltime(time_frame)
-            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/testing/{animal}/{date}/{probe}/'
+            saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
             if not os.path.exists(saveloc):
                 os.makedirs(saveloc)
 
