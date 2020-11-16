@@ -79,7 +79,7 @@ if scorer == 'sahara':
         print('Loading . . . . . . . . . . ')
         cells = np.load(fl2,allow_pickle=True)
         print('Boosting . . . . . . . . . . ')
-        mbt.autoqual(cells,'Z:/models/xgboost_autoqual')
+        mbt.autoqual(cells,autoqual)
         o_ones = len([cell for cell in cells if cell.quality == 1])
         o_twos = len([cell for cell in cells if cell.quality == 2])
         o_threes = len([cell for cell in cells if cell.quality == 3])
