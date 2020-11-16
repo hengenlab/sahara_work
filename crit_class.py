@@ -311,7 +311,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
         good=True
         if i%5 == 0:
             print(f'#paths: {i}')
-        if i%100==0:
+        if i%100==0 and i!=0:
             del crit
             gc.collect()
         try:
