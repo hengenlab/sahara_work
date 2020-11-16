@@ -11,7 +11,7 @@ import time
 # scorer = 'xgb'
 #scorer = 'clayton'
 scorer = 'sahara'
-autoqual = '/media/HlabShare/'
+autoqual = '/media/HlabShare/models/xgboost_autoqual'
 ###     M:/caf\caf42_0914\60_72\probe5\co\H_2020-09-17_05-20-37_2020-09-17_17-15-37_neurons_group0.npy     ###
 # fls = sorted(glob.glob('/media/*/caf/*/*/*/co/*_neurons_group0.npy'))
 fls = sorted(glob.glob('/media/bs007s/caf/*/*/*/co/*_neurons_group0.npy'))
