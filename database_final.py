@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pymysql
 import pandas as pd
+import base64
 from pandas.io.sql import DatabaseError
 from traits.api import HasTraits, Str, Enum, Range, Directory, Bool, File, Int, List, Date
 from traitsui.api import View, Item, Handler, Action, VGroup, FileEditor, CheckListEditor, RangeEditor
@@ -87,7 +88,7 @@ def __check_existance_restart(name, start, cursor):
     result = np.asarray(cursor.fetchall()).flatten()[0]
     return result
 
-def connectclusterdb (user = "root", pwd = "N3tw0rks#!"):
+def connectclusterdb(user, pwd):
     ''' CONNECTCLUSTERDB. Connect to the clusteringdb database.
     Inputs:
         USER: username
@@ -106,7 +107,7 @@ def connectclusterdb (user = "root", pwd = "N3tw0rks#!"):
     db = pymysql.connect(user   = user,
                                 passwd  = pwd,
                                 host    = "localhost",
-                                database= "lab_db")
+                                database= "clusteringdb")
 
 
     return db.cursor(), db
@@ -345,7 +346,7 @@ def __animalgui():
 
 
 def __restartgui(current_animals, ogstart_day, ogend_day, ogcameras):
-    manipulationslist = ['none', 'MD', 'Food Dep', 'Crickets', 'Cocaine', 'Visual Stim', 'Auditory Dep', 'Operant Task', 'Sprinkles', 'OPTO', 'DREADDs']
+    manipulationslist = ['none', 'MD', 'Food Dep', 'Crickets', 'Cocaine', 'Visual Stim', 'Auditory Dep', 'Operant Task', 'Sprinkles', 'OPTO', 'DREADDs', 'Lick Port']
 
     class restartupload(HasTraits):
         """ IMPLANTUPLOAD: Class for traitsui GUI creation and subsequent datastorage.
@@ -512,12 +513,12 @@ def submit_clusters(g, cursor, db):
     """
     samplerate=25000
     #get implant and restart info
-    q = f'SELECT animal_id FROM lab_db.animals WHERE animal_name = "{g.animal}"'
+    q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{g.animal}"'
     cursor.execute(q)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
-    q2 = f'SELECT restart_id FROM lab_db.restarts WHERE animal_id = {animal_id} AND start_day = "{g.restart}"'
-    q3 = f'SELECT probe_id FROM lab_db.probes WHERE animal_id = {animal_id} AND probe_num = {g.probe_num}'
+    q2 = f'SELECT restart_id FROM clusteringdb.restarts WHERE animal_id = {animal_id} AND start_day = "{g.restart}"'
+    q3 = f'SELECT probe_id FROM clusteringdb.probes WHERE animal_id = {animal_id} AND probe_num = {g.probe_num}'
     try:
         cursor.execute(q2)
         restart_id = np.asarray(cursor.fetchall()).flatten()[0]
@@ -583,7 +584,7 @@ def submit_restart(g, cursor, db):
 
     returns the unique id of the restart entry
     """
-    query1 = f'SELECT animal_id FROM lab_db.animals WHERE animal_name = "{g.animalid}"'
+    query1 = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{g.animalid}"'
     cursor.execute(query1)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
@@ -625,7 +626,7 @@ def submit_probe(g, cursor, db):
     returns: unique id of the probe entry
     '''
 
-    q = f'SELECT animal_id FROM lab_db.animals WHERE animal_name = "{g.animal}"'
+    q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{g.animal}"'
     cursor.execute(q)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
@@ -656,7 +657,7 @@ def submit_probe(g, cursor, db):
     uniqueid = cursor.lastrowid
 
     db.commit()
-    print('Added probe information to the probes table in the lab_db database.')
+    print('Added probe information to the probes table in the clusteringdb database.')
 
     # add the folder location and the implant barcode ID (unique, generated on
     # commit) to the dictionary
@@ -673,7 +674,7 @@ def submit_probe(g, cursor, db):
 
 def submit_animal(g,cursor,db):
     '''SUBMIT_ANIMAL Takes the data structure output from the GUI __animalgui
-        and writes the data contents into the lab_db in the animals
+        and writes the data contents into the lab database in the animals
         table.
 
         Inputs:
@@ -750,7 +751,7 @@ def submit_animal(g,cursor,db):
 
 
 def submit_sac(g, cursor, db):
-    q = f'SELECT animal_id FROM lab_db.animals WHERE animal_name = "{g.animal}"'
+    q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{g.animal}"'
     cursor.execute(q)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
@@ -764,11 +765,11 @@ def submit_sac(g, cursor, db):
     return
 
 def submit_dlcsws(g, cursor, db):
-    q = f'SELECT animal_id FROM lab_db.animals WHERE animal_name = "{g.animal}"'
+    q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{g.animal}"'
     cursor.execute(q)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
-    q = f'SELECT restart_id FROM lab_db.restarts WHERE animal_id = {animal_id} AND start_day = "{g.restart}"'
+    q = f'SELECT restart_id FROM clusteringdb.restarts WHERE animal_id = {animal_id} AND start_day = "{g.restart}"'
     try:
         cursor.execute(q)
         restart_id = np.asarray(cursor.fetchall()).flatten()[0]
@@ -811,7 +812,7 @@ def upload_probe(user, pwd, animal_id, probenum):
     """
     cursor, db = connectclusterdb(user, pwd)
 
-    query = f'SELECT animal_name FROM lab_db.animals WHERE animal_id = "{animal_id}"'
+    query = f'SELECT animal_name FROM clusteringdb.animals WHERE animal_id = "{animal_id}"'
     cursor.execute(query)
     animal_name = np.asarray(cursor.fetchall()).flatten()
 
@@ -828,15 +829,23 @@ def upload_restart(user, pwd):
     """
     cursor, db = connectclusterdb(user, pwd)
 
-    query = 'SELECT animal_name FROM lab_db.animals'
+    query = 'SELECT animal_name FROM clusteringdb.animals'
     cursor.execute(query)
     current_implants = np.asarray(cursor.fetchall()).flatten()
 
-    query = 'SELECT * FROM lab_db.restarts ORDER BY restart_id DESC LIMIT 1'
+    query = 'SELECT * FROM clusteringdb.restarts ORDER BY restart_id DESC LIMIT 1'
     result = pd.read_sql(query, db)
 
+    if result.empty:
+        sday = None
+        eday = None
+        cs = None
+    else:
+        sday = result.start_day[0]
+        eday = result.end_day[0]
+        cs = result.cameras[0]
 
-    g = __restartgui(current_implants, result.start_day[0], result.end_day[0], result.cameras[0])
+    g = __restartgui(current_implants, sday, eday, cs)
 
     if g.exit:
         print('--EXITING--')
@@ -847,11 +856,11 @@ def upload_restart(user, pwd):
 def upload_dlc_sws_edit(user, pwd):
     cursor, db = connectclusterdb(user, pwd)
 
-    query = 'SELECT animal_name FROM lab_db.animals'
+    query = 'SELECT animal_name FROM clusteringdb.animals'
     cursor.execute(query)
     current_animals = np.asarray(cursor.fetchall()).flatten()
 
-    query = 'SELECT start_day FROM lab_db.restarts'
+    query = 'SELECT start_day FROM clusteringdb.restarts'
     cursor.execute(query)
     current_restarts = np.unique(np.asarray(cursor.fetchall()).flatten())
 
@@ -868,11 +877,11 @@ def upload_clusters(user, pwd):
     """
     cursor, db = connectclusterdb(user, pwd)
 
-    query = 'SELECT animal_name FROM lab_db.animals'
+    query = 'SELECT animal_name FROM clusteringdb.animals'
     cursor.execute(query)
     current_animals = np.asarray(cursor.fetchall()).flatten()
 
-    query = 'SELECT start_day FROM lab_db.restarts'
+    query = 'SELECT start_day FROM clusteringdb.restarts'
     cursor.execute(query)
     current_restarts = np.unique(np.asarray(cursor.fetchall()).flatten())
 
@@ -886,7 +895,7 @@ def upload_clusters(user, pwd):
 def sac_animal(user, pwd):
     """top level function for submitting an animals sac data"""
     cursor, db = connectclusterdb(user, pwd)
-    query = 'SELECT animal_name FROM lab_db.animals WHERE alive = 1'
+    query = 'SELECT animal_name FROM clusteringdb.animals WHERE alive = 1'
     cursor.execute(query)
     current_animals = np.asarray(cursor.fetchall()).flatten()
 
@@ -934,7 +943,7 @@ def __top_gui():
     return top_gui
 
 
-def use_the_database(user, pwd):
+def use_the_database():
     """
     This is the function that will be called from the command line to interact with the database
     consists of a loop that continues going until a user specifies that they're done using the database
@@ -1025,33 +1034,39 @@ def use_the_database(user, pwd):
     in the query - Google is your friend.
 
     """
+    t = []
+    with open('/media/HlabShare/db_creds.txt') as f:
+        for line in f:
+            t.append(line.rstrip())
+
+    pwd = base64.b64decode(t[0]).decode()
+    user = base64.b64decode(t[1]).decode()
+
     alive = True
     to_return = None
-    try:
-        while alive:
-            g = __top_gui()
-            if g.action == 'DONE':
-                print("thanks for visiting")
-                alive = False
+    while alive:
+        g = __top_gui()
+        if g.action == 'DONE':
+            print("thanks for visiting")
+            alive = False
 
-            elif g.action == 'submit a surgery':
-                animal_id, numprobes = upload_animal(user, pwd)
-                if animal_id is not None:
-                    for p in range(numprobes):
-                        upload_probe(user, pwd, animal_id, p+1)
-            elif g.action == 'submit a restart':
-                upload_restart(user, pwd)
-            elif g.action == 'submit clusters':
-                upload_clusters(user, pwd)
-            elif g.action == 'sac':
-                sac_animal(user, pwd)
-            elif g.action == 'QUERY':
-                to_return = SEARCH(user, pwd)
-            elif g.action == 'DLC/SWS':
-                upload_dlc_sws_edit(user, pwd)
-    except:
-        print('Thanks for coming! If you werent trying to leave then you have an error. Try submitting again')
-        return to_return
+        elif g.action == 'submit a surgery':
+            animal_id, numprobes = upload_animal(user, pwd)
+            if animal_id is not None:
+                for p in range(numprobes):
+                    upload_probe(user, pwd, animal_id, p+1)
+        elif g.action == 'submit a restart':
+            upload_restart(user, pwd)
+        elif g.action == 'submit clusters':
+            upload_clusters(user, pwd)
+        elif g.action == 'sac':
+            sac_animal(user, pwd)
+        elif g.action == 'QUERY':
+            to_return = SEARCH(user, pwd)
+        elif g.action == 'DLC/SWS':
+            upload_dlc_sws_edit(user, pwd)
+
+
     return to_return
 
 
@@ -1069,23 +1084,23 @@ def SEARCH(user, pwd):
     """
     cursor, db = connectclusterdb(user, pwd)
 
-    query = 'SELECT animal_name FROM lab_db.animals'
+    query = 'SELECT animal_name FROM clusteringdb.animals'
     cursor.execute(query)
     current_animals = np.asarray(cursor.fetchall()).flatten()
     current_animals = np.insert(current_animals, 0, 'any')
 
-    query = 'SELECT manipulations FROM lab_db.restarts'
+    query = 'SELECT manipulations FROM clusteringdb.restarts'
     cursor.execute(query)
     current_manipulations = np.unique(np.asarray(cursor.fetchall()).flatten())
     current_manipulations= np.insert(current_manipulations, 0, 'any')
 
 
-    query = 'SELECT region FROM lab_db.probes'
+    query = 'SELECT region FROM clusteringdb.probes'
     cursor.execute(query)
     current_sites = np.unique(np.asarray(cursor.fetchall()).flatten())
     current_sites = np.insert(current_sites, 0, 'any')
 
-    query = 'SELECT genotype FROM lab_db.animals'
+    query = 'SELECT genotype FROM clusteringdb.animals'
     cursor.execute(query)
     current_genos = np.unique(np.asarray(cursor.fetchall()).flatten())
     current_genos = np.insert(current_genos, 0, 'any')
@@ -1168,7 +1183,7 @@ def __desc_gui():
                                   'implant_date', 'electrode', 'headstage', 'daqsys', 'alive', 'sac_date']
         animal_info_value_list = list(map(format_query, np.repeat('animals', len(animal_info_value_list)), animal_info_value_list))
         animal_info_key_list = ['Animal Name', 'Surgeon', 'Animal DOB', 'Species', 'Strain',
-                                'Genotype', 'Sex', '# sites', '# sites', '# probes',
+                                'Genotype', 'Sex','# Channels', '# Sites', '# Probes',
                                 'Implant Date', 'Electrode Type', 'Headstage', 'Daqsys', 'Active?', 'Sac Date']
 
         animal_info = list(zip(animal_info_value_list, animal_info_key_list))
