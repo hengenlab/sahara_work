@@ -2,10 +2,11 @@ import numpy as np
 import criticality as cr
 import musclebeachtools as mbt
 import re
+import pandas as pd
 import os 
 import glob
 import signal
-
+import gc
 class Crit:
     """
     Class to look at criticality stuff
@@ -133,6 +134,10 @@ class Crit:
         self.tmin = Result['tmin']
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
+        self.beta = Result['beta']
+        self.gen_kappa()
+        self.gen_k2()
+        self.gen_kprob()
 
     def run_crit_from_start(self, flag = 2, save=False):
         if self.final:
@@ -156,6 +161,187 @@ class Crit:
         if save:
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
+
+    def gen_beta(self):
+        tm = int(np.max(self.T)/20)
+        _, _, beta = \
+            cr.EXCLUDE(self.T[self.T < np.power(np.max(self.T), self.nfactor_tm_tail)], tm,
+                   nfactor=self.nfactor_tm)
+        self.beta = beta
+    
+    def gen_k2(self, num=100):
+        if self.burst is None:
+            print("You must run_crit() before you can run this function")
+            return
+        if self.xmin is None:
+            print('this block failed while running for some reason')
+            return
+        idx = np.where(np.logical_and(self.burst<=self.xmax, self.burst>=self.xmin)) 
+        b = self.burst[idx]
+        n = np.size(b)
+        cdf = np.cumsum(np.histogram(b, np.arange(self.xmin, self.xmax+2))[0]/n)
+        s = np.unique(b)
+        A = 1/np.sum(np.power(s, -self.alpha))
+        fit = np.cumsum(A*np.power(np.arange(self.xmin, self.xmax+1), -self.alpha)) 
+
+        idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+        half = int(num/2)
+        second_half = idxs[half:]
+        diffs = [cdf[i]-fit[i] for i in second_half]
+        mean_diff = np.mean(diffs)
+        k2b = mean_diff
+
+        self.k2b = k2b
+        try:
+            idx2 = np.where(np.logical_and(self.T<=self.tmax, self.T>=self.tmin)) 
+            t = self.T[idx2]
+            n = np.size(t)
+            cdf = np.cumsum(np.histogram(t, np.arange(self.tmin, self.tmax+2))[0]/n)
+            s = np.unique(t)
+            A = 1/np.sum(np.power(s, -self.beta))
+            fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
+
+            idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+            half = int(num/2)
+            second_half = idxs[half:]
+            diffs = [cdf[i]-fit[i] for i in second_half]
+            mean_diff = np.mean(diffs)
+            k2t = mean_diff
+
+            self.k2t = k2t
+        except AttributeError:
+            self.k2t = None
+        return self.k2b, self.k2t
+            
+    def gen_kappa(self, num = 100):
+        if self.burst is None:
+            print("You must run_crit() before you can run this function")
+            return
+        if self.xmin is None:
+            print('block failed')
+            return
+        idx = np.where(np.logical_and(self.burst<=self.xmax, self.burst>=self.xmin)) 
+        b = self.burst[idx]
+        n = np.size(b)
+        cdf = np.cumsum(np.histogram(b, np.arange(self.xmin, self.xmax+2))[0]/n)
+        s = np.unique(b)
+        A = 1/np.sum(np.power(s, -self.alpha))
+        fit = np.cumsum(A*np.power(np.arange(self.xmin, self.xmax+1), -self.alpha)) 
+
+        idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+        diffs = [fit[i]-cdf[i] for i in idxs]
+        mean_diff = np.mean(diffs)
+        kappa_burst = 1 + mean_diff
+
+        self.kappa_burst = kappa_burst
+        try:
+            idx2 = np.where(np.logical_and(self.T<=self.tmax, self.T>=self.tmin)) 
+            t = self.T[idx2]
+            n = np.size(t)
+            cdf = np.cumsum(np.histogram(t, np.arange(self.tmin, self.tmax+2))[0]/n)
+            s = np.unique(t)
+            A = 1/np.sum(np.power(s, -self.beta))
+            fit = np.cumsum(A*np.power(np.arange(self.tmin, self.tmax+1), -self.beta)) 
+
+            idxs = np.geomspace(1, np.size(cdf)-1, num=num, dtype=int)
+            diffs = [fit[i]-cdf[i] for i in idxs]
+            mean_diff = np.mean(diffs)
+            kappa_t = 1 + mean_diff
+
+            self.kappa_t = kappa_t
+        except AttributeError:
+            self.kappa_t = None
+        return self.kappa_burst, self.kappa_t
+
+    def gen_kprob(self):
+        if self.burst is None:
+            print("You must run_crit() before you can run this function")
+            return
+        if self.xmin is None:
+            print('this block failed while running for some reason')
+            return
+
+        pdf = np.histogram(self.burst, bins = np.arange(1, np.max(self.burst) + 2))[0]
+        p = pdf / np.sum(pdf)
+        x = np.arange(self.xmin, self.xmax + 1)
+        y = (np.size(np.where(self.burst == self.xmin + 6)[0]) / np.power(self.xmin + 6, -self.alpha)) *\
+            np.power(x, -self.alpha)
+        y = y / np.sum(pdf)
+
+        ps=p[self.xmin:self.xmax]
+        diffs = np.diff([ps,y[:-1]],axis=0)
+        above_idx = np.where(diffs<0)[1]
+        below_idx = np.where(diffs>0)[1]
+        prob_above = np.sum(ps[above_idx])
+        prob_below = np.sum(ps[below_idx])
+
+        kprob_b = prob_above/prob_below
+        self.kprob_b = kprob_b
+        try:
+            tdf = np.histogram(self.T, bins = np.arange(1, np.max(self.T) + 2))[0]
+            t = tdf / np.sum(tdf)
+            x = np.arange(self.tmin, self.tmax + 1)
+            y = (np.size(np.where(self.T == self.tmin + 6)[0]) / np.power(self.tmin + 6, -self.beta)) *\
+                np.power(x, -self.beta)
+            y = y / np.sum(tdf)
+
+            ps=t[self.tmin:self.tmax]
+            diffs = np.diff([ps,y[:-1]],axis=0)
+            above_idx = np.where(diffs<0)[1]
+            below_idx = np.where(diffs>0)[1]
+            prob_above = np.sum(ps[above_idx])
+            prob_below = np.sum(ps[below_idx])
+
+            kprob_t = prob_above/prob_below
+            self.kprob_t = kprob_t
+        except Exception:
+            print('kprob_t not working')
+            self.kprob_t = None
+
+
+
+
+def get_results(animal,probe='', paths = None, save=False, saveloc=''):
+    if paths is None:  
+        paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
+    results = []
+    print(f'Total # of paths: {len(paths)}')
+    errs = []
+    for i,p in enumerate(paths):
+        good=True
+        if i%5 == 0:
+            print(f'#paths: {i}')
+        if i%100==0 and i!=0:
+            del crit
+            gc.collect()
+        try:
+            crit = None
+            crit = np.load(p, allow_pickle=True)[0]
+        except Exception as er:
+            print("won't load object")
+            good=False
+            errs.append([p, er])
+        if good:
+            try:
+                results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
+            except Exception:
+                try:
+                    results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
+                except Exception as er:
+                    print(f"not going to work --- skipping this path {p}")
+                    errs.append([p, er])
+            
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    df = pd.DataFrame(results, columns = cols)
+    df_clean = df.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
+        
+    if save:
+        if animal=='':
+            df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
+        else:
+            df_clean.to_pickle(f'{saveloc}/{animal}_all_results.pkl')
+
+    return df_clean, errs
 
 def run_crit_from_start(obj, flag = 2, save=True):
     if obj.final:
@@ -235,7 +421,7 @@ def get_info_from_path(path):
     return animal, date, time_frame, probe
 
 params = {
-    'rerun' : False,
+    'rerun' : True,
     'flag': 2, # 1 is DCC 2 is p_val and DCC
     'ava_binsz': 0.04, # in seconds
     'hour_bins': 4,# durration of block to look at
@@ -348,7 +534,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
                     print('TIMEOUT or ERROR', flush = True)
                     errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
                     noerr=False
-                signal.alarm(0)
+                    signal.alarm(0)
 
                 if rerun and noerr:
                     while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
@@ -364,7 +550,7 @@ def lilo_and_stitch(paths, params, rerun=False, save=True):
                         if crit.p_value_t < 0.05:
                             crit.nfactor_tm_tail -= 0.05
                         try:
-                            crit.run_crit()
+                            crit.run_crit(flag = params['flag'])
                         
                         except Exception:
                             print('TIMEOUT or ERROR', flush = True)
