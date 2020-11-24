@@ -4,7 +4,7 @@ import pymysql
 import pandas as pd
 import base64
 from pandas.io.sql import DatabaseError
-from traits.api import HasTraits, Str, Enum, Range, Directory, Bool, File, Int, List, Date
+from traits.api import HasTraits, Str, Enum, Range, Directory, Bool, File, Int, List, Date, Float
 from traitsui.api import View, Item, Handler, Action, VGroup, FileEditor, CheckListEditor, RangeEditor
 from traitsui.menu import OKCancelButtons
 
@@ -221,7 +221,9 @@ def __probegui(animal_name, title):
         probe_num       = Int (title)
         chanrange       = Str ('ex. 65-128')
         region          = Enum(regionlist)
-        implantcoord    = Str('ex. -2.3,0.4')
+        ap              = Float()
+        ml              = Float()
+        dv              = Float()
         exit            = Bool()
 
         view = View(
@@ -230,7 +232,9 @@ def __probegui(animal_name, title):
             Item(name = 'probe_num', style = 'readonly'),
             Item(name = 'chanrange'),
             Item(name = 'region'),
-            Item(name = 'implantcoord'),
+            Item(name = 'ap', label = 'AP'),
+            Item(name = 'ml', label = 'ML'),
+            Item(name = 'dv', label = 'DV'),
             Item(name = 'exit', label = 'EXIT'),
 
             title = f'Probe {title} Information.',
@@ -641,7 +645,9 @@ def submit_probe(g, cursor, db):
         "animal_id": int(animal_id),
         "probe_num": int(g.probe_num),
         "region": g.region,
-        "implantcoord": g.implantcoord,
+        "ap": g.ap,
+        "ml":g.ml,
+        "dv":g.dv,
         "chan_range": g.chanrange
     }
 

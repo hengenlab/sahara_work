@@ -60,7 +60,7 @@ if scorer == 'clayton':
                     new_bad_list.append(cell)
         if len(new_bad_list) > 0:
             print('Saving bad list . . . . . . . . . . ')
-            np.save(str(fl2[:-4]+'_new_bad_list.npy'),cells)
+            np.save(str(fl2[:-4]+'_new_bad_list.npy'),new_bad_list)
         toc = time.time()
         print('########## It took you {} minutes to score this block ##########'.format((toc-tic)/60))
         print('delta ones = {} pre / {} post'.format(o_ones,len([cell for cell in cells if cell.quality in [1]])))
@@ -96,7 +96,7 @@ if scorer == 'sahara':
                     new_bad_list.append(cell)
         if len(new_bad_list) > 0:
             print('Saving bad list . . . . . . . . . . ')
-            np.save(str(fl2[:-4]+'_new_bad_list.npy'),cells)
+            np.save(str(fl2[:-4]+'_new_bad_list.npy'),new_bad_list)
         toc = time.time()
         print('########## It took you {} minutes to score this block ##########'.format((toc-tic)/60))
         print('delta ones = {} pre / {} post'.format(o_ones,len([cell for cell in cells if cell.quality in [1]])))

@@ -8,6 +8,8 @@ import glob
 import signal
 import gc
 from datetime import datetime as dt 
+from datetime import timedelta
+import csv
 
 class Crit:
     """
