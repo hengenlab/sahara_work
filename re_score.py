@@ -7,9 +7,10 @@ import os
 import os.path as op
 import time
 
-s = f'/media/HlabShare/clayton_sahara_work/clustering/*/*/*/co/*scored_clayton_spks_rm_new_mbt_caf.npy'
+s = f'/media/HlabShare/clayton_sahara_work/clustering/*/*/*/co/*_spks_rm_new_mbt_caf.npy'
 print(s)
 fs = [f for f in glob.glob(s)]
+fs = sorted(fs)
 print(f'total # of paths: {len(fs)}', flush=True)
 
 for i, p in enumerate(fs):
