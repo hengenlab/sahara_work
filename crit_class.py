@@ -7,6 +7,8 @@ import os
 import glob
 import signal
 import gc
+from datetime import datetime as dt 
+
 class Crit:
     """
     Class to look at criticality stuff
@@ -298,12 +300,101 @@ class Crit:
             print('kprob_t not working')
             self.kprob_t = None
 
+def get_cell_stats(cell):
+    fr, xbins = cell.plotFR(binsz=3600, start=False, end=False,
+               lplot=0, lonoff=0)
+
+    isis = []
+    bins = np.arange(cell.start_time, cell.end_time, 300) # 5 min bins
+
+    for i in range(len(bins)):
+        if i == len(bins)-1:
+            end_bin = cell.end_time
+        else:
+            end_bin = bins[i+1]
+        spk_idxs = np.where(np.logical_and(cell.spike_time_sec > bins[i], cell.spike_time_sec < end_bin))
+        isis.append(np.diff(cell.spike_time[spk_idxs]))
+
+    means = np.array([np.mean(i) for i in isis])
+    stds = np.array([np.std(i) for i in isis])
+    cvs = stds/means
+    binned_cvs = np.reshape(cvs, [int(xbins[-1]), 12])
+    cv = np.mean(binned_cvs, axis=1)
+    return fr, cv
+
+def construct_fr_df(paths):
+    bdays = {
+        'caf01':dt(2019, 12, 24, 7, 30),
+        'caf19':dt(2020, 1, 19, 7, 30),
+        'caf22':dt(2020, 2, 17, 7, 30),
+        'caf26':dt(2020, 2, 20, 7, 30),
+        'caf34':dt(2020, 3, 18, 7, 30),
+        'caf37':dt(2019, 8, 18, 7, 30),
+        'caf40':dt(2020, 2, 20, 7, 30),
+        'caf42':dt(2020, 2, 20, 7, 30),
+        'caf48':dt(2020, 7, 20, 7, 30),
+        'caf49':dt(2020, 7, 20, 7, 30),
+        'caf50':dt(2020, 7, 20, 7, 30),
+        'eab52':dt(2020, 4, 19, 7, 30),
+        'eab47':dt(2019, 2, 17, 7, 30),
+        'eab':dt(2019, 2, 17, 7, 30),
+        'eab40':dt(2018, 12, 5, 7, 30)
+    }
+    seconds_in_day = 60*60*24
+    with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'w', newline='') as c:
+        w =  csv.DictWriter(c, fieldnames=['animal', 'rstart_time', 'age_start', 'days_old', 'hours_old', 'cell_idx', 'quality', 'fr', 'cv', 'wf'])
+        w.writeheader()
+    
+    done = []
+    for i,p in enumerate(paths):
+        print(i)
+        path_info = p[:p.find('_perc')]
+        if path_info in done:
+            print('already done')
+        else:
+            done.append(path_info)
+            crit = np.load(p, allow_pickle=True)[0]
+            birth = bdays[crit.animal]
+
+
+            for cell in crit.cells:
+                start_time = crit.cells[0].rstart_time
+                start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
+                age = start_time - birth
+
+                fr, cv = get_cell_stats(cell)
+
+                for i in range(len(fr)):
+
+                    age_now = age + timedelta(hours=i)
+                    days_old = age_now.total_seconds()/seconds_in_day
+                    hours_old = age_now.total_seconds()/3600
+
+                    with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'a', newline='') as c:
+                        w =  csv.DictWriter(c, fieldnames=['animal', 'rstart_time', 'age_start', 'days_old', 'hours_old', 'cell_idx', 'quality', 'fr', 'cv', 'wf'])
+
+                        d = {
+                            'animal': crit.animal,
+                            'rstart_time': start_time,
+                            'age_start': age_now,
+                            'days_old': days_old,
+                            'hours_old': hours_old,
+                            'cell_idx': cell.clust_idx,
+                            'quality': cell.quality,
+                            'fr': fr[i],
+                            'cv': cv[i],
+                            'wf': cell.waveform
+                        }
+                        w.writerow(d)
+               
 
 
 
-def get_results(animal,probe='', paths = None, save=False, saveloc=''):
+
+def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load = False):
     if paths is None:  
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
+    
     results = []
     print(f'Total # of paths: {len(paths)}')
     errs = []
@@ -316,20 +407,24 @@ def get_results(animal,probe='', paths = None, save=False, saveloc=''):
             gc.collect()
         try:
             crit = None
-            crit = np.load(p, allow_pickle=True)[0]
+            with np.load(p, allow_pickle=True) as crit:
+                crit = crit[0]
+                try:
+                    results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
+                except Exception:
+                    try:
+                        results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
+                    except Exception as er:
+                        print(f"not going to work --- skipping this path {p}")
+                        errs.append([p, er])
         except Exception as er:
             print("won't load object")
             good=False
             errs.append([p, er])
-        if good:
-            try:
-                results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
-            except Exception:
-                try:
-                    results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
-                except Exception as er:
-                    print(f"not going to work --- skipping this path {p}")
-                    errs.append([p, er])
+
+        base = p[:-4]
+        n = base+'_LOADED.npy'
+        os.rename(p, n)
             
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
     df = pd.DataFrame(results, columns = cols)
