@@ -304,7 +304,7 @@ class Crit:
 
 def get_cell_stats(cell):
     fr, xbins = cell.plotFR(binsz=3600, start=False, end=False,
-               lplot=0, lonoff=0)
+               lplot=0)
 
     isis = []
     bins = np.arange(cell.start_time, cell.end_time, 300) # 5 min bins
