@@ -370,10 +370,7 @@ def construct_fr_df(paths):
             crit = np.load(p, allow_pickle=True)[0]
             birth = bdays[crit.animal]
 
-            if crit.final:
-                print('This object is final. Go back and find these cells individually to add to the csv')
-                final.append(p)
-            else:
+            try:
                 for cell in crit.cells:
                     start_time = crit.cells[0].rstart_time
                     start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
@@ -403,6 +400,9 @@ def construct_fr_df(paths):
                                 'wf': cell.waveform
                             }
                             w.writerow(d)
+            except Exception:
+                print('This object is final. Go back and find these cells individually to add to the csv')
+                final.append(p)
     np.save('/media/HlabShare/clayton_sahara_work/fr_csv_done.npy', done)
     np.save('/media/HlabShare/clayton_sahara_work/fr_csv_FINAL.npy', final)
 

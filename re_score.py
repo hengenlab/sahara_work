@@ -17,19 +17,22 @@ for i, p in enumerate(fs):
     if op.exists(new_name):
         print("Already did this one")
     else:
-        tic = time.time()
-        print(p)
-        print('Loading . . . . . . . . . . ')
-        cells = np.load(p,allow_pickle=True)
-        twos = len([cell for cell in cells if cell.quality==2])
-        print(f'{twos} TWOS TO RESCORE')
-        for cell in cells:
-            if cell.quality == 2:
-                fix_amp = cell.mean_amplitude*2.2
-                cell.checkqual(fix_amp_ylim=fix_amp)
-        twos_1 = len([cell for cell in cells if cell.quality==2])
-        print(f'{twos} start --- {twos_1} fixed')
-        np.save(new_name, cells)
-        toc = time.time()
-        print('########## It took you {} minutes to RESCORE this block ##########'.format((toc-tic)/60))
-        print(f'\n\n Only {len(fs)-i} paths left lol')
+        try:
+            tic = time.time()
+            print(p)
+            print('Loading . . . . . . . . . . ')
+            cells = np.load(p,allow_pickle=True)
+            twos = len([cell for cell in cells if cell.quality==2])
+            print(f'{twos} TWOS TO RESCORE')
+            for cell in cells:
+                if cell.quality == 2:
+                    fix_amp = cell.mean_amplitude*2.2
+                    cell.checkqual(fix_amp_ylim=fix_amp)
+            twos_1 = len([cell for cell in cells if cell.quality==2])
+            print(f'{twos} start --- {twos_1} fixed')
+            np.save(new_name, cells)
+            toc = time.time()
+            print('########## It took you {} minutes to RESCORE this block ##########'.format((toc-tic)/60))
+            print(f'\n\n Only {len(fs)-i} paths left lol')
+        except Exception as err:
+            print(err)
