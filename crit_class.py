@@ -358,6 +358,7 @@ def construct_fr_df(paths):
         w.writeheader()
     
     done = []
+    final = []
     for i,p in enumerate(paths):
         print(i)
         path_info = p[:p.find('_perc')]
@@ -369,37 +370,41 @@ def construct_fr_df(paths):
             crit = np.load(p, allow_pickle=True)[0]
             birth = bdays[crit.animal]
 
+            if crit.final:
+                print('This object is final. Go back and find these cells individually to add to the csv')
+                final.append(p)
+            else:
+                for cell in crit.cells:
+                    start_time = crit.cells[0].rstart_time
+                    start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
+                    age = start_time - birth
 
-            for cell in crit.cells:
-                start_time = crit.cells[0].rstart_time
-                start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
-                age = start_time - birth
+                    fr, cv = get_cell_stats(cell)
 
-                fr, cv = get_cell_stats(cell)
+                    for i in range(len(fr)):
 
-                for i in range(len(fr)):
+                        age_now = age + timedelta(hours=i)
+                        days_old = age_now.total_seconds()/seconds_in_day
+                        hours_old = age_now.total_seconds()/3600
 
-                    age_now = age + timedelta(hours=i)
-                    days_old = age_now.total_seconds()/seconds_in_day
-                    hours_old = age_now.total_seconds()/3600
+                        with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'a', newline='') as c:
+                            w =  csv.DictWriter(c, fieldnames=['animal', 'rstart_time', 'age_start', 'days_old', 'hours_old', 'cell_idx', 'quality', 'fr', 'cv', 'wf'])
 
-                    with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'a', newline='') as c:
-                        w =  csv.DictWriter(c, fieldnames=['animal', 'rstart_time', 'age_start', 'days_old', 'hours_old', 'cell_idx', 'quality', 'fr', 'cv', 'wf'])
-
-                        d = {
-                            'animal': crit.animal,
-                            'rstart_time': start_time,
-                            'age_start': age_now,
-                            'days_old': days_old,
-                            'hours_old': hours_old,
-                            'cell_idx': cell.clust_idx,
-                            'quality': cell.quality,
-                            'fr': fr[i],
-                            'cv': cv[i],
-                            'wf': cell.waveform
-                        }
-                        w.writerow(d)
+                            d = {
+                                'animal': crit.animal,
+                                'rstart_time': start_time,
+                                'age_start': age_now,
+                                'days_old': days_old,
+                                'hours_old': hours_old,
+                                'cell_idx': cell.clust_idx,
+                                'quality': cell.quality,
+                                'fr': fr[i],
+                                'cv': cv[i],
+                                'wf': cell.waveform
+                            }
+                            w.writerow(d)
     np.save('/media/HlabShare/clayton_sahara_work/fr_csv_done.npy', done)
+    np.save('/media/HlabShare/clayton_sahara_work/fr_csv_FINAL.npy', final)
 
 
 
