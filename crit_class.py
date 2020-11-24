@@ -339,6 +339,12 @@ def construct_fr_df(paths):
         'caf48':dt(2020, 7, 20, 7, 30),
         'caf49':dt(2020, 7, 20, 7, 30),
         'caf50':dt(2020, 7, 20, 7, 30),
+        'caf54':dt(2020, 7, 11, 7, 30),
+        'caf55':dt(2020, 7, 11, 7, 30),
+        'caf58':dt(2020, 9, 23, 7, 30)
+        'caf60':dt(2020, 9, 23, 7, 30),
+        'caf61':dt(2019, 12, 11, 7, 30),
+        'caf62':dt(2019, 11, 18, 7, 30),
         'eab52':dt(2020, 4, 19, 7, 30),
         'eab47':dt(2019, 2, 17, 7, 30),
         'eab':dt(2019, 2, 17, 7, 30),
@@ -357,6 +363,7 @@ def construct_fr_df(paths):
             print('already done')
         else:
             done.append(path_info)
+            crit = None
             crit = np.load(p, allow_pickle=True)[0]
             birth = bdays[crit.animal]
 
@@ -390,7 +397,7 @@ def construct_fr_df(paths):
                             'wf': cell.waveform
                         }
                         w.writerow(d)
-               
+    np.save('/media/HlabShare/clayton_sahara_work/fr_csv_done.npy', done)
 
 
 
