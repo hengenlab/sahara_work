@@ -320,7 +320,7 @@ def get_cell_stats(cell):
     means = np.array([np.mean(i) for i in isis])
     stds = np.array([np.std(i) for i in isis])
     cvs = stds/means
-    binned_cvs = [cvs[i*12:(i+1)*12] for i in np.arange(xbins[-1])]
+    binned_cvs = [cvs[i*12:(i+1)*12] for i in np.arange(int(xbins[-1]))]
     cv = [np.mean(i) for i in binned_cvs]
     if len(fr) != len(cv):
         print('this isnt working, fix it')
