@@ -320,8 +320,10 @@ def get_cell_stats(cell):
     means = np.array([np.mean(i) for i in isis])
     stds = np.array([np.std(i) for i in isis])
     cvs = stds/means
-    binned_cvs = np.reshape(cvs, [int(xbins[-1]), 12])
-    cv = np.mean(binned_cvs, axis=1)
+    binned_cvs = [cvs[i*12:(i+1)*12] for i in np.arange(xbins[-1])]
+    cv = [np.mean(i) for i in binned_cvs]
+    if len(fr) != len(cv):
+        print('this isnt working, fix it')
     return fr, cv
 
 def construct_fr_df(paths):
