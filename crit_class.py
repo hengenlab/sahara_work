@@ -367,10 +367,9 @@ def construct_fr_df(paths):
         else:
             done.append(path_info)
             crit = None
-            crit = np.load(p, allow_pickle=True)[0]
-            birth = bdays[crit.animal]
-
             try:
+                crit = np.load(p, allow_pickle=True)[0]
+                birth = bdays[crit.animal]
                 for cell in crit.cells:
                     start_time = crit.cells[0].rstart_time
                     start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
@@ -401,7 +400,7 @@ def construct_fr_df(paths):
                             }
                             w.writerow(d)
             except Exception:
-                print('This object is final. Go back and find these cells individually to add to the csv')
+                print('This object is final or weird. Go back and find these cells individually to add to the csv')
                 final.append(p)
     np.save('/media/HlabShare/clayton_sahara_work/fr_csv_done.npy', done)
     np.save('/media/HlabShare/clayton_sahara_work/fr_csv_FINAL.npy', final)
