@@ -436,6 +436,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load =
                     errs.append([p, er])
         except Exception as er:
             print("won't load object")
+            print(er)
             good=False
             errs.append([p, er])
 
