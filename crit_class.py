@@ -428,6 +428,13 @@ def lil_helper_boi(p):
 
     return err, to_append
 
+def write_to_csv(data, cols, loc):
+    d = dict(zip(cols, data))
+    with open(loc, 'a', newline='') as c:
+        w =  csv.DictWriter(c, fieldnames=cols)
+        w.writerow(d)
+
+
 def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load = False):
     if paths is None:  
         paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
