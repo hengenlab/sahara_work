@@ -418,7 +418,7 @@ def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load =
     for i,p in enumerate(paths):
         good=True
         if i%5 == 0:
-            print(f'#paths: {i}')
+            print(f'#paths: {i}', flush = True)
         if i%100==0 and i!=0:
             del crit
             gc.collect()
@@ -434,10 +434,10 @@ def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load =
                     try:
                         results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
                     except Exception as er:
-                        print(f"not going to work --- skipping this path {p}")
+                        print(f"not going to work --- skipping this path {p}", flush=True)
                         errs.append([p, er])
             except Exception as er:
-                print("won't load object")
+                print("won't load object", flush = True)
                 print(er)
                 good=False
                 errs.append([p, er])
@@ -458,8 +458,8 @@ def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load =
         og_df = pd.read_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
         df_clean = pd.concat([df_clean, og_df])
         df_clean = df_clean.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
-        print(f'OG SIZE: {og_df.size()}')
-        print(f'NEW SIZE: {df_clean.size()}')
+        print(f'OG SIZE: {og_df.size()}', flush = True)
+        print(f'NEW SIZE: {df_clean.size()}', flush = True)
     if save:
         if animal=='':
             df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
