@@ -346,7 +346,7 @@ def construct_fr_df(paths):
         'caf60':dt(2020, 9, 23, 7, 30),
         'caf61':dt(2019, 12, 11, 7, 30),
         'caf62':dt(2019, 11, 18, 7, 30),
-        'eab52':dt(2020, 4, 19, 7, 30),
+        'eab52':dt(2019, 4, 19, 7, 30),
         'eab47':dt(2019, 2, 17, 7, 30),
         'eab':dt(2019, 2, 17, 7, 30),
         'eab50':dt(2019, 2, 15, 7, 30),
@@ -422,32 +422,44 @@ def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load =
         if i%100==0 and i!=0:
             del crit
             gc.collect()
-        try:
-            crit = None
-            crit = np.load(p, allow_pickle=True)
-            crit = crit[0]
-            try:
-                results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
-            except Exception:
-                try:
-                    results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
-                except Exception as er:
-                    print(f"not going to work --- skipping this path {p}")
-                    errs.append([p, er])
-        except Exception as er:
-            print("won't load object")
-            print(er)
-            good=False
-            errs.append([p, er])
 
-        base = p[:-4]
-        n = base+'_LOADED.npy'
-        os.rename(p, n)
+        if 'LOADED' not in p or re_load:
+            try:
+                crit = None
+                crit = np.load(p, allow_pickle=True)
+                crit = crit[0]
+                try:
+                    results.append([crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
+                except Exception:
+                    try:
+                        results.append([crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t])
+                    except Exception as er:
+                        print(f"not going to work --- skipping this path {p}")
+                        errs.append([p, er])
+            except Exception as er:
+                print("won't load object")
+                print(er)
+                good=False
+                errs.append([p, er])
+
+            if 'LOADED' in p:
+                base = p[:p.find('_LOADED')]
+            else:
+                base = p[:-4]
+
+            n = base+'_LOADED.npy'
+            os.rename(p, n)
             
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
     df = pd.DataFrame(results, columns = cols)
     df_clean = df.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
-        
+    
+    if not re_load:
+        og_df = pd.read_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
+        df_clean = pd.concat([df_clean, og_df])
+        df_clean = df_clean.drop_duplicates(subset=['animal','probe','date', 'time_frame', 'block_num'], keep = 'last')
+        print(f'OG SIZE: {og_df.size()}')
+        print(f'NEW SIZE: {df_clean.size()}')
     if save:
         if animal=='':
             df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
