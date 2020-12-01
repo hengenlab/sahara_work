@@ -435,13 +435,12 @@ def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load =
     results = []
     print(f'Total # of paths: {len(paths)}')
     errs = []
-    
+
     for i,p in enumerate(paths):
         good=True
         if i%5 == 0:
             print(f'#paths: {i}', flush = True)
         if i%100==0 and i!=0:
-            del crit
             gc.collect()
 
         if 'LOADED' not in p or re_load:
