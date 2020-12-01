@@ -11,7 +11,7 @@ def get_all_results(save = True, csvloc = '', re_load=False):
 
     fingers crossed this works
     '''
-    paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
+    paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/*/*/*/Crit*')
     print(f'Total # of paths: {len(paths)}')
     errs = []
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
