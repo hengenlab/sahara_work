@@ -70,7 +70,7 @@ class Crit:
         '''
         how to generate crit
         '''
-        return str("'Crit(spikewords)'")
+        return str(f'{self.animal} -- {self.date} -- {self.time_frame}')
     
     def __enter__(self):
         return self

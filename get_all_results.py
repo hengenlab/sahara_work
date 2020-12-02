@@ -2,6 +2,7 @@ import glob
 import sahara_work as s
 import csv
 import os
+import numpy as np
 
 
 def get_all_results(save, csvloc, loaded_file, re_load):
