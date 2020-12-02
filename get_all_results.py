@@ -29,11 +29,13 @@ def get_all_results(save, csvloc, loaded_file, re_load):
         if i%5 == 0:
             print(f'#paths: {i}', flush = True)
 
-        if i%100 == 0 and i!=0:
+        if count==100:
             print('saving progress', flush = True)
             np.save(loaded_file, loaded)
+            count=0
 
         if p not in loaded or re_load:
+            count+=1
             err, to_append = s.lil_helper_boi(p)
             if err:
                 print(to_append)
