@@ -20,7 +20,7 @@ def get_all_results(save, csvloc, loaded_file, re_load):
         with open(csvloc, 'w', newline='') as c:
             w =  csv.DictWriter(c, fieldnames=cols)
             w.writeheader()
-        loaded = []
+        loaded = np.array([])
     else:
         loaded = np.load(loaded_file)
         print(f'Number of paths already loaded: {len(loaded)}')
@@ -40,7 +40,7 @@ def get_all_results(save, csvloc, loaded_file, re_load):
                 errs.append(to_append)
             else:
                 s.write_to_csv(to_append, cols, csvloc)
-                loaded.append(p)
+                loaded = np.append(loaded, p)
 
             if 'LOADED' in p:
                 base = p[:p.find('_LOADED')]
