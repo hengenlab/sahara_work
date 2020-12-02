@@ -25,6 +25,7 @@ def get_all_results(save, csvloc, loaded_file, re_load):
         loaded = np.load(loaded_file)
         print(f'Number of paths already loaded: {len(loaded)}')
 
+    count = 0
     for i, p in enumerate(paths):
         if i%5 == 0:
             print(f'#paths: {i}', flush = True)
@@ -47,5 +48,8 @@ def get_all_results(save, csvloc, loaded_file, re_load):
             if 'LOADED' in p:
                 base = p[:p.find('_LOADED')]
                 os.rename(p, base+'.npy')
+
+    print('saving final progress', flush = True)
+    np.save(loaded_file, loaded)
             
     return errs, loaded
