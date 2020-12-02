@@ -434,12 +434,33 @@ def lil_helper_boi(p):
 
     return err, to_append
 
+def lil_helper_dude(crit):
+    err = False
+    
+    birth = bdays[crit.animal]
+    start_time = crit.cells[0].rstart_time
+    start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
+    age = start_time - birth
+    age = age + timedelta(hours = (crit.block_num*crit.hour_bins))
+    geno = genos[crit.animal]
+    info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
+
+    return info
+
 def write_to_csv(data, cols, loc):
     d = dict(zip(cols, data))
     with open(loc, 'a', newline='') as c:
         w =  csv.DictWriter(c, fieldnames=cols)
         w.writerow(d)
 
+def write_to_results_csv(crit, loc):
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num','bday','rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    err, data = lil_helper_dude(crit)
+    if err:
+        print('this path failed, plz just fucking delete it and re-do this path ffs')
+        return err, []
+    write_to_csv(data, cols, loc)
+    return err, data
 
 def get_results(animal,probe='', paths = None, save=False, saveloc='', re_load = False):
     if paths is None:  

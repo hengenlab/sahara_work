@@ -15,7 +15,8 @@ def get_all_results(save, csvloc, loaded_file, re_load):
     paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/*/*/*/Crit*')
     print(f'Total # of paths: {len(paths)}')
     errs = []
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num','bday','rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+
     if re_load:
         with open(csvloc, 'w', newline='') as c:
             w =  csv.DictWriter(c, fieldnames=cols)
@@ -37,7 +38,7 @@ def get_all_results(save, csvloc, loaded_file, re_load):
 
         if p not in loaded or re_load:
             count+=1
-            err, to_append = s.lil_helper_boi(p)
+            err, dat = s.write_to_results_csv()
             if err:
                 print(to_append)
                 errs.append(to_append)
