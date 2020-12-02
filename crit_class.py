@@ -71,6 +71,12 @@ class Crit:
         how to generate crit
         '''
         return str("'Crit(spikewords)'")
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exception_type, exception_value, traceback):
+        print('closing file')
         
     def get_params(self):
         print(f'PARAMETERS:\n'
