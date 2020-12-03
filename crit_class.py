@@ -18,7 +18,6 @@ class Crit:
 
     tbd on init and what not
     """
-    def __init__(self):
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True):
 
         # required parameters
