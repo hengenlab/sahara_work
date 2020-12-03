@@ -56,6 +56,7 @@ def get_all_results(csvloc, loaded_file, re_load):
 
     print('saving final progress', flush = True)
     np.save(loaded_file, loaded)
+    np.save(error_save, errs)
 
     return errs, loaded
 
