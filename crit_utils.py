@@ -105,6 +105,7 @@ def lil_helper_boi(crit):
         geno = s.get_genotype(crit.animal)
         info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
     except Exception as e:
+        print(f'error: {e}')
         err = True
         info = [e]
     return err, info
