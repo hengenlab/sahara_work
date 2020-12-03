@@ -14,7 +14,7 @@ def get_all_results(csvloc, loaded_file, re_load):
 
     it doesn't really work. Gonna eventually re-write this correctly but for now - a bandaid
     """
-    paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/*/*/*/Crit*')
+    paths = sorted(glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/*/*/*/Crit*'))
     print(f'Total # of paths: {len(paths)}')
     error_save = '/media/HlabShare/clayton_sahara_work/criticality/results_errors_TODEL.npy'
     if re_load:
