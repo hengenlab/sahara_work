@@ -40,7 +40,7 @@ def get_all_results(csvloc, loaded_file, re_load):
             np.save(error_save, errs)
             count = 0
 
-        if p not in loaded or p not in errs or re_load:
+        if (p not in loaded and p not in errs) or re_load:
             count += 1
             err, dat = s.write_to_results_csv_from_path(p, csvloc)
             if err:
