@@ -18,7 +18,7 @@ class Crit:
 
     tbd on init and what not
     """
-
+    def __init__(self):
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True):
 
         # required parameters
@@ -653,7 +653,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
 
             num_bins = int(total_time / params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
-            quals = [1, 3]
+            quals = [1, 2, 3]
             try:
                 cells = np.load(path, allow_pickle = True)
                 good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
