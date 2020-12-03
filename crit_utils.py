@@ -26,7 +26,7 @@ def get_all_results(csvloc, loaded_file, re_load):
         errs = np.array([])
     else:
         loaded = np.load(loaded_file)
-        errs = np.load(error_save)
+        errs = np.load(error_save, allow_pickle = True)
         print(f'Number of paths already loaded: {len(loaded)}')
 
     count = 0
