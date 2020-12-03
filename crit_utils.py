@@ -33,6 +33,7 @@ def get_all_results(csvloc, loaded_file, re_load):
     for i, p in enumerate(paths):
         if i % 5 == 0:
             print(f'#paths: {i}', flush = True)
+            print(f'count: {count}', flush = True)
 
         if count == 100:
             print('saving progress', flush = True)
