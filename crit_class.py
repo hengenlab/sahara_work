@@ -656,9 +656,19 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
             try:
                 cells = np.load(path, allow_pickle = True)
                 good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+
+
                 if len(good_cells) < 10:
                     quals = [1, 2, 3]
                     good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+                else if len(good_cells) < 60:
+                    quals = [1, 2]
+                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+
+                else if len(good_cells) >= 60:
+                    quals = [1]
+                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+
                 spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
             except Exception:
                 print("Neuron File Won't Load")
