@@ -653,20 +653,25 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
             num_bins = int(total_time / params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
             quals = [1, 2, 3]
+            fr_cutoff = 10
             try:
                 cells = np.load(path, allow_pickle = True)
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
-
+                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
 
                 if len(good_cells) < 10:
                     quals = [1, 2, 3]
-                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
+
                 elif len(good_cells) < 60:
                     quals = [1, 2]
-                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
                 elif len(good_cells) >= 60:
                     quals = [1]
-                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type']]
+                    good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
+
+                    # if len(good_cells) > 100:
+                    #     cell_idxs = np.random.choice(len(good_cells), 50, replace=False)
+                    #     good_cells = good_cells[cell_idxs]
 
                 spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
             except Exception:

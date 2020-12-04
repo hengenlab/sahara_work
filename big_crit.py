@@ -31,8 +31,8 @@ def run(animal = '', probe = '', rerun = False):
         'perc': 0.35,
         'nfactor_bm': 0,
         'nfactor_tm': 0,
-        'nfactor_bm_tail': 1,  # upper bound to start exclude for burst
-        'nfactor_tm_tail': 1,  # upper bound to start exclude for time
+        'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
+        'nfactor_tm_tail': .9,  # upper bound to start exclude for time
         'cell_type': ['FS', 'RSU'],
         'plot': True
     }
