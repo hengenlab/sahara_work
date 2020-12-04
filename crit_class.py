@@ -156,7 +156,7 @@ class Crit:
         if self.final:
             print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
             return
-        total_time = __get_totaltime(self.time_frame)
+        total_time = s.__get_totaltime(self.time_frame)
         num_bins = int(total_time / self.hour_bins)
         bin_len = int((self.hour_bins * 3600) / self.ava_binsize)
         good_cells = [cell for cell in self.cells if self.quality in self.qualities and self.cell_type in self.cell_types]
@@ -167,7 +167,7 @@ class Crit:
         else:
             data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
         self.spikewords = data
-        param_str = __get_paramstr(self.animal, self.probe, self.date, self.time_frame, self.hour_bins, self.perc, self.ava_binsize, self.qualities, self.cell_types, idx)
+        param_str = s.__get_paramstr(self.animal, self.probe, self.date, self.time_frame, self.hour_bins, self.perc, self.ava_binsize, self.qualities, self.cell_types, idx)
         self.pltname = param_str
         self.run_crit(flag = flag)
         print(f'BLOCK RESULTS: P_vals - {self.p_value_burst}   {self.p_value_t} \n DCC: {self.dcc}')

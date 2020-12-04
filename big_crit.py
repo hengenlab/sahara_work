@@ -3,7 +3,7 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-from sahara_work import lilo_and_stitch_the_sequel
+import sahara_work as sw
 from datetime import datetime as dt
 import signal
 import sys
@@ -31,8 +31,8 @@ def run(animal = '', probe = '', rerun = False):
         'perc': 0.35,
         'nfactor_bm': 0,
         'nfactor_tm': 0,
-        'nfactor_bm_tail': .8,  # upper bound to start exclude for burst
-        'nfactor_tm_tail': .8,  # upper bound to start exclude for time
+        'nfactor_bm_tail': 1,  # upper bound to start exclude for burst
+        'nfactor_tm_tail': 1,  # upper bound to start exclude for time
         'cell_type': ['FS', 'RSU'],
         'plot': True
     }
@@ -50,7 +50,7 @@ def run(animal = '', probe = '', rerun = False):
         results = []
         for o in all_objs:
             results.append([o.animal, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
-            err, appended = s.write_to_results_csv(o, csvloc)
+            err, appended = sw.write_to_results_csv(o, csvloc)
             if err:
                 print('something weird happened, this should not have errored')
 
