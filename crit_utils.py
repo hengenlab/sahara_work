@@ -173,5 +173,8 @@ def get_genotype(animal):
     return genos[animal]
 
 
+def load_crit(path):
+    return np.load(path, allow_pickle = True)[0]
+
 def update_object(old):
     new = None

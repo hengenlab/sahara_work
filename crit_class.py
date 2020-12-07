@@ -11,12 +11,13 @@ from datetime import datetime as dt
 from datetime import timedelta
 import csv
 
-
 class Crit:
     """
+    
     Class to look at criticality stuff
 
     tbd on init and what not
+    
     """
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True):
 
@@ -53,18 +54,6 @@ class Crit:
         self.tmax = None
         self.alpha = None
 
-        # all parameters that can be set by lilo and stitch
-        self.time_frame = None
-        self.block_num = None
-        self.qualities = None
-        self.cell_types = None
-        self.hour_bins = None
-        self.ava_binsize = None
-        self.animal = None
-        self.date = None
-        self.final = False
-        self.cells = []
-        self.probe = None
 
     def __repr__(self):
         """
@@ -77,6 +66,7 @@ class Crit:
 
     def __exit__(self, exception_type, exception_value, traceback):
         print('closing file')
+
 
     def get_params(self):
         print(f'PARAMETERS:\n'
@@ -689,7 +679,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
                         data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
                     param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
-                    crit = Crit(data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
+                    crit = Crit(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                                 nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                                 pltname = param_str, plot = params['plot'])
 
