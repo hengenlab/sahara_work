@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime as dt
 from datetime import timedelta
 from sahara_work import Crit
-from sahara_work import Crit_hlab
+from sahara_work import *
 
 
 def get_all_results(csvloc, loaded_file, re_load):
@@ -197,4 +197,3 @@ def update_object(old, save_new = False):
         np.save(os.path.join(old.saveloc, f'Crit_hlab_{old.pltname}'), [new_obj])
 
     return new_obj
-
