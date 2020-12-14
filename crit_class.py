@@ -1,6 +1,10 @@
 import numpy as np
 from criticality_hlab import criticality as cr
 from musclebeachtools_hlab import musclebeachtools as mbt
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
+from matplotlib.collections import PatchCollection
+import seaborn as sns
 import re
 import pandas as pd
 import os
@@ -10,6 +14,8 @@ import gc
 from datetime import datetime as dt
 from datetime import timedelta
 import csv
+from copy import deepcopy as cdc
+
 
 class Crit:
     """
@@ -70,11 +76,7 @@ class Crit:
 
     def get_params(self):
         print(f'PARAMETERS:\n'
-              f'binsize: {self.ava_binsize}\n'
               f'perc: {self.perc}\n'
-              f'hour bins: {self.hour_bins}\n'
-              f'qualities: {self.qualities}\n'
-              f'cell types: {self.cell_types}\n'
               f'nfactor_bm: {self.nfactor_bm}\n'
               f'nfactor_tm: {self.nfactor_tm}\n'
               f'nfactor_bm_tail: {self.nfactor_bm_tail}\n'
@@ -83,6 +85,71 @@ class Crit:
     def finalize(self):
         self.cells = None
         self.final = True
+
+    def show_plots(self):
+        self.t_cdf_plot.show()
+        self.burst_cdf_plot.show()
+        self.scaling_plot.show()
+
+    def plot_raster(self, window_start = 200, window_end = 400, saveplot = False, show = True):
+        # window of time to look at
+        small_spikewords = self.spikewords[:, window_start : window_end]
+        n, m = np.shape(small_spikewords)
+
+        # pulling out spikes from the binned spikewords array
+        positions = []
+        for cell in small_spikewords:
+            positions.append(np.where(cell > 0)[0])
+
+        # pulling out threshold to determine avalanches
+        network = np.nansum(small_spikewords, axis = 0)
+        sortN = np.sort(network)
+        threshold = sortN[round(m * self.perc)]
+        thresh_max = np.ma.masked_where(network <= threshold, network)
+
+        # determining avalanches
+        zdata = cdc(network)
+        zdata[~thresh_max.mask] = 1  # avalanches
+        zdata[thresh_max.mask] = 0  # intervals
+
+        # pulling out the edges for the plot
+        edges = np.diff(zdata)
+        ontimes = np.where(edges > 0)[0]
+        offtimes = np.where(edges < 0)[0]
+
+        #edge cases
+
+        if zdata[0] == 1:
+            ontimes = np.insert(ontimes, 0, 0)
+        if zdata[-1] == 1:
+            offtimes = np.append(offtimes, len(edges))
+
+        #making the rectagles
+        xys = []
+        widths = []
+        heights = []
+        for i, on in enumerate(ontimes):
+            xys.append((on, 0))
+            widths.append(offtimes[i] - on)
+
+        boxes = [Rectangle(xy, width, n) for xy, width in zip(xys, widths)]
+        pc = PatchCollection(boxes, facecolor = 'moccasin', alpha = 0.7, edgecolor = 'firebrick')
+
+        # plotting
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (11, 8))
+
+        ax.eventplot(positions, orientation = "horizontal")
+        ax.add_collection(pc)
+        ax.set_ylabel("Cell")
+        ax.set_xlabel("Bin")
+        ax.set_title(f"Raster Avalanches")
+        sns.despine()
+
+        if show:
+            plt.show()
+
+        if saveplot:
+            fig.savefig(os.path.join(self.saveloc, 'spike_raster.png'))
 
     def run_crit(self, flag = 2):
         """
@@ -134,45 +201,18 @@ class Crit:
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
         self.beta = Result['beta']
-        self.gen_kappa()
-        self.gen_k2()
-        self.gen_kprob()
+        self.__gen_kappa()
+        self.__gen_k2()
+        self.__gen_kprob()
 
-    def run_crit_from_start(self, flag = 2, save = False):
-        
-        """
-        This isn't going to work as a class function, if you need it then fix it
-        """
-        if self.final:
-            print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
-            return
-        total_time = s.__get_totaltime(self.time_frame)
-        num_bins = int(total_time / self.hour_bins)
-        bin_len = int((self.hour_bins * 3600) / self.ava_binsize)
-        good_cells = [cell for cell in self.cells if self.quality in self.qualities and self.cell_type in self.cell_types]
-        spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = self.ava_binsize, binarize = 1)
-        idx = self.block_num
-        if idx == num_bins - 1:
-            data = spikewords[:, (idx * bin_len):]
-        else:
-            data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
-        self.spikewords = data
-        param_str = s.__get_paramstr(self.animal, self.probe, self.date, self.time_frame, self.hour_bins, self.perc, self.ava_binsize, self.qualities, self.cell_types, idx)
-        self.pltname = param_str
-        self.run_crit(flag = flag)
-        print(f'BLOCK RESULTS: P_vals - {self.p_value_burst}   {self.p_value_t} \n DCC: {self.dcc}')
-        if save:
-            to_save = np.array([obj])
-            np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
-
-    def gen_beta(self):
+    def __gen_beta(self):
         tm = int(np.max(self.T) / 20)
         _, _, beta = \
             cr.EXCLUDE(self.T[self.T < np.power(np.max(self.T), self.nfactor_tm_tail)], tm,
                        nfactor = self.nfactor_tm)
         self.beta = beta
 
-    def gen_k2(self, num = 100):
+    def __gen_k2(self, num = 100):
         if self.burst is None:
             print("You must run_crit() before you can run this function")
             return
@@ -216,7 +256,7 @@ class Crit:
             self.k2t = None
         return self.k2b, self.k2t
 
-    def gen_kappa(self, num = 100):
+    def __gen_kappa(self, num = 100):
         if self.burst is None:
             print("You must run_crit() before you can run this function")
             return
@@ -256,7 +296,7 @@ class Crit:
             self.kappa_t = None
         return self.kappa_burst, self.kappa_t
 
-    def gen_kprob(self):
+    def __gen_kprob(self):
         if self.burst is None:
             print("You must run_crit() before you can run this function")
             return
@@ -406,86 +446,6 @@ def construct_fr_df(paths):
     np.save('/media/HlabShare/clayton_sahara_work/fr_csv_FINAL.npy', final)
 
 
-def load_helper(p):
-    err = False
-    try:
-        crit = np.load(p, allow_pickle = True)
-        crit = crit[0]
-    except Exception as er:
-        print("won't load object", flush = True)
-        err = True
-        errors = [p, errors]
-    try:
-        to_append = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
-    except Exception:
-        try:
-            to_append = [crit.animal, probe, crit.date, crit.time_frame, crit.block_num, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
-        except Exception as er:
-            print(f"not going to work --- skipping this path {p}", flush = True)
-            err = True
-            errors = [p, er]
-            return err, errors
-
-    return err, to_append
-
-
-
-
-
-
-
-
-def get_results(animal, probe = '', paths = None, save = False, saveloc = '', re_load = False):
-    if paths is None:
-        paths = glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/{animal}*/*/{probe}*/Crit*')
-
-    results = []
-    print(f'Total # of paths: {len(paths)}')
-    errs = []
-
-    for i, p in enumerate(paths):
-        good = True
-        if i % 5 == 0:
-            print(f'#paths: {i}', flush = True)
-        if i % 100 == 0 and i != 0:
-            gc.collect()
-
-        if 'LOADED' not in p or re_load:
-
-            err, to_append = lil_helper_boi(p)
-            if err:
-                print(to_append)
-                errs.append(to_append)
-            else:
-                results.append(to_append)
-
-            if 'LOADED' in p:
-                base = p[:p.find('_LOADED')]
-            else:
-                base = p[:-4]
-
-            n = base + '_LOADED.npy'
-            os.rename(p, n)
-
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
-    df = pd.DataFrame(results, columns = cols)
-    df_clean = df.drop_duplicates(subset = ['animal', 'probe', 'date', 'time_frame', 'block_num'], keep = 'last')
-
-    if not re_load:
-        og_df = pd.read_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
-        df_clean = pd.concat([df_clean, og_df])
-        df_clean = df_clean.drop_duplicates(subset = ['animal', 'probe', 'date', 'time_frame', 'block_num'], keep = 'last')
-        print(f'OG SIZE: {og_df.size()}', flush = True)
-        print(f'NEW SIZE: {df_clean.size()}', flush = True)
-    if save:
-        if animal == '':
-            df_clean.to_pickle(f'{saveloc}/ALL_ANIMALS_all_results.pkl')
-        else:
-            df_clean.to_pickle(f'{saveloc}/{animal}_all_results.pkl')
-
-    return df_clean, errs
-
-
 def run_crit_from_start(obj, flag = 2, save = True):
     if obj.final:
         print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
@@ -536,18 +496,6 @@ def save_obj(crit):
     np.save(f'{crit.saveloc}Crit_{crit.pltname}', to_save)
 
 
-def finalize_all_paths(paths):
-    for c in objs:
-        crit = np.load(c, allow_pickle = True)[0]
-        try:
-            if not crit.final:
-                crit.finalize()
-                print(f'{crit.time_frame} - finalized')
-                save_obj(crit)
-        except AttributeError:
-            print(f'{crit.time_frame} - old version no cells')
-
-
 def signal_handler(signum, frame):
     print("timeout")
     raise Exception('timeout')
@@ -584,45 +532,6 @@ params = {
     'cell_type': ['FS', 'RSU'],
     'plot': True
 }
-
-
-def lilo_and_stitch_the_sequel(paths, params, save = True, delete = True):
-    all_objs = []
-    errors = []
-    for p in paths:
-        c = np.load(p, allow_pickle = True)
-        from_start = False
-        if c.cell_types != params['cell_type'] or c.qualities != params['quality'] or c.ava_binsize != params['ava_binsz'] or c.hour_bins != params['hour_bins']:
-            from_start = True
-            c.ava_binsize = params['ava_binsz']
-            c.hour_bins = params['hour_bins']
-            c.qualities = params['quality']
-            c.cell_types = params['cell_type']
-        c.perc = params['perc']
-        c.nfactor_bm = params['nfactor_bm']
-        c.nfactor_tm = params['nfactor_tm']
-        c.nfactor_bm_tail = params['nfactor_bm_tail']
-        c.nfactor_tm_tail = params['nfactor_tm_tail']
-
-        signal.signal(signal.SIGALRM, signal_handler)
-        signal.alarm(600)
-        try:
-            if from_start:
-                c_new = run_crit_from_start(obj, flag = params['flag'], save = save)
-                all_objs.append(c_new)
-
-            else:
-                c.run_crit()
-                if save:
-                    save_obj(c)
-                all_objs.append(c)
-            if delete:
-                os.remove(p)
-        except Exception:
-            print('TIMEOUT or ERROR')
-            errors.append(f'{c.animal} -- {c.date} -- {c.time_frame} -- {c.block_num} --- ERRORED')
-
-    return all_objs, errors
 
 
 def lilo_and_stitch(paths, params, rerun = False, save = True):

@@ -5,6 +5,8 @@ import os
 import numpy as np
 from datetime import datetime as dt
 from datetime import timedelta
+from sahara_work import Crit
+from sahara_work import Crit_hlab
 
 
 def get_all_results(csvloc, loaded_file, re_load):
@@ -176,5 +178,23 @@ def get_genotype(animal):
 def load_crit(path):
     return np.load(path, allow_pickle = True)[0]
 
-def update_object(old):
-    new = None
+def update_object(old, save_new = False):
+    new_obj = Crit_hlab(
+
+        spikewords = old.spikewords, perc = old.perc, nfactor_bm = old.nfactor_bm,
+        nfactor_tm = old.nfactor_tm, nfactor_bm_tail = old.nfactor_bm_tail, nfactor_tm_tail = old.nfactor_tm_tail,
+        saveloc = old.saveloc, pltname = old.pltname, plot = old.plot, burst = old.burst, T = old.T, tm = old.tm,
+        p_value_burst = old.p_value_burst, p_value_t = old.p_value_t, dcc = old.dcc, scaling_plot = old.scaling_plot,
+        burst_cdf_plot = old.burst_cdf_plot, t_cdf_plot = old.t_cdf_plot, pre = old.pre, fit = old.fit,
+        xmin = old.xmin, xmax = old.xmax, tmin = old.tmin, tmax = old.tmax, alpha = old.alpha, time_frame = old.time_frame,
+        block_num = old.block_num, qualities = old.qualities, cell_types = old.cell_types, hour_bins = old.hour_bins,
+        ava_binsize = old.ava_binsize, animal = old.animal, date = old.date, final = old.final, cells = old.cells,
+        probe = old.probe
+
+        )
+
+    if save_new:
+        np.save(os.path.join(old.saveloc, f'Crit_hlab_{old.pltname}'), [new_obj])
+
+    return new_obj
+
