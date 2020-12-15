@@ -7,7 +7,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 from sahara_work import Crit
 from sahara_work import *
-
+from sahara_work.crit_hlab import Crit_hlab
 
 def get_all_results(csvloc, loaded_file, re_load):
     """

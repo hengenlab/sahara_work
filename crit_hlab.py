@@ -68,7 +68,7 @@ class Crit_hlab(Crit):
 
 
     def __repr__(self):
-        print(f'CRIT_HLAB: {self.animal} -- {self.date} -- {self.time_frame}')
+        return str(f'CRIT_HLAB: {self.animal} -- {self.date} -- {self.time_frame}')
 
     def get_params(self):
         print(f'PARAMETERS:\n'
