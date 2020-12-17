@@ -6,8 +6,8 @@ import numpy as np
 from datetime import datetime as dt
 from datetime import timedelta
 from sahara_work import Crit
-from sahara_work import *
 from sahara_work.crit_hlab import Crit_hlab
+import sahara_work as s
 
 def get_all_results(csvloc, loaded_file, re_load):
     """
@@ -196,6 +196,196 @@ def update_object(old, save_new = False):
         np.save(old.filename, [new_obj])
 
     return new_obj
+
+def __get_totaltime(time_frame):
+    start_time = int(time_frame[0:time_frame.find('_')])
+    stop_time = int(time_frame[time_frame.find('_') + 1:])
+    total_time = stop_time - start_time
+    return total_time
+
+
+def __get_paramstr(animal, probe, date, time_frame, hour_bins, perc, ava_binsize, quals, cells, idx):
+    qual_str = '_'.join(map(str, quals))
+    cell_str = '_'.join(cells)
+    s = f'{animal}_{probe}_{date}_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc * 100))}_binsz{str(int(ava_binsize * 1000))}ms_q{qual_str}_cells{cell_str}_{idx}'
+    return s
+
+
+def generate_timeframes(start, end, blocksize):
+    ts = np.arange(start, end + 1, blocksize)
+    time_frames = [str(a) + "_" + str(b) for a, b in zip(ts[:-1], ts[1:])]
+    return time_frames
+
+
+def save_obj(crit):
+    to_save = np.array([crit])
+    np.save(f'{crit.saveloc}Crit_{crit.pltname}', to_save)
+
+
+def signal_handler(signum, frame):
+    print("timeout")
+    raise Exception('timeout')
+
+
+def get_info_from_path(path):
+    animal_pattern = '((caf|eab)\d{2})'
+    matches = re.findall(animal_pattern, path)
+    animal = matches[0][0]
+
+    date_pattern = '\d{4}'
+    matches = re.findall(date_pattern, path)
+    date = matches[0]
+
+    time_frame_pattern = '/\d{1,}_\d{1,}'
+    matches = re.findall(time_frame_pattern, path)
+    time_frame = matches[0][1:]
+
+    probe = path[path.find('probe'):path.find('probe') + 6]
+
+    return animal, date, time_frame, probe
+
+def get_cell_stats(cell):
+    fr, xbins = cell.plotFR(binsz = 3600, start = False, end = False,
+                            lplot = 0)
+
+    isis = []
+    bins = np.arange(cell.start_time, cell.end_time, 300)  # 5 min bins
+
+    for i in range(len(bins)):
+        if i == len(bins) - 1:
+            end_bin = cell.end_time
+        else:
+            end_bin = bins[i + 1]
+        spk_idxs = np.where(np.logical_and(cell.spike_time_sec > bins[i], cell.spike_time_sec < end_bin))
+        isis.append(np.diff(cell.spike_time[spk_idxs]))
+
+    means = np.array([np.mean(i) for i in isis])
+    stds = np.array([np.std(i) for i in isis])
+    cvs = stds / means
+    binned_cvs = [cvs[i * 12:(i + 1) * 12] for i in np.arange(int(xbins[-1]))]
+    cv = [np.mean(i) for i in binned_cvs]
+    if len(fr) != len(cv):
+        print('this isnt working, fix it')
+    return fr, cv
+
+
+def construct_fr_df(paths):
+    bdays = {
+        'caf01': dt(2019, 12, 24, 7, 30),
+        'caf19': dt(2020, 1, 19, 7, 30),
+        'caf22': dt(2020, 2, 17, 7, 30),
+        'caf26': dt(2020, 2, 20, 7, 30),
+        'caf34': dt(2020, 3, 18, 7, 30),
+        'caf37': dt(2019, 8, 18, 7, 30),
+        'caf40': dt(2020, 2, 20, 7, 30),
+        'caf42': dt(2020, 2, 20, 7, 30),
+        'caf48': dt(2020, 7, 20, 7, 30),
+        'caf49': dt(2020, 7, 20, 7, 30),
+        'caf50': dt(2020, 7, 20, 7, 30),
+        'caf52': dt(2020, 4, 19, 7, 30),
+        'caf54': dt(2020, 7, 11, 7, 30),
+        'caf55': dt(2020, 7, 11, 7, 30),
+        'caf58': dt(2020, 9, 23, 7, 30),
+        'caf60': dt(2020, 9, 23, 7, 30),
+        'caf61': dt(2019, 12, 11, 7, 30),
+        'caf62': dt(2019, 11, 18, 7, 30),
+        'eab52': dt(2019, 4, 19, 7, 30),
+        'eab47': dt(2019, 2, 17, 7, 30),
+        'eab': dt(2019, 2, 17, 7, 30),
+        'eab50': dt(2019, 2, 15, 7, 30),
+        'eab40': dt(2018, 12, 5, 7, 30)
+    }
+    seconds_in_day = 60 * 60 * 24
+    with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'w', newline = '') as c:
+        w = csv.DictWriter(c, fieldnames = ['animal', 'rstart_time', 'age_start', 'days_old', 'hours_old', 'cell_idx', 'quality', 'fr', 'cv', 'wf'])
+        w.writeheader()
+
+    done = []
+    final = []
+    for i, p in enumerate(paths):
+        print(i)
+        path_info = p[:p.find('_perc')]
+        if path_info in done:
+            print('already done')
+        else:
+            done.append(path_info)
+            crit = None
+            try:
+                crit = np.load(p, allow_pickle = True)[0]
+                birth = bdays[crit.animal]
+                for cell in crit.cells:
+                    start_time = crit.cells[0].rstart_time
+                    start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
+                    age = start_time - birth
+
+                    fr, cv = get_cell_stats(cell)
+
+                    for i in range(len(fr)):
+                        age_now = age + timedelta(hours = i)
+                        days_old = age_now.total_seconds() / seconds_in_day
+                        hours_old = age_now.total_seconds() / 3600
+
+                        with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'a', newline = '') as c:
+                            w = csv.DictWriter(c, fieldnames = ['animal', 'rstart_time', 'age_start', 'days_old', 'hours_old', 'cell_idx', 'quality', 'fr', 'cv', 'wf'])
+
+                            d = {
+                                'animal': crit.animal,
+                                'rstart_time': start_time,
+                                'age_start': age_now,
+                                'days_old': days_old,
+                                'hours_old': hours_old,
+                                'cell_idx': cell.clust_idx,
+                                'quality': cell.quality,
+                                'fr': fr[i],
+                                'cv': cv[i],
+                                'wf': cell.waveform
+                            }
+                            w.writerow(d)
+            except Exception:
+                print('This object is final or weird. Go back and find these cells individually to add to the csv')
+                final.append(p)
+    np.save('/media/HlabShare/clayton_sahara_work/fr_csv_done.npy', done)
+    np.save('/media/HlabShare/clayton_sahara_work/fr_csv_FINAL.npy', final)
+
+
+    if obj.final:
+        print('This crit object is final, there are no cells saved here. If youd like to rerun this block start from lilo_and_stitch')
+        return
+    total_time = __get_totaltime(obj.time_frame)
+    num_bins = int(total_time / obj.hour_bins)
+    bin_len = int((obj.hour_bins * 3600) / obj.ava_binsize)
+    good_cells = [cell for cell in obj.cells if cell.quality in obj.qualities and cell.cell_type in obj.cell_types]
+    spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = obj.ava_binsize, binarize = 1)
+    idx = obj.block_num
+    if idx == num_bins - 1:
+        data = spikewords[:, (idx * bin_len):]
+    else:
+        data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
+    obj.spikewords = data
+    param_str = __get_paramstr(obj.animal, obj.probe, obj.date, obj.time_frame, obj.hour_bins, obj.perc, obj.ava_binsize, obj.qualities, obj.cell_types, idx)
+    obj.pltname = param_str
+    obj.run_crit(flag = flag)
+    print(f'BLOCK RESULTS: P_vals - {obj.p_value_burst}   {obj.p_value_t} \n DCC: {obj.dcc}')
+    if save:
+        to_save = np.array([obj])
+        np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
+    return obj
+
+
+params = {
+    'rerun': True,
+    'flag': 2,  # 1 is DCC 2 is p_val and DCC
+    'ava_binsz': 0.04,  # in seconds
+    'hour_bins': 4,  # durration of block to look at
+    'perc': 0.35,
+    'nfactor_bm': 0,
+    'nfactor_tm': 0,
+    'nfactor_bm_tail': .8,  # upper bound to start exclude for burst
+    'nfactor_tm_tail': .8,  # upper bound to start exclude for time 
+    'cell_type': ['FS', 'RSU'],
+    'plot': True
+}
+
 
 def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
     all_objs = []
