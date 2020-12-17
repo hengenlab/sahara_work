@@ -15,6 +15,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 import csv
 from copy import deepcopy as cdc
+from sahara_work import Crit_hlab
 
 
 class Crit:
@@ -573,7 +574,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                     # if len(good_cells) > 100:
                     #     cell_idxs = np.random.choice(len(good_cells), 50, replace=False)
                     #     good_cells = good_cells[cell_idxs]
-                if overlap and idx > 0:
+                if overlap:
                     start = 3600
                 else:
                     start = False
