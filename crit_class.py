@@ -613,8 +613,9 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                     crit.pathname = path
                     crit.filename = f'{saveloc}Crit_{param_str}_{scorer}'
 
-                except Exception:
+                except Exception as err:
                     print('TIMEOUT or ERROR', flush = True)
+                    print(err)
                     errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
                     noerr = False
                     signal.alarm(0)
