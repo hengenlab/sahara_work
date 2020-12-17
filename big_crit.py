@@ -11,7 +11,7 @@ import os
 
 
 def run(animal = '', probe = '', rerun = False):
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*rm_new_mbt_caf.npy'
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_*.npy'
     print(s)
     og = [f for f in glob.glob(s)]
     print(f'total # of paths: {len(og)}', flush = True)
@@ -51,7 +51,7 @@ def run(animal = '', probe = '', rerun = False):
         for o in all_objs:
             results.append([o.animal, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
             err, appended = sw.write_to_results_csv(o, csvloc)
-            new_path = os.path.join(o.saveloc, 'Crit_', o.pltname, '.npy')
+            new_path = crit.filename
             loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
             loaded = np.append(loaded, new_path)
             np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)

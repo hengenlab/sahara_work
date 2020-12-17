@@ -72,7 +72,7 @@ def write_to_csv(data, cols, loc):
 
 
 def write_to_results_csv(crit, loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
     err, data = s.lil_helper_boi(crit)
     if err:
         print('this path failed, plz just fucking delete it and re-do this path ffs')
@@ -107,7 +107,7 @@ def lil_helper_boi(crit):
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
         geno = s.get_genotype(crit.animal)
-        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
+        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
     except Exception as e:
         print(f'error: {e}')
         err = True
@@ -189,11 +189,10 @@ def update_object(old, save_new = False):
         xmin = old.xmin, xmax = old.xmax, tmin = old.tmin, tmax = old.tmax, alpha = old.alpha, time_frame = old.time_frame,
         block_num = old.block_num, qualities = old.qualities, cell_types = old.cell_types, hour_bins = old.hour_bins,
         ava_binsize = old.ava_binsize, animal = old.animal, date = old.date, final = old.final, cells = old.cells,
-        probe = old.probe
-
+        probe = old.probe, filename = old.filename, pathname = old.pathname, scored_by = old.scored_by
         )
 
     if save_new:
-        np.save(os.path.join(old.saveloc, f'Crit_hlab_{old.pltname}'), [new_obj])
+        np.save(old.filename, [new_obj])
 
     return new_obj

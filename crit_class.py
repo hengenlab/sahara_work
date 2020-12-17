@@ -534,7 +534,7 @@ params = {
 }
 
 
-def lilo_and_stitch(paths, params, rerun = False, save = True):
+def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -548,6 +548,8 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
             saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
             if not os.path.exists(saveloc):
                 os.makedirs(saveloc)
+
+            scorer = path[path.find('scored')+7:path.find('.npy')]
 
             num_bins = int(total_time / params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
@@ -571,8 +573,11 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
                     # if len(good_cells) > 100:
                     #     cell_idxs = np.random.choice(len(good_cells), 50, replace=False)
                     #     good_cells = good_cells[cell_idxs]
-
-                spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
+                if overlap and idx > 0:
+                    start = 3600
+                else:
+                    start = False
+                spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1, start = start)
             except Exception:
                 print("Neuron File Won't Load")
                 pass
@@ -588,7 +593,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
                         data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
                     param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
-                    crit = Crit(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
+                    crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                                 nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                                 pltname = param_str, plot = params['plot'])
 
@@ -604,10 +609,13 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
                     crit.final = False
                     crit.cells = [cell for cell in cells if cell.quality < 4]
                     crit.probe = probe
+                    crit.scored_by = scorer
+                    crit.pathname = path
+                    crit.filename = f'{saveloc}Crit_{param_str}_{scorer}'
 
                 except Exception:
                     print('TIMEOUT or ERROR', flush = True)
-                    errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                    errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
                     noerr = False
                     signal.alarm(0)
 
@@ -629,7 +637,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
 
                         except Exception:
                             print('TIMEOUT or ERROR', flush = True)
-                            errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- ERRORED')
+                            errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
                             signal.alarm(0)
                             noerr = False
                             break
@@ -638,7 +646,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
                 if noerr and save:
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
                     to_save = np.array([crit])
-                    np.save(f'{saveloc}Crit_{param_str}', to_save)
+                    np.save(crit.filename, to_save)
                     all_objs.append(crit)
 
             with open(f'{basepath}/done.txt', 'w+') as f:
@@ -647,3 +655,5 @@ def lilo_and_stitch(paths, params, rerun = False, save = True):
             print(f'\n\n{path} -- ALREADY DONE')
 
     return all_objs, errors
+
+

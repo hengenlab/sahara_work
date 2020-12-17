@@ -64,6 +64,9 @@ class Crit_hlab(Crit):
         self.final = kwargs.get('final')
         self.cells = kwargs.get('cells')
         self.probe = kwargs.get('probe')
+        self.scored_by = kwargs.get('scored_by')
+        self.pathname = kwargs.get('pathname')
+        self.filename = kwargs.get('filename')
 
 
 
