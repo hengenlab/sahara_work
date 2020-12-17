@@ -15,8 +15,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 import csv
 from copy import deepcopy as cdc
-from sahara_work import Crit_hlab
-
+from sahara_work import *
 
 class Crit:
     """
