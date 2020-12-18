@@ -391,8 +391,8 @@ params = {
     'perc': 0.35,
     'nfactor_bm': 0,
     'nfactor_tm': 0,
-    'nfactor_bm_tail': .8,  # upper bound to start exclude for burst
-    'nfactor_tm_tail': .8,  # upper bound to start exclude for time 
+    'nfactor_bm_tail': 1,  # upper bound to start exclude for burst
+    'nfactor_tm_tail': 1,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
     'plot': True
 }
@@ -496,8 +496,10 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                             break
                         if crit.p_value_burst < 0.05:
                             crit.nfactor_bm_tail -= 0.05
+                            crit.bm += 10
                         if crit.p_value_t < 0.05:
                             crit.nfactor_tm_tail -= 0.05
+                            crit.tm += 10
                         try:
                             crit.run_crit(flag = params['flag'])
 

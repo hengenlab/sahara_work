@@ -164,9 +164,10 @@ class Crit:
         T = R['T']
         self.burst = burst
         self.T = T
-
-        self.bm = int(np.max(burst) / 20)
-        self.tm = int(np.max(T) / 20)
+        
+        if self.bm is None:
+            self.bm = int(np.max(burst) / 20)
+            self.tm = int(np.max(T) / 20)
 
         crit_params = {
             'flag': flag,
