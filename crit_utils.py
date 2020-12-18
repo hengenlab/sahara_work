@@ -488,7 +488,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                 if rerun and noerr:
                     while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
                         signal.signal(signal.SIGALRM, signal_handler)
-                        signal.alarm(600)
+                        signal.alarm(900)
                         print('\nRERUNNING BLOCK', flush = True)
                         if crit.nfactor_tm_tail < 0.75 or crit.nfactor_bm_tail < 0.75:
                             print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
