@@ -496,10 +496,10 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                             break
                         if crit.p_value_burst < 0.05:
                             crit.nfactor_bm_tail -= 0.05
-                            crit.bm += 10
+                            crit.bm += 5
                         if crit.p_value_t < 0.05:
                             crit.nfactor_tm_tail -= 0.05
-                            crit.tm += 10
+                            crit.tm += 5
                         try:
                             crit.run_crit(flag = params['flag'])
 
