@@ -102,9 +102,10 @@ if __name__ == "__main__":
         animal = sys.argv[1]
         probe = sys.argv[2]
         rerun = True if sys.argv[3] == 'True' else False
+        redo = True if sys.argv[4] == 'True' else False
         print(f'specifying animal -- {animal}')
         print(f'specifying probe -- {probe}')
         print(f'rerun -- {rerun}')
-        run(animal, probe, rerun)
+        run(animal, probe, rerun, redo)
     else:
         run()
