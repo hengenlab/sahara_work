@@ -10,21 +10,32 @@ import sys
 import os
 
 
-def run(animal = '', probe = '', rerun = False):
+def run(animal = '', probe = '', rerun = True, redo = False):
     s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_*.npy'
     print(s)
     og = [f for f in glob.glob(s)]
     print(f'total # of paths: {len(og)}', flush = True)
 
-    paths = []
-    for p in og:
-        base = p[:p.rfind('/') + 1]
-        if not os.path.exists(base + 'done.txt'):
-            paths.append(p)
+    csvloc = '/media/HlabShare/clayton_sahara_work/criticality/all_results.csv'
+
+    if redo:
+        paths = og
+        sw.write_csv_header(csvloc)
+        loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
+        loaded = []
+        np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+
+    else:
+        paths = []
+        for p in og:
+            base = p[:p.rfind('/') + 1]
+            if not os.path.exists(base + 'done.txt'):
+                paths.append(p)
+
 
     print(f'Number of paths left to analyze: {len(paths)}', flush = True)
     params = {
-        'rerun': False,
+        'redo_paths': redo,
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
         'ava_binsz': 0.04,  # in seconds
         'hour_bins': 4,  # durration of block to look at
@@ -37,7 +48,6 @@ def run(animal = '', probe = '', rerun = False):
         'plot': True
     }
     bins = np.arange(0, len(paths), 10)
-    csvloc = '/media/HlabShare/clayton_sahara_work/criticality/all_results.csv'
     for i, b in enumerate(bins):
         print(f"\n\n{b} ---- PATHS COMPLETE \n\n", flush = True)
         if b == bins[-1]:
@@ -51,12 +61,14 @@ def run(animal = '', probe = '', rerun = False):
         for o in all_objs:
             results.append([o.animal, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
             err, appended = sw.write_to_results_csv(o, csvloc)
-            new_path = crit.filename
-            loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
-            loaded = np.append(loaded, new_path)
-            np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+
             if err:
                 print('something weird happened, this should not have errored')
+            else:
+                new_path = o.filename
+                loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
+                loaded = np.append(loaded, new_path)
+                np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
 
         df = pd.DataFrame(results, columns = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_value_burst', 'p_value_t', 'dcc', 'passed'])
 

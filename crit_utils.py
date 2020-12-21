@@ -31,10 +31,7 @@ def get_all_results(csvloc, loaded_file, re_load):
     print(f'Total # of paths: {len(paths)}')
     error_save = '/media/HlabShare/clayton_sahara_work/criticality/results_errors_TODEL.npy'
     if re_load:
-        cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
-        with open(csvloc, 'w', newline = '') as c:
-            w = csv.DictWriter(c, fieldnames = cols)
-            w.writeheader()
+        write_csv_header(csvloc)
         loaded = np.array([])
         errs = np.array([])
     else:
@@ -91,6 +88,11 @@ def write_to_results_csv(crit, loc):
     write_to_csv(data, cols, loc)
     return err, data
 
+def write_csv_header(loc):
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    with open(loc, 'w', newline = '') as c:
+        w = csv.DictWriter(c, fieldnames = cols)
+        w.writeheader()
 
 def write_to_results_csv_from_path(p, loc):
     err = False
@@ -384,7 +386,7 @@ def construct_fr_df(paths):
 
 
 params = {
-    'rerun': True,
+    'redo_paths': True,
     'flag': 2,  # 1 is DCC 2 is p_val and DCC
     'ava_binsz': 0.04,  # in seconds
     'hour_bins': 4,  # durration of block to look at
@@ -403,7 +405,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
     errors = []
     for idx, path in enumerate(paths):
         basepath = path[:path.rfind('/')]
-        if not os.path.exists(f'{basepath}/done.txt') or params['rerun']:
+        if not os.path.exists(f'{basepath}/done.txt') or params['redo_paths']:
 
             print(f'\n\nWorking on ---- {path}', flush = True)
             animal, date, time_frame, probe = get_info_from_path(path)
@@ -437,7 +439,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                     # if len(good_cells) > 100:
                     #     cell_idxs = np.random.choice(len(good_cells), 50, replace=False)
                     #     good_cells = good_cells[cell_idxs]
-                if overlap:
+                if overlap :
                     start = 3600
                 else:
                     start = False
