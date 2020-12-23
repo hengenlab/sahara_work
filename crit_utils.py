@@ -88,11 +88,13 @@ def write_to_results_csv(crit, loc):
     write_to_csv(data, cols, loc)
     return err, data
 
+
 def write_csv_header(loc):
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
     with open(loc, 'w', newline = '') as c:
         w = csv.DictWriter(c, fieldnames = cols)
         w.writeheader()
+
 
 def write_to_results_csv_from_path(p, loc):
     err = False

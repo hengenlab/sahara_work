@@ -24,7 +24,6 @@ def run(animal = '', probe = '', rerun = True, redo = False):
         loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
         loaded = []
         np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
-
     else:
         paths = []
         for p in og:
