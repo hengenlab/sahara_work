@@ -31,6 +31,7 @@ def run(animal = '', probe = '', rerun = True, redo = False):
             if not os.path.exists(base + 'done.txt'):
                 paths.append(p)
     paths = sorted(paths)
+    now = dt.now()
     with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
         f.write('------ JOB START -------- ')
         f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
