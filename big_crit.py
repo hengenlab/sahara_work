@@ -30,6 +30,11 @@ def run(animal = '', probe = '', rerun = True, redo = False):
             base = p[:p.rfind('/') + 1]
             if not os.path.exists(base + 'done.txt'):
                 paths.append(p)
+    paths = sorted(paths)
+    with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
+        f.write('------ JOB START -------- ')
+        f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
+        f.write(f'{len(paths)} PATHS TO DO - of this job - lol fuck u right?')
 
 
     print(f'Number of paths left to analyze: {len(paths)}', flush = True)
@@ -58,7 +63,7 @@ def run(animal = '', probe = '', rerun = True, redo = False):
 
         results = []
         for o in all_objs:
-            results.append([o.animal, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
+            results.append([o.animal, o.scored_by, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
             err, appended = sw.write_to_results_csv(o, csvloc)
 
             if err:
@@ -69,9 +74,9 @@ def run(animal = '', probe = '', rerun = True, redo = False):
                 loaded = np.append(loaded, new_path)
                 np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
 
-        df = pd.DataFrame(results, columns = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'p_value_burst', 'p_value_t', 'dcc', 'passed'])
+        df = pd.DataFrame(results, columns = ['animal', 'scored', 'probe', 'date', 'time_frame', 'block_num', 'p_value_burst', 'p_value_t', 'dcc', 'passed'])
 
-        group = df.groupby(['animal', 'probe', 'date'])
+        group = df.groupby(['animal', 'probe', 'date', 'scored'])
 
         strs = []
         for i, row in group:
@@ -81,13 +86,15 @@ def run(animal = '', probe = '', rerun = True, redo = False):
             animal = row['animal'].to_numpy()[0]
             date = row['date'].to_numpy()[0]
             probe = row['probe'].to_numpy()[0]
-            s = f'{str(animal)} -- {probe} -- {date} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
+            scored = row['scored'].to_numpy()[0]
+            s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
 
         now = dt.now()
         if len(all_objs) > 0:
             with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
                 f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
+                f.write(f'{b} PATHS DONE - of this job')
                 for s in strs:
                     f.write(f'{s}\n')
                 f.write('\tERRORS:\n')

@@ -421,6 +421,8 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
 
             num_bins = int(total_time / params['hour_bins'])
             bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
+
+
             quals = [1, 2, 3]
             fr_cutoff = 10
             try:
@@ -498,12 +500,12 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                             print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
                             signal.alarm(0)
                             break
-                        if crit.p_value_burst < 0.05:
-                            crit.nfactor_bm_tail -= 0.05
-                            crit.bm += 5
-                        if crit.p_value_t < 0.05:
-                            crit.nfactor_tm_tail -= 0.05
-                            crit.tm += 5
+                        # if crit.p_value_burst < 0.05:
+                        #     crit.nfactor_bm_tail -= 0.05
+                        #     crit.bm += 5
+                        # if crit.p_value_t < 0.05:
+                        #     crit.nfactor_tm_tail -= 0.05
+                        #     crit.tm += 5
                         try:
                             crit.run_crit(flag = params['flag'])
 
