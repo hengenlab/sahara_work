@@ -500,12 +500,12 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                             print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
                             signal.alarm(0)
                             break
-                        # if crit.p_value_burst < 0.05:
-                        #     crit.nfactor_bm_tail -= 0.05
-                        #     crit.bm += 5
-                        # if crit.p_value_t < 0.05:
-                        #     crit.nfactor_tm_tail -= 0.05
-                        #     crit.tm += 5
+                        if crit.p_value_burst < 0.05:
+                            crit.nfactor_bm_tail -= 0.05
+                            #crit.bm += 5
+                        if crit.p_value_t < 0.05:
+                            crit.nfactor_tm_tail -= 0.05
+                            #crit.tm += 5
                         try:
                             crit.run_crit(flag = params['flag'])
 
