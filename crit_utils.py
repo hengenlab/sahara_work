@@ -466,7 +466,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                     param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                     crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                                 nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
-                                pltname = param_str, plot = params['plot'])
+                                pltname = f'{param_str}_{scorer}', plot = params['plot'])
 
                     crit.run_crit(flag = params['flag'])
                     crit.time_frame = time_frame
