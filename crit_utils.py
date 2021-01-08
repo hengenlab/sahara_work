@@ -247,9 +247,10 @@ def get_info_from_path(path):
     matches = re.findall(animal_pattern, path)
     animal = matches[0][0]
 
-    date_pattern = '\d{4}'
+    date_pattern = '\d{8}'
     matches = re.findall(date_pattern, path)
     date = matches[0]
+    date = date[0:4]+date[-2:]
 
     time_frame_pattern = '/\d{1,}_\d{1,}'
     matches = re.findall(time_frame_pattern, path)
