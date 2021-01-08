@@ -396,8 +396,8 @@ params = {
     'perc': 0.35,
     'nfactor_bm': 0,
     'nfactor_tm': 0,
-    'nfactor_bm_tail': 1,  # upper bound to start exclude for burst
-    'nfactor_tm_tail': 1,  # upper bound to start exclude for time 
+    'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
+    'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
     'plot': True
 }
@@ -425,11 +425,12 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
 
 
             quals = [1, 2, 3]
-            fr_cutoff = 10
+            fr_cutoff = 50
             try:
                 cells = np.load(path, allow_pickle = True)
                 good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-
+                num_cells = len(good_cells)
+        
                 if len(good_cells) < 10:
                     quals = [1, 2, 3]
                     good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
@@ -518,10 +519,11 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                             break
                         signal.alarm(0)
 
-                if noerr and save:
+                if noerr:
                     print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
-                    to_save = np.array([crit])
-                    np.save(crit.filename, to_save)
+                    if save:
+                        to_save = np.array([crit])
+                        np.save(crit.filename, to_save)
                     all_objs.append(crit)
 
             with open(f'{basepath}/done.txt', 'w+') as f:
