@@ -21,14 +21,13 @@ def run(animal = '', probe = '', rerun = True, redo = False):
     if redo:
         paths = og
         sw.write_csv_header(csvloc)
-        loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
         loaded = []
         np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
     else:
+        loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
         paths = []
         for p in og:
-            base = p[:p.rfind('/') + 1]
-            if not os.path.exists(base + 'done.txt'):
+            if p not in loaded:
                 paths.append(p)
     paths = sorted(paths)
     now = dt.now()
@@ -37,10 +36,10 @@ def run(animal = '', probe = '', rerun = True, redo = False):
         f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
         f.write(f'{len(paths)} PATHS TO DO - of this job - lol fuck u right?')
 
-
     print(f'Number of paths left to analyze: {len(paths)}', flush = True)
+
     params = {
-        'redo_paths': redo,
+        'redo_paths': True, # eventually this should just be deleted entirely but for now, here we are
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
         'ava_binsz': 0.04,  # in seconds
         'hour_bins': 4,  # durration of block to look at
@@ -52,6 +51,7 @@ def run(animal = '', probe = '', rerun = True, redo = False):
         'cell_type': ['FS', 'RSU'],
         'plot': True
     }
+
     bins = np.arange(0, len(paths), 10)
     for i, b in enumerate(bins):
         print(f"\n\n{b} ---- PATHS COMPLETE \n\n", flush = True)
@@ -113,6 +113,7 @@ if __name__ == "__main__":
         print(f'specifying animal -- {animal}')
         print(f'specifying probe -- {probe}')
         print(f'rerun -- {rerun}')
+        print(f'redo paths -- {redo}')
         run(animal, probe, rerun, redo)
     else:
         run()
