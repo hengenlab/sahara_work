@@ -109,9 +109,10 @@ def run(paths, csvloc, b, redo = False, rerun = True):
 
     LOCK2.acquire()
     if len(all_objs) > 0:
-        with open('/media/HlabShare/clayton_sahara_work/criticality/status_test.txt', 'a+') as f:
+        with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
             f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-            f.write(f'{b} PATHS DONE - of this job')
+            f.write(f'{b} PATHS DONE - of this job\n')
+            f.write(f'worker:\t{mp.current_process()}\n')
             for s in strs:
                 f.write(f'{s}\n')
             f.write('\tERRORS:\n')
@@ -120,7 +121,7 @@ def run(paths, csvloc, b, redo = False, rerun = True):
     LOCK2.release()
     return 0
 
-def get_paths(animal, probe, redo):
+def get_paths(animal, probe, redo, csvloc):
 
     s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_*.npy'
     print(s)
@@ -196,7 +197,7 @@ if __name__ == '__main__':
 
     csvloc = '/media/HlabShare/clayton_sahara_work/criticality/all_results.csv'
 
-    paths = get_paths(animal, probe, redo)
+    paths = get_paths(animal, probe, redo, csvloc)
 
     now = dt.now()
     with open(TEMP_PATH, 'a+') as f:
@@ -207,7 +208,7 @@ if __name__ == '__main__':
     l = mp.Lock()
     l2 = mp.Lock()
 
-    bins = np.arange(0, len(paths), 4)
+    bins = np.arange(0, len(paths), 5)
     tic = time.time()
     results = []
     with mp.Pool(processes = 4, initializer=init, initargs=(l,l2)) as p:
