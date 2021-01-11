@@ -207,7 +207,7 @@ if __name__ == '__main__':
     l = mp.Lock()
     l2 = mp.Lock()
 
-    bins = np.arange(0, len(paths), 5)
+    bins = np.arange(0, len(paths), 4)
     tic = time.time()
     results = []
     with mp.Pool(processes = 4, initializer=init, initargs=(l,l2)) as p:
