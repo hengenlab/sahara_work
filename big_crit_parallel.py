@@ -120,7 +120,7 @@ def run(paths, csvloc, b, redo = False, rerun = True):
                 f.write(f'\t{e[0]}\n')
                 errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
                 errored.append(e[1])
-                np.save(('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errored)
+                np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errored)
 
     LOCK2.release()
     return 0
