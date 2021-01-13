@@ -117,7 +117,11 @@ def run(paths, csvloc, b, redo = False, rerun = True):
                 f.write(f'{s}\n')
             f.write('\tERRORS:\n')
             for e in errors:
-                f.write(f'\t{e}\n')
+                f.write(f'\t{e[0]}\n')
+                errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
+                errored.append(e[1])
+                np.save(('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errored)
+
     LOCK2.release()
     return 0
 
@@ -132,11 +136,14 @@ def get_paths(animal, probe, redo, csvloc):
         sw.write_csv_header(csvloc)
         loaded = []
         np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+        errors = []
+        np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errors)
     else:
         loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
+        errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
         paths = []
         for p in og:
-            if p not in loaded:
+            if p not in loaded and p not in errored:
                 paths.append(p)
     paths = sorted(paths)
 
