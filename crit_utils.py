@@ -513,7 +513,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
 
                         except Exception:
                             print('TIMEOUT or ERROR', flush = True)
-                            errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
+                            errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED', path])
                             signal.alarm(0)
                             noerr = False
                             break
