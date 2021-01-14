@@ -16,7 +16,7 @@ def write_to_files(o, csvloc):
     if err:
         print('something weird happened, this should not have errored')
     else:
-        new_path = o.filename
+        new_path = o.pathname
         loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
         loaded = np.append(loaded, new_path)
         np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
