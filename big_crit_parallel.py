@@ -116,6 +116,9 @@ def run(paths, csvloc, b, redo = False, rerun = True):
                 f.write(f'{s}\n')
     if len(errors) > 0:
         with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
+            f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
+            f.write(f'{b} PATHS DONE - of this job\n')
+            f.write(f'worker:\t{mp.current_process()}\n')
             f.write('\tERRORS:\n')
             for e in errors:
                 f.write(f'\t{e[0]}\n')
