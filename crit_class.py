@@ -19,9 +19,24 @@ from copy import deepcopy as cdc
 class Crit:
     """
     
-    Class to look at criticality stuff
+    Class to organize and run criticality analyses based on an array of binarized spiketimes
 
-    tbd on init and what not
+    Necessary parameters are passed through the init statement with default values being used
+    if not given initially. 
+
+    eg:
+    crit = Crit(spikewords, perc = .5)
+
+    the Crit object can then have analyses run on it by executing 
+    crit.run_crit()
+
+    following this the Crit object now holds all the values from the analyses 
+
+    eg:
+    crit.dcc
+    >>>> 0.23
+
+    
     
     """
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True):
@@ -164,7 +179,7 @@ class Crit:
         T = R['T']
         self.burst = burst
         self.T = T
-        
+
         if self.bm is None:
             self.bm = int(np.max(burst) / 20)
             self.tm = int(np.max(T) / 20)

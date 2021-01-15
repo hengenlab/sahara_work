@@ -71,7 +71,6 @@ def run_linear(paths, csvloc, redo, rerun):
 
 def run(paths, csvloc, b, redo = False, rerun = True):
     params = {
-        'redo_paths': True,
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
         'ava_binsz': 0.04,  # in seconds
         'hour_bins': 4,  # durration of block to look at
@@ -115,11 +114,13 @@ def run(paths, csvloc, b, redo = False, rerun = True):
             f.write(f'worker:\t{mp.current_process()}\n')
             for s in strs:
                 f.write(f'{s}\n')
+    if len(errors) > 0:
+        with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
             f.write('\tERRORS:\n')
             for e in errors:
                 f.write(f'\t{e[0]}\n')
                 errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
-                errored.append(e[1])
+                errored = np.append(errored, e[1])
                 np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errored)
 
     LOCK2.release()
