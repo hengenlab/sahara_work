@@ -91,21 +91,22 @@ def run(paths, csvloc, b, redo = False, rerun = True):
         LOCK.release()
         results.append(appended)
 
-    df = pd.DataFrame(results, columns = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t'])
-    group = df.groupby(['animal', 'probe', 'date', 'scored'])
-    strs = []
-    for i, row in group:
-        num_passed = row[row["passed"]].count()['passed']
-        total_num = row.count()['passed']
-        avg_dcc = row.mean()['dcc']
-        animal = row['animal'].to_numpy()[0]
-        date = row['date'].to_numpy()[0]
-        probe = row['probe'].to_numpy()[0]
-        scored = row['scored'].to_numpy()[0]
-        s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
-        strs.append(s)
+    if len(all_objs) > 0:
+        df = pd.DataFrame(results, columns = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t'])
+        group = df.groupby(['animal', 'probe', 'date', 'scored'])
+        strs = []
+        for i, row in group:
+            num_passed = row[row["passed"]].count()['passed']
+            total_num = row.count()['passed']
+            avg_dcc = row.mean()['dcc']
+            animal = row['animal'].to_numpy()[0]
+            date = row['date'].to_numpy()[0]
+            probe = row['probe'].to_numpy()[0]
+            scored = row['scored'].to_numpy()[0]
+            s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
+            strs.append(s)
+    
     now = dt.now()
-
     LOCK2.acquire()
     if len(all_objs) > 0:
         with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
