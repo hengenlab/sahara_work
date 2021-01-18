@@ -108,18 +108,14 @@ def run(paths, csvloc, b, redo = False, rerun = True):
     
     now = dt.now()
     LOCK2.acquire()
-    if len(all_objs) > 0:
-        with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
-            f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-            f.write(f'{b} PATHS DONE - of this job\n')
-            f.write(f'worker:\t{mp.current_process()}\n')
+    with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
+        f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
+        f.write(f'{b} PATHS DONE - of this job\n')
+        f.write(f'worker:\t{mp.current_process()}\n')
+        if len(all_objs) > 0: 
             for s in strs:
                 f.write(f'{s}\n')
-    if len(errors) > 0:
-        with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
-            f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-            f.write(f'{b} PATHS DONE - of this job\n')
-            f.write(f'worker:\t{mp.current_process()}\n')
+        if len(errors) > 0:
             f.write('\tERRORS:\n')
             for e in errors:
                 f.write(f'\t{e[0]}\n')
