@@ -154,6 +154,7 @@ def get_birthday(animal):
         'caf69': dt(2020, 1, 5, 7, 30),
         'caf71': dt(2019, 8, 30, 7, 30),
         'caf72': dt(2020, 11, 24, 7, 30),
+        'caf73': dt(2020, 1, 5, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -164,9 +165,43 @@ def get_birthday(animal):
     return bdays[animal]
 
 
+def get_region(animal):
+    regions = {
+        'caf01': ['CA1'],
+        'caf19': ['CA1'],
+        'caf22': ['V1','CA1'],
+        'caf26': ['M1','CA1','S1'],
+        'caf34': ['S1','M1','CA1','NAc'],
+        'caf37': ['CA1'],
+        'caf40': ['CA1'],
+        'caf42': ['M1','ACaD','CA1','RSPv','V1'],
+        'caf48': ['CA1'],
+        'caf49': ['CA1'],
+        'caf50': ['CA1'],
+        'caf52': ['CA1'],
+        'caf54': ['V1'],
+        'caf55': ['V1'],
+        'caf58': ['CA1'],
+        'caf60': ['CA1'],
+        'caf61': ['CA1'],
+        'caf62': ['CA1'],
+        'caf66': ['RSPv','V1','C_Pu','LGN','Sup_col','S1','CA1','M1'],
+        'caf69': ['ACaD','RSPv','V1','CA1'],
+        'caf71': ['V1','RSPv','CA1','ACaD'],
+        'caf72': ['CA1'],
+        'caf73': ['ACaD','CA1','RSPv','V1'],
+        'eab52': ['CA1','V1'],
+        'eab47': ['M1_M2','CA1','V2'],
+        'eab': ['M1_M2','CA1','V2'],
+        'eab50': ['C_Pu','C_Pu','M1_M2','CA1_DG','CA1_DG','S1','Sup_col','V1_V2'],
+        'eab40': ['S1','CA1','M1','M2']
+    }
+    return regions[animal]
+
+
 def get_genotype(animal):
     genos = {
-        'caf01': 'te4',
+        'caf01': 'e4',
         'caf19': 'te4',
         'caf22': 'te4',
         'caf26': 'wt',
@@ -184,6 +219,11 @@ def get_genotype(animal):
         'caf60': 'te4',
         'caf61': 'e4',
         'caf62': 'te4',
+        'caf66': 'wt',
+        'caf69': 'wt',
+        'caf71': 'app_ps1',
+        'caf72': 'te4',
+        'caf73': 'app_ps1',
         'eab52': 'te4',
         'eab47': 'te4',
         'eab': 'te4',
