@@ -165,7 +165,7 @@ def get_birthday(animal):
     return bdays[animal]
 
 
-def get_region(animal):
+def get_regions(animal):
     regions = {
         'caf01': ['CA1'],
         'caf19': ['CA1'],
