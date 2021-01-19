@@ -128,7 +128,7 @@ def run(paths, csvloc, b, redo = False, rerun = True):
 
 def get_paths(animal, probe, redo, csvloc):
 
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_*.npy'
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}*/co/*scored_*.npy'
     print(s)
     og = [f for f in glob.glob(s)]
     print(f'total # of paths: {len(og)}', flush = True)
