@@ -164,6 +164,25 @@ def get_birthday(animal):
 
     return bdays[animal]
 
+def encode_animal(animal):
+    animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
+                'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
+                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'eab52', 
+                'eab47', 'eab', 'eab50', 'eab40']
+    nums = np.arange(len(animals))
+
+    keys = dict(zip(animals, nums))
+
+    return keys[animal]
+
+def decode_animal(num):
+    
+    animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
+                'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
+                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'eab52', 
+                'eab47', 'eab', 'eab50', 'eab40']
+
+    return animals[num]
 
 def get_regions(animal):
     regions = {
