@@ -176,7 +176,7 @@ def encode_animal(animal):
     return keys[animal]
 
 def decode_animal(num):
-    
+
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'eab52', 
@@ -449,6 +449,12 @@ def construct_fr_df(paths):
         to_save = np.array([obj])
         np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
     return obj
+
+def get_age_sec(start_time, birthday):
+    start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
+    age = start_time - birthday
+    seconds = age.total_seconds()
+    return seconds
 
 
 params = {
