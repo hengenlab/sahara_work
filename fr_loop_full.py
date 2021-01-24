@@ -12,13 +12,17 @@ import pandas as pd
 
 geno = ['te4']
 
-ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb*.npy')
-paths = []
-for p in ps:
-    animal, _, _, _ = s.get_info_from_path(p)
-    if s.get_genotype(animal) in geno:
-        paths.append(p)
+# ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb*.npy')
+# paths = []
+# for p in ps:
+#     animal, _, _, _ = s.get_info_from_path(p)
+#     if s.get_genotype(animal) in geno:
+#         paths.append(p)
 
+# Subset of the full dataset for testing (comment out when not needed)
+paths = np.load('/media/HlabShare/AD_paper/fr_subset_paths.npy')
+
+# for preallocation, figure out a reasonable number larger than the total number of cells. 100 in a block would be really high yield, the average will definitely be lower than that. 
 num_paths = len(paths)
 cellnum = num_paths * 100
 
@@ -27,14 +31,19 @@ tic = time.time()
 print('---- allocating array space')
 fr_array = np.zeros(maxt*cellnum)
 fr_array[fr_array==0]=np.nan
+
 cellid_array = np.zeros(maxt*cellnum)
 cellid_array[cellid_array==0]=np.nan
+
 time_array = np.zeros(maxt*cellnum)
 time_array[time_array==0]=np.nan
+
 animal_array = np.zeros(maxt*cellnum)
 animal_array[animal_array==0]=np.nan 
+
 cellcount_array = np.zeros(maxt*cellnum)
 cellcount_array[cellcount_array==0]=np.nan
+
 cellqual_array = np.zeros(maxt*cellnum)
 cellqual_array[cellqual_array==0] = np.nan
 
@@ -49,16 +58,16 @@ for idx, p in enumerate(paths):
     print(f'{idx} of {len(paths)}')
     animal, _, _, _ = s.get_info_from_path(p)
     cells = np.load(p, allow_pickle=True)
-    age_sec = get_age_sec(start_time = cells[0].rstart_time, birthday = s.get_birthday(animal))
+    age_sec = s.get_age_sec(start_time = cells[0].rstart_time, birthday = s.get_birthday(animal))
     for cell in cells:
         if cell.quality < 4:
             
-            fr_edges = np.arange(cell.start_time + age_sec, neuron.end_time + age_sec, 1)
-            vals, bins = np.histogram(neuron.spike_time_sec+age_sec, fr_edges)
+            fr_edges = np.arange(cell.start_time + age_sec, cell.end_time + age_sec, 1)
+            vals, bins = np.histogram(cell.spike_time_sec+age_sec, fr_edges)
             fr_array[tcount:tcount+len(vals) ] = vals
             cellid_array[tcount:tcount+len(vals) ] = np.repeat(cell.clust_idx,len(vals))
             time_array[tcount:tcount+len(vals) ] = bins[0:-1]
-            animal_array[tcount:tcount+len(vals) ]= np.repeat(sw.encode_animal(animal), len(vals) )
+            animal_array[tcount:tcount+len(vals) ]= np.repeat(s.encode_animal(animal), len(vals) )
             cellqual_array[tcount:tcount+len(vals) ]= np.repeat(cell.quality, len(vals) )
             cellcount_array[tcount:tcount+len(vals) ]= np.repeat(cellcount, len(vals) )
 
