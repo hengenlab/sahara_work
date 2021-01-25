@@ -10,7 +10,8 @@ import sahara_work as s
 import pickle
 import pandas as pd
 
-geno = ['te4']
+bigtic = time.time()
+geno = ['wt']
 
 ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb.npy')
 paths = []
@@ -87,9 +88,12 @@ cellcount_array = np.delete(cellcount_array, np.where(cellcount_array == -1))
 toc = time.time()
 print(f'time to delete nans: {(toc-tic)/60} min')
 
-np.save('/media/HlabShare/AD_paper/FR_testing/te4_fr_array.npy', fr_array.astype(np.int16))
-np.save('/media/HlabShare/AD_paper/FR_testing/te4_cellid_array.npy', cellid_array.astype(np.int16))
-np.save('/media/HlabShare/AD_paper/FR_testing/te4_time_array.npy', time_array.astype(np.int32))
-np.save('/media/HlabShare/AD_paper/FR_testing/te4_animal_array.npy', animal_array.astype(np.int8))
-np.save('/media/HlabShare/AD_paper/FR_testing/te4_cellqual_array.npy', cellqual_array.astype(np.int8))
-np.save('/media/HlabShare/AD_paper/FR_testing/te4_cellcount_array.npy', cellcount_array.astype(np.int32))
+np.save('/media/HlabShare/AD_paper/FR_testing/wt_fr_array.npy', fr_array.astype(np.int16))
+np.save('/media/HlabShare/AD_paper/FR_testing/wt_cellid_array.npy', cellid_array.astype(np.int16))
+np.save('/media/HlabShare/AD_paper/FR_testing/wt_time_array.npy', time_array.astype(np.int32))
+np.save('/media/HlabShare/AD_paper/FR_testing/wt_animal_array.npy', animal_array.astype(np.int8))
+np.save('/media/HlabShare/AD_paper/FR_testing/wt_cellqual_array.npy', cellqual_array.astype(np.int8))
+np.save('/media/HlabShare/AD_paper/FR_testing/wt_cellcount_array.npy', cellcount_array.astype(np.int32))
+
+bigtoc = time.time()
+print(f'TOTAL TIME: {(bigtoc-bigtic)/60} min')
