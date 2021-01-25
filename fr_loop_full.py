@@ -12,15 +12,15 @@ import pandas as pd
 
 geno = ['te4']
 
-# ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb*.npy')
-# paths = []
-# for p in ps:
-#     animal, _, _, _ = s.get_info_from_path(p)
-#     if s.get_genotype(animal) in geno:
-#         paths.append(p)
+ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb*.npy')
+paths = []
+for p in ps:
+    animal, _, _, _ = s.get_info_from_path(p)
+    if s.get_genotype(animal) in geno:
+        paths.append(p)
 
 # Subset of the full dataset for testing (comment out when not needed)
-paths = np.load('/media/HlabShare/AD_paper/fr_subset_paths.npy')
+#paths = np.load('/media/HlabShare/AD_paper/fr_subset_paths.npy')
 
 # for preallocation, figure out a reasonable number larger than the total number of cells. 100 in a block would be really high yield, the average will definitely be lower than that. 
 num_paths = len(paths)
@@ -86,9 +86,9 @@ cellcount_array = np.delete(cellcount_array, np.where(np.isnan(cellcount_array))
 toc = time.time()
 print(f'time to delete nans: {(toc-tic)/60} min')
 
-np.save('/media/HlabShare/AD_paper/FR_testing/sample_fr_array.npy', fr_array.astype(np.int16))
-np.save('/media/HlabShare/AD_paper/FR_testing/sample_cellid_array.npy', cellid_array.astype(np.int16))
-np.save('/media/HlabShare/AD_paper/FR_testing/sample_time_array.npy', time_array.astype(np.int32))
-np.save('/media/HlabShare/AD_paper/FR_testing/sample_animal_array.npy', animal_array.astype(np.int8))
-np.save('/media/HlabShare/AD_paper/FR_testing/sample_cellqual_array.npy', cellqual_array.astype(np.int8))
-np.save('/media/HlabShare/AD_paper/FR_testing/sample_cellcount_array.npy', cellcount_array.astype(np.int32))
+np.save('/media/HlabShare/AD_paper/FR_testing/te4_fr_array.npy', fr_array.astype(np.int16))
+np.save('/media/HlabShare/AD_paper/FR_testing/te4_cellid_array.npy', cellid_array.astype(np.int16))
+np.save('/media/HlabShare/AD_paper/FR_testing/te4_time_array.npy', time_array.astype(np.int32))
+np.save('/media/HlabShare/AD_paper/FR_testing/te4_animal_array.npy', animal_array.astype(np.int8))
+np.save('/media/HlabShare/AD_paper/FR_testing/te4_cellqual_array.npy', cellqual_array.astype(np.int8))
+np.save('/media/HlabShare/AD_paper/FR_testing/te4_cellcount_array.npy', cellcount_array.astype(np.int32))
