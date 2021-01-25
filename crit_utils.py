@@ -485,7 +485,10 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
 
-        scorer = path[path.find('scored')+7:path.find('.npy')]
+        if path.find('scored') < 0:
+            scorer = 'xgb'
+        else:
+            scorer = path[path.find('scored')+7:path.find('.npy')]
 
         num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])

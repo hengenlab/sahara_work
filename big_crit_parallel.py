@@ -133,12 +133,17 @@ def get_paths(animal, probe, redo, csvloc):
     og = [f for f in glob.glob(s)]
     print(f'total # of paths: {len(og)}', flush = True)
     if redo:
-        paths = og
-        sw.write_csv_header(csvloc)
-        loaded = []
-        np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
-        errors = []
-        np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errors)
+        CHECK = input('YOURE ABOUT TO OVERWRITE THE LOADED AND ERRORED PATHS. ARE YOU SURE?')
+        if CHECK in ['y', 'yes', 'Yes']:
+            paths = og
+            sw.write_csv_header(csvloc)
+            loaded = []
+            np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+            errors = []
+            np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errors)
+        else:
+            print('Thats what I thought. bye!')
+            sys.exit()
     else:
         loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
         errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
