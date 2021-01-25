@@ -12,7 +12,7 @@ import pandas as pd
 
 geno = ['te4']
 
-ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb*.npy')
+ps = glob.glob('/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*scored_xgb.npy')
 paths = []
 for p in ps:
     animal, _, _, _ = s.get_info_from_path(p)
@@ -29,23 +29,23 @@ cellnum = num_paths * 100
 maxt = 12*3600 # seconds in a clustering output
 tic = time.time()
 print('---- allocating array space')
-fr_array = np.zeros(maxt*cellnum, dtype=np.int16)
-fr_array[fr_array==0]=np.nan
+fr_array = np.zeros(maxt*cellnum, dtype=np.int8)
+fr_array[fr_array==0]=-1
 
 cellid_array = np.zeros(maxt*cellnum, dtype=np.int16)
-cellid_array[cellid_array==0]=np.nan
+cellid_array[cellid_array==0]=-1
 
 time_array = np.zeros(maxt*cellnum, dtype=np.int32)
-time_array[time_array==0]=np.nan
+time_array[time_array==0]=-1
 
 animal_array = np.zeros(maxt*cellnum, dtype=np.int8)
-animal_array[animal_array==0]=np.nan 
+animal_array[animal_array==0]=-1
 
 cellcount_array = np.zeros(maxt*cellnum, dtype=np.int32)
-cellcount_array[cellcount_array==0]=np.nan
+cellcount_array[cellcount_array==0]=-1
 
 cellqual_array = np.zeros(maxt*cellnum, dtype=np.int8)
-cellqual_array[cellqual_array==0] = np.nan
+cellqual_array[cellqual_array==0] = -1
 
 toc = time.time()
 print(f'time to allocate space: {(toc-tic)/60} min')
@@ -61,7 +61,8 @@ for idx, p in enumerate(paths):
     age_sec = s.get_age_sec(start_time = cells[0].rstart_time, birthday = s.get_birthday(animal))
     for cell in cells:
         if cell.quality < 4:
-            
+            if cell.quality == 0:
+                print('found a qual 0 cell')
             fr_edges = np.arange(cell.start_time + age_sec, cell.end_time + age_sec, 1)
             vals, bins = np.histogram(cell.spike_time_sec+age_sec, fr_edges)
             fr_array[tcount:tcount+len(vals) ] = vals
@@ -77,12 +78,12 @@ toc = time.time()
 print(f'time to collect {len(paths)} paths worth of data ({cellcount} cells): {(toc-tic)/60} min')
 tic = time.time()
 print('------deleting nans')
-fr_array = np.delete(fr_array, np.where(np.isnan(fr_array)))
-cellid_array = np.delete(cellid_array, np.where(np.isnan(cellid_array)))
-time_array = np.delete(time_array, np.where(np.isnan(time_array)))
-animal_array = np.delete(animal_array, np.where(np.isnan(animal_array)))
-cellqual_array = np.delete(cellqual_array, np.where(np.isnan(cellqual_array)))
-cellcount_array = np.delete(cellcount_array, np.where(np.isnan(cellcount_array)))
+fr_array = np.delete(fr_array, np.where(fr_array == -1))
+cellid_array = np.delete(cellid_array, np.where(cellid_array == -1))
+time_array = np.delete(time_array, np.where(time_array == -1))
+animal_array = np.delete(animal_array, np.where(animal_array == -1))
+cellqual_array = np.delete(cellqual_array, np.where(cellqual_array == -1))
+cellcount_array = np.delete(cellcount_array, np.where(cellcount_array == -1))
 toc = time.time()
 print(f'time to delete nans: {(toc-tic)/60} min')
 
