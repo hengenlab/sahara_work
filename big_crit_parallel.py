@@ -128,10 +128,22 @@ def run(paths, csvloc, b, redo = False, rerun = True):
 
 def get_paths(animal, probe, redo, csvloc):
 
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}*/co/*scored_*.npy'
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}*/co/'
     print(s)
-    og = [f for f in glob.glob(s)]
-    print(f'total # of paths: {len(og)}', flush = True)
+    basepaths = [f for f in glob.glob(s)]
+    print(f'total # of folders: {len(basepaths)}', flush = True)
+    og = []
+    errors = []
+    for f in basepaths:
+        neuron_files = glob.glob(f+'*neurons_group0*npy')
+        scored_files = glob.glob(f+'*scored*.npy')
+        if len(scored_files) > 0:
+            og = np.concatenate([og, scored_files])
+        elif len(neuron_files) == 1:
+            og = np.concatenate([og, neuron_files])
+        else:
+            errors.append(f)
+
     if redo:
         CHECK = input('YOURE ABOUT TO OVERWRITE THE LOADED AND ERRORED PATHS. ARE YOU SURE?')
         if CHECK in ['y', 'yes', 'Yes']:
