@@ -29,22 +29,22 @@ cellnum = num_paths * 100
 maxt = 12*3600 # seconds in a clustering output
 tic = time.time()
 print('---- allocating array space')
-fr_array = np.zeros(maxt*cellnum)
+fr_array = np.zeros(maxt*cellnum, dtype=np.int16)
 fr_array[fr_array==0]=np.nan
 
-cellid_array = np.zeros(maxt*cellnum)
+cellid_array = np.zeros(maxt*cellnum, dtype=np.int16)
 cellid_array[cellid_array==0]=np.nan
 
-time_array = np.zeros(maxt*cellnum)
+time_array = np.zeros(maxt*cellnum, dtype=np.int32)
 time_array[time_array==0]=np.nan
 
-animal_array = np.zeros(maxt*cellnum)
+animal_array = np.zeros(maxt*cellnum, dtype=np.int8)
 animal_array[animal_array==0]=np.nan 
 
-cellcount_array = np.zeros(maxt*cellnum)
+cellcount_array = np.zeros(maxt*cellnum, dtype=np.int32)
 cellcount_array[cellcount_array==0]=np.nan
 
-cellqual_array = np.zeros(maxt*cellnum)
+cellqual_array = np.zeros(maxt*cellnum, dtype=np.int8)
 cellqual_array[cellqual_array==0] = np.nan
 
 toc = time.time()
