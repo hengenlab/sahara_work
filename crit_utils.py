@@ -155,6 +155,8 @@ def get_birthday(animal):
         'caf71': dt(2019, 8, 30, 7, 30),
         'caf72': dt(2020, 11, 24, 7, 30),
         'caf73': dt(2020, 1, 5, 7, 30),
+        'caf74': dt(2019, 12, 5, 7, 30),
+        'caf75': dt(2020, 1, 5, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -167,8 +169,8 @@ def get_birthday(animal):
 def encode_animal(animal):
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
-                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'eab52', 
-                'eab47', 'eab', 'eab50', 'eab40']
+                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74', 
+                'caf75','eab52', 'eab47', 'eab', 'eab50', 'eab40']
     nums = np.arange(len(animals))
 
     keys = dict(zip(animals, nums))
@@ -179,8 +181,8 @@ def decode_animal(num):
 
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
-                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'eab52', 
-                'eab47', 'eab', 'eab50', 'eab40']
+                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
+                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40']
 
     return animals[num]
 
@@ -209,6 +211,8 @@ def get_regions(animal):
         'caf71': ['V1','RSPv','CA1','ACaD'],
         'caf72': ['CA1'],
         'caf73': ['ACaD','CA1','RSPv','V1'],
+        'caf74': ['ACaD','RSPv','CA1','V1'],
+        'caf75': ['ACaD','CA1','RSPv','V1'],
         'eab52': ['CA1','V1'],
         'eab47': ['M1_M2','CA1','V2'],
         'eab': ['M1_M2','CA1','V2'],
@@ -243,6 +247,8 @@ def get_genotype(animal):
         'caf71': 'app_ps1',
         'caf72': 'te4',
         'caf73': 'app_ps1',
+        'caf74': 'app_ps1',
+        'caf75': 'app_ps1',
         'eab52': 'te4',
         'eab47': 'te4',
         'eab': 'te4',
