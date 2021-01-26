@@ -129,6 +129,26 @@ def lil_helper_boi(crit):
         info = [e]
     return err, info
 
+def get_paths(scorer = '', geno=None, animal = '', probe = ''):
+    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}*/co/'
+    print(s)
+    basepaths = [f for f in glob.glob(s)]
+    print(f'total # of folders: {len(basepaths)}', flush = True)
+    og = []
+    errors = []
+    for f in basepaths:
+        neuron_files = glob.glob(f+'*neurons_group0*npy')
+        scored_files = glob.glob(f+f'*scored_{scorer}*.npy')
+        animal, _, _, _ = get_info_from_path(f)
+        thisgeno = get_genotype(animal)
+        if geno is None or geno == thisgeno:
+            if len(scored_files) > 0:
+                og = np.concatenate([og, scored_files])
+            elif len(neuron_files) == 1 and (scorer=='xgb' or scorer == ''):
+                og = np.concatenate([og, neuron_files])
+            else:
+                errors.append(f)
+    return og
 
 def get_birthday(animal):
     bdays = {
