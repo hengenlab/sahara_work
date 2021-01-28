@@ -165,7 +165,7 @@ class Crit:
         if saveplot:
             fig.savefig(os.path.join(self.saveloc, 'spike_raster.png'))
 
-    def run_crit(self, flag = 2):
+    def run_crit(self, flag = 2, verbose = True):
         """
         So this will do the whole calculation. I think i'm gonna break it up into methods even further for re-running purposes
 
@@ -194,7 +194,7 @@ class Crit:
         }
 
         Result = cr.AV_analysis(burst, T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
-                                nfactor_tm_tail = self.nfactor_tm_tail)
+                                nfactor_tm_tail = self.nfactor_tm_tail, verbose = verbose)
 
         if flag == 2:
             self.p_value_burst = Result['P_burst']
