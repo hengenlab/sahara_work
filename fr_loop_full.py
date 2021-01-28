@@ -25,7 +25,7 @@ def cv_isi(start, stop, times):
     return cv
 
 bigtic = time.time()
-geno = ['te4']
+geno = ['wt']
 
 paths = s.get_paths(scorer = 'xgb', geno = geno)
 
@@ -134,19 +134,19 @@ cv_cellcount_array = np.delete(cv_cellcount_array, np.where(cv_cellcount_array =
 toc = time.time()
 print(f'time to delete nans: {(toc-tic)/60} min')
 
-np.save(f'/media/HlabShare/AD_paper/FR_testing/{geno[0]}_fr_array.npy', fr_array.astype(np.int16))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/{geno[0]}_cellid_array.npy', cellid_array.astype(np.int16))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/{geno[0]}_time_array.npy', time_array.astype(np.int32))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/{geno[0]}_animal_array.npy', animal_array.astype(np.int8))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/{geno[0]}_cellqual_array.npy', cellqual_array.astype(np.int8))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/{geno[0]}_cellcount_array.npy', cellcount_array.astype(np.int32))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_fr_array.npy', fr_array.astype(np.int16))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cellid_array.npy', cellid_array.astype(np.int16))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_time_array.npy', time_array.astype(np.int32))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_animal_array.npy', animal_array.astype(np.int8))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cellqual_array.npy', cellqual_array.astype(np.int8))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cellcount_array.npy', cellcount_array.astype(np.int32))
 
-np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}_cv_array.npy', cv_array)
-np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}_cv_cellid_array.npy', cv_cellid_array.astype(np.int16))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}_cv_time_array.npy', cv_time_array.astype(np.int32))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}_cv_animal_array.npy', cv_animal_array.astype(np.int8))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}_cv_cellqual_array.npy', cv_cellqual_array.astype(np.int8))
-np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}_cv_cellcount_array.npy', cv_cellcount_array.astype(np.int32))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cv_array.npy', cv_array)
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cv_cellid_array.npy', cv_cellid_array.astype(np.int16))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cv_time_array.npy', cv_time_array.astype(np.int32))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cv_animal_array.npy', cv_animal_array.astype(np.int8))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cv_cellqual_array.npy', cv_cellqual_array.astype(np.int8))
+np.save(f'/media/HlabShare/AD_paper/FR_testing/DATA/{geno[0]}/{geno[0]}_cv_cellcount_array.npy', cv_cellcount_array.astype(np.int32))
 
 bigtoc = time.time()
 print(f'TOTAL TIME: {(bigtoc-bigtic)/60} min')
