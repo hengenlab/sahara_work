@@ -54,7 +54,7 @@ def lilo_and_stitch(paths, params, rerun = True, save = False, overlap = False):
         print(f'\n\nWorking on ---- {path}', flush = True)
         animal, date, time_frame, probe = sw.get_info_from_path(path)
         print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
-        total_time = sw.__get_totaltime(time_frame)
+        total_time = __get_totaltime(time_frame)
         saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/param_testing/{animal}/{date}/{probe}/'
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
@@ -92,7 +92,7 @@ def lilo_and_stitch(paths, params, rerun = True, save = False, overlap = False):
                 else:
                     data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
-                param_str = sw.__get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
+                param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'])
