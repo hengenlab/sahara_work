@@ -493,11 +493,12 @@ params = {
     'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
     'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
-    'plot': True
+    'plot': True,
+    'quals': None
 }
 
 
-def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
+def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -566,7 +567,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False):
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'])
 
-                crit.run_crit(flag = params['flag'])
+                crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
                 crit.block_num = idx
                 crit.qualities = quals
