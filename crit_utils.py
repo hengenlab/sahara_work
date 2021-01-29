@@ -139,10 +139,13 @@ def get_paths(scorer = '', geno=None, animal = '', probe = ''):
     for f in basepaths:
         neuron_files = glob.glob(f+'*neurons_group0*npy')
         scored_files = glob.glob(f+f'*scored_{scorer}*.npy')
+        xgb_files = glob.glob(f+f'*neurons_group0.npy')
         animal, _, _, _ = get_info_from_path(f)
         thisgeno = get_genotype(animal)
         if geno is None or thisgeno in geno:
-            if len(scored_files) > 0:
+            if scorer = 'xgb':
+                og = np.concatenate([og, xgb_files])
+            elif len(scored_files) > 0:
                 og = np.concatenate([og, scored_files])
             elif len(neuron_files) == 1 and (scorer=='xgb' or scorer == ''):
                 og = np.concatenate([og, neuron_files])
