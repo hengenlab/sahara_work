@@ -143,7 +143,7 @@ def get_paths(scorer = '', geno=None, animal = '', probe = ''):
         animal, _, _, _ = get_info_from_path(f)
         thisgeno = get_genotype(animal)
         if geno is None or thisgeno in geno:
-            if scorer = 'xgb':
+            if scorer == 'xgb':
                 og = np.concatenate([og, xgb_files])
             elif len(scored_files) > 0:
                 og = np.concatenate([og, scored_files])
