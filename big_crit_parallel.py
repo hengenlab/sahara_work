@@ -83,7 +83,7 @@ def run(paths, csvloc, b, redo = False, rerun = True):
         'plot': True
     }
 
-    all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True)
+    all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=False)
     results = []
     for o in all_objs:
         LOCK.acquire()

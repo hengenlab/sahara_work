@@ -606,7 +606,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                         crit.nfactor_tm_tail -= 0.05
                         #crit.tm += 5
                     try:
-                        crit.run_crit(flag = params['flag'])
+                        crit.run_crit(flag = params['flag'], verbose = verbose)
 
                     except Exception:
                         print('TIMEOUT or ERROR', flush = True)
