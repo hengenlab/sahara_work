@@ -76,11 +76,11 @@ def lilo_and_stitch(paths, params, rerun = True, save = False, overlap = False):
             num_cells = len(good_cells)
 
             print(f'WITH QUALS: {quals}, NCELLS: {num_cells}')
-            spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1, start = start)
+            spikewords = mbt.n_spiketimes_to_spikewords(good_cells, binsz = params['ava_binsz'], binarize = 1)
         except Exception as err:
             print("Neuron File Won't Load")
             print(err)
-            pass
+            continue
         for idx in np.arange(0, num_bins):
             signal.signal(signal.SIGALRM, sw.signal_handler)
             signal.alarm(600)
