@@ -28,10 +28,12 @@ bigtic = time.time()
 geno = ['wt']
 
 paths = s.get_paths(scorer = 'xgb', geno = geno)
-
+print(f'num paths: ', len(paths))
 if 'wt' in geno:
     additional_paths = glob.glob('/media/bs007s/caf/caf69/caf69_*/*/probe4/co/*neurons_group0.npy')
     paths = np.concatenate([paths, additional_paths])
+
+print(f'num total Paths: ', len(paths))
 # Subset of the full dataset for testing (comment out when not needed)
 #paths = np.load('/media/HlabShare/AD_paper/fr_subset_paths.npy')
 
