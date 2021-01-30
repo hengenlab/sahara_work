@@ -25,7 +25,7 @@ def cv_isi(start, stop, times):
     return cv
 
 bigtic = time.time()
-geno = ['wt']
+geno = ['te4']
 
 paths = s.get_paths(scorer = 'xgb', geno = geno)
 print(f'num paths: ', len(paths))
