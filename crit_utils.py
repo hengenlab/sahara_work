@@ -5,7 +5,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 import seaborn as sns
 import criticality as cr
-from musclebeachtools_hlab import musclebeachtools as mbt
+import musclebeachtools as mbt
 import csv
 import os
 import numpy as np
