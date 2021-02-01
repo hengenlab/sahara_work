@@ -498,7 +498,7 @@ params = {
     'cell_type': ['FS', 'RSU'],
     'plot': True,
     'quals': None, 
-    'saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
+    'saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/'
 }
 
 
