@@ -497,7 +497,8 @@ params = {
     'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
     'plot': True,
-    'quals': None
+    'quals': None, 
+    'saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
 }
 
 
@@ -553,7 +554,8 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
         except Exception as err:
             print("Neuron File Won't Load")
             print(err)
-            pass
+            errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
+            continue
         for idx in np.arange(0, num_bins):
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(600)
@@ -632,36 +634,59 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
     return all_objs, errors
 
 
-# this isnt gonna work. talk to keith
-def smooth_crit(paths, params):
-    all_objs = []
-    all_errs = []
 
+params = {
+    'flag': 2,  # 1 is DCC 2 is p_val and DCC
+    'ava_binsz': 0.04,  # in seconds
+    'hour_bins': 4,  # durration of block to look at
+    'perc': 0.35,
+    'nfactor_bm': 0,
+    'nfactor_tm': 0,
+    'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
+    'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
+    'cell_type': ['FS', 'RSU'],
+    'plot': True,
+    'quals': None, 
+    'saveloc': f'/scratch/sensley/crit_testing/results/',
+    'animal': 'caf37',
+    'probe': 'probe1',
+    'time_frame':'0_12',
+    'date':'01012021'
+}
+# on the chpc, lil annoying but what can you do
+def lilo_and_stitch_on_blu_ray(paths, params, rerun = False, save = True, overlap = False, verbose = False):
+    all_objs = []
+    errors = []
     for idx, path in enumerate(paths):
         basepath = path[:path.rfind('/')]
-
+        
         print(f'\n\nWorking on ---- {path}', flush = True)
-        animal, date, time_frame, probe = get_info_from_path(path)
+        animal = params['animal']
+        date = params['date']
+        time_frame = params['time_frame']
+        probe = params['probe']
         print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
-
         total_time = __get_totaltime(time_frame)
-        saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
-
+        saveloc = params['saveloc']
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
 
-        scorer = path[path.find('scored')+7:path.find('.npy')]
+        if path.find('scored') < 0:
+            scorer = 'xgb'
+        else:
+            scorer = path[path.find('scored')+7:path.find('.npy')]
 
         num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
 
         quals = [1, 2, 3]
-        fr_cutoff = 10
+        fr_cutoff = 50
         try:
             cells = np.load(path, allow_pickle = True)
             good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-
+            num_cells = len(good_cells)
+    
             if len(good_cells) < 10:
                 quals = [1, 2, 3]
                 good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
@@ -684,7 +709,8 @@ def smooth_crit(paths, params):
         except Exception as err:
             print("Neuron File Won't Load")
             print(err)
-            pass
+            errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
+            continue
         for idx in np.arange(0, num_bins):
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(600)
@@ -701,7 +727,7 @@ def smooth_crit(paths, params):
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'])
 
-                crit.run_crit(flag = params['flag'])
+                crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
                 crit.block_num = idx
                 crit.qualities = quals
@@ -720,7 +746,7 @@ def smooth_crit(paths, params):
             except Exception as err:
                 print('TIMEOUT or ERROR', flush = True)
                 print(err)
-                errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
+                errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED', path])
                 noerr = False
                 signal.alarm(0)
 
@@ -740,24 +766,24 @@ def smooth_crit(paths, params):
                         crit.nfactor_tm_tail -= 0.05
                         #crit.tm += 5
                     try:
-                        crit.run_crit(flag = params['flag'])
+                        crit.run_crit(flag = params['flag'], verbose = verbose)
 
                     except Exception:
                         print('TIMEOUT or ERROR', flush = True)
-                        errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
+                        errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED', path])
                         signal.alarm(0)
                         noerr = False
                         break
                     signal.alarm(0)
 
-            if noerr and save:
+            if noerr:
                 print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
-                to_save = np.array([crit])
-                np.save(crit.filename, to_save)
+                if save:
+                    to_save = np.array([crit])
+                    np.save(crit.filename, to_save)
                 all_objs.append(crit)
 
         with open(f'{basepath}/done.txt', 'w+') as f:
             f.write('done')
-
 
     return all_objs, errors
