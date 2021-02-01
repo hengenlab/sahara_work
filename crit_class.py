@@ -1,5 +1,5 @@
 import numpy as np
-from criticality_hlab import criticality as cr
+import criticality as cr
 from musclebeachtools_hlab import musclebeachtools as mbt
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle

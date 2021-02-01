@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 import seaborn as sns
-from criticality_hlab import criticality as cr
+import criticality as cr
 from musclebeachtools_hlab import musclebeachtools as mbt
 import csv
 import os
