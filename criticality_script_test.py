@@ -1,29 +1,26 @@
 import sahara_work as s 
 import glob
 
-jobnum = 0
-paths = glob.glob('/scratch/sensley/crit_testing/*')
-params = {
-    'flag': 2,  # 1 is DCC 2 is p_val and DCC
-    'ava_binsz': 0.04,  # in seconds
-    'hour_bins': 4,  # durration of block to look at
-    'perc': 0.35,
-    'nfactor_bm': 0,
-    'nfactor_tm': 0,
-    'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
-    'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
-    'cell_type': ['FS', 'RSU'],
-    'plot': True,
-    'quals': None, 
-    'saveloc': f'/scratch/sensley/crit_testing/results/',
-    'animal': 'caf37',
-    'probe': 'probe1',
-    'time_frame':'0_12',
-    'date':'01012021'
-}
 
-test_subset = paths[0:5]
-print(f'num paths: {len(test_subset)}', flush = True)
+paths = []
+with open('job_paths.txt', 'r') as f:
+    for line in f:
+        paths.append(line.strip())
+
+params = {
+        'flag': 2,  # 1 is DCC 2 is p_val and DCC
+        'ava_binsz': 0.04,  # in seconds
+        'hour_bins': 4,  # durration of block to look at
+        'perc': 0.35,
+        'nfactor_bm': 0,
+        'nfactor_tm': 0,
+        'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
+        'nfactor_tm_tail': .9,  # upper bound to start exclude for time
+        'cell_type': ['FS', 'RSU'],
+        'plot': True,
+        'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS',
+        'verbose', False
+}
 
 s.run_testing_chpc(test_subset, params)
 

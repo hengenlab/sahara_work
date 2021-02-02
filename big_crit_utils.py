@@ -9,6 +9,8 @@ from datetime import datetime as dt
 import signal
 import sys
 import os
+import shutil
+import time
 
 def write_to_files(o, csvloc):
     err, appended = sw.write_to_results_csv(o, csvloc)
@@ -21,6 +23,17 @@ def write_to_files(o, csvloc):
         np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
     return appended
 
+def write_to_files_chpc(o, csvloc):
+    err, appended = sw.write_to_results_csv(o, csvloc)
+    if err:
+        print('something weird happened, this should not have errored')
+    else:
+        new_path = o.pathname
+        loaded = np.load('/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy')
+        loaded = np.append(loaded, new_path)
+        np.save'/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy', loaded)
+    return appended
+
 params = {
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
         'ava_binsz': 0.04,  # in seconds
@@ -31,14 +44,18 @@ params = {
         'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
         'nfactor_tm_tail': .9,  # upper bound to start exclude for time
         'cell_type': ['FS', 'RSU'],
-        'plot': True
+        'plot': True,
+        'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS/',
+        'verbose', False
     }
 
-def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = True, redo = False):
-    status_file = f'/scratch/sensley/STATUS_{jobnum}_test.txt'
-    csv_file = f'/scratch/sensley/results_{jobnum}.csv'
-    print('GOT HERE', flush=True)
-    all_objs, errors = lilo_and_stitch_on_blu_ray(paths, params, rerun = rerun, save = True, verbose=True)
+def run_testing_chpc(paths, params, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
+    tic = time.time()
+    status_file = f'/scratch/khengen_lab/crit_sahara/STATUS/STATUS_{jobname}_test.txt'
+    csv_file = f'/scratch/khengen_lab/crit_sahara/STATUS/results_{jobname}.csv'
+
+    all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=params['verbose'])
+
     results = []
     for o in all_objs:
         appended = write_to_files(o, csv_file)
@@ -58,11 +75,12 @@ def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = T
             scored = row['scored'].to_numpy()[0]
             s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
-    
+    toc = time.time()
     now = dt.now()
     with open(status_file, 'a+') as f:
         f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-        #f.write(f'{b} PATHS DONE - of this job\n')
+        f.write(f'{jobnum} PATHS DONE - of this job\n')
+        f.write(f'{(toc-tic)/60/60} hours to complete this job')
         if len(all_objs) > 0: 
             for s in strs:
                 f.write(f'{s}\n')
@@ -71,6 +89,33 @@ def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = T
             for e in errors:
                 f.write(f'\t{e[0]}\n')
     return 0
+
+def make_chpc_crit_jobs(paths_per_job):
+    BASE = '/scratch/khengen_lab/crit_sahara/'
+    all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy'))
+    bins = np.arange(0, len(all_paths), paths_per_job)
+
+    for i, b in enumerate(bins):
+        these_paths = all_paths[b:b+paths_per_job]
+        animal, _, _, _ = sw.get_info_from_path(these_paths[0])
+        newjobdir = os.path.join(BASE, 'JOBS', f'job_{i}_{animal}')
+        if not os.path.exists(saveloc):
+            os.makedirs(saveloc)
+        shutil.copy(BASE+'qsub_script.sh', newjobdir)
+        shutil.copy(BASE+'criticality_scripy.py', newjobdir)
+        os.cwd(newjobdir)
+        with open('qsub_script.sh', 'r') as f:
+            shellfile = f.read()
+        shellfile = shellfile.replace('REPLACEJOBNAME', f'crit_{i}_{animal}')
+        shellfile = shellfile.replace('REPLACEBASE', newjobdir)
+        shellfile = shellfile.replace('REPLACEOUT', newjobdir)
+        with open('qsub_script.sh', 'w') as f:
+            f.write(shellfile)
+
+        with open('job_paths.txt', 'w') as pathfile:
+            for p in these_paths:
+                pathfile.write(f'{p}\n')
+
 
 def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
     paths = sw.get_paths(animal = animal, probe = probe)
