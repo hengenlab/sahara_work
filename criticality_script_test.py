@@ -1,4 +1,5 @@
 import sahara_work as s 
+import glob
 
 jobnum = 0
 paths = glob.glob('/scratch/sensley/crit_testing/*')
