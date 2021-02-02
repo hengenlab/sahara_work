@@ -8,7 +8,6 @@ from datetime import datetime as dt
 import signal
 import sys
 import os
-
 def write_to_files(o, csvloc):
     err, appended = sw.write_to_results_csv(o, csvloc)
     if err:
@@ -19,7 +18,7 @@ def write_to_files(o, csvloc):
         loaded = np.append(loaded, new_path)
         np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
     return appended
-
+    
 params = {
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
         'ava_binsz': 0.04,  # in seconds

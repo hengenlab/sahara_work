@@ -655,6 +655,7 @@ params = {
 }
 # on the chpc, lil annoying but what can you do
 def lilo_and_stitch_on_blu_ray(paths, params, rerun = False, save = True, overlap = False, verbose = False):
+    print('GOT TO BLU RAY', flush = True)
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):

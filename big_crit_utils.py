@@ -37,7 +37,7 @@ params = {
 def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = True, redo = False):
     status_file = f'/scratch/sensley/STATUS_{jobnum}_test.txt'
     csv_file = f'/scratch/sensley/results_{jobnum}.csv'
-
+    print('GOT HERE', flush=True)
     all_objs, errors = lilo_and_stitch_on_blu_ray(paths, params, rerun = rerun, save = True, verbose=False)
     results = []
     for o in all_objs:
@@ -70,4 +70,45 @@ def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = T
             f.write('\tERRORS:\n')
             for e in errors:
                 f.write(f'\t{e[0]}\n')
+    return 0
+
+def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
+    paths = sw.get_paths(animal = animal, probe = probe)
+    all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=False)
+    results = []
+    for o in all_objs:
+        appended = write_to_files(o, csvloc)
+        results.append(appended)
+
+    if len(all_objs) > 0:
+        df = pd.DataFrame(results, columns = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t'])
+        group = df.groupby(['animal', 'probe', 'date', 'scored'])
+        strs = []
+        for i, row in group:
+            num_passed = row[row["passed"]].count()['passed']
+            total_num = row.count()['passed']
+            avg_dcc = row.mean()['dcc']
+            animal = row['animal'].to_numpy()[0]
+            date = row['date'].to_numpy()[0]
+            probe = row['probe'].to_numpy()[0]
+            scored = row['scored'].to_numpy()[0]
+            s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
+            strs.append(s)
+    
+    now = dt.now()
+    with open(f'/media/HlabShare/clayton_sahara_work/criticality/STATUS_{jobnum}.txt', 'a+') as f:
+        f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
+        f.write(f'{b} PATHS DONE - of this job\n')
+        f.write(f'worker:\t{mp.current_process()}\n')
+        if len(all_objs) > 0: 
+            for s in strs:
+                f.write(f'{s}\n')
+        if len(errors) > 0:
+            f.write('\tERRORS:\n')
+            for e in errors:
+                f.write(f'\t{e[0]}\n')
+                errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
+                errored = np.append(errored, e[1])
+                np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errored)
+
     return 0
