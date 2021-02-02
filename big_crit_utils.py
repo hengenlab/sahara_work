@@ -97,7 +97,10 @@ def make_chpc_crit_jobs(paths_per_job):
 
     for i, b in enumerate(bins):
         os.cwd(BASE)
-        these_paths = all_paths[b:b+paths_per_job]
+        if i == len(bins)-1:
+            these_paths = all_paths[b:]
+        else:
+            these_paths = all_paths[b:b+paths_per_job]
         animal, _, _, _ = sw.get_info_from_path(these_paths[0])
         newjobdir = os.path.join(BASE, 'JOBS', f'job_{i}_{animal}')
         print('newdir: ', newjobdir)

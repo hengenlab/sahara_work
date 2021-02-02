@@ -1,11 +1,11 @@
 #!/bin/bash
-#PBS -N REPLACEJOBNAME
-#PBS -l nodes=1:ppn=1,walltime=2:0:00
+#PBS -N make_dirs
+#PBS -l nodes=1:ppn=1,walltime=1:0:00
 
 # Make sure ncpus in spikeinterface_currentall.py is same as ppn
 # Please change BASEDIR
-BASEDIR=REPLACEBASE
-OUTDIR=REPLACEOUT
+BASEDIR=/scratch/khengen_lab/crit_sahara/
+OUTDIR=/scratch/khengen_lab/crit_sahara/
 
 # Get name for log file
 JOBID=`echo ${PBS_JOBID} | cut -c1-12`
@@ -26,5 +26,4 @@ export PYTHONPATH=/scratch/khengen_lab/git/:$PYTHONPATH
 export PYTHONPATH=/scratch/khengen_lab/crit_sahara/git/:$PYTHONPATH
 
 cd $BASEDIR
-python  $BASEDIR/criticality_script_test.py &> $OUTDIR/$output_name
-
+python  $BASEDIR/make_dirs.py &> $OUTDIR/$output_name
