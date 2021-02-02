@@ -22,6 +22,7 @@ params = {
 }
 
 test_subset = paths[0:5]
+print(f'num paths: {len(test_subset)}', flush = True)
 
 s.run_testing_chpc(test_subset, params)
 
