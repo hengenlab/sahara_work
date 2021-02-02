@@ -714,7 +714,7 @@ def lilo_and_stitch_on_blu_ray(paths, params, rerun = False, save = True, overla
             continue
         for idx in np.arange(0, num_bins):
             signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(900)
+            signal.alarm(1200)
             noerr = True
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
@@ -754,7 +754,7 @@ def lilo_and_stitch_on_blu_ray(paths, params, rerun = False, save = True, overla
             if rerun and noerr:
                 while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
                     signal.signal(signal.SIGALRM, signal_handler)
-                    signal.alarm(900)
+                    signal.alarm(1200)
                     print('\nRERUNNING BLOCK', flush = True)
                     if crit.nfactor_tm_tail < 0.75 or crit.nfactor_bm_tail < 0.75:
                         print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
