@@ -46,7 +46,7 @@ params = {
         'cell_type': ['FS', 'RSU'],
         'plot': True,
         'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS/',
-        'verbose', False
+        'verbose': False
     }
 
 def run_testing_chpc(paths, params, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
