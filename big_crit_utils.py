@@ -31,7 +31,7 @@ def write_to_files_chpc(o, csvloc):
         new_path = o.pathname
         loaded = np.load('/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy')
         loaded = np.append(loaded, new_path)
-        np.save'/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy', loaded)
+        np.save('/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy', loaded)
     return appended
 
 params = {
