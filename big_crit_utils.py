@@ -102,9 +102,9 @@ def make_chpc_crit_jobs(paths_per_job):
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
         shutil.copy(BASE+'qsub_script.sh', newjobdir)
-        shutil.copy(BASE+'criticality_scripy.py', newjobdir)
+        shutil.copy(BASE+'criticality_script.py', newjobdir)
         os.cwd(newjobdir)
-        with open('qsub_script.sh', 'r') as f:
+        with open('qsub_criticality_script.sh', 'r') as f:
             shellfile = f.read()
         shellfile = shellfile.replace('REPLACEJOBNAME', f'crit_{i}_{animal}')
         shellfile = shellfile.replace('REPLACEBASE', newjobdir)
