@@ -62,7 +62,7 @@ def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = T
     now = dt.now()
     with open(status_file, 'a+') as f:
         f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-        f.write(f'{b} PATHS DONE - of this job\n')
+        #f.write(f'{b} PATHS DONE - of this job\n')
         if len(all_objs) > 0: 
             for s in strs:
                 f.write(f'{s}\n')
