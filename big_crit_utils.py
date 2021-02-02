@@ -96,13 +96,16 @@ def make_chpc_crit_jobs(paths_per_job):
     bins = np.arange(0, len(all_paths), paths_per_job)
 
     for i, b in enumerate(bins):
+        os.cwd(BASE)
         these_paths = all_paths[b:b+paths_per_job]
         animal, _, _, _ = sw.get_info_from_path(these_paths[0])
         newjobdir = os.path.join(BASE, 'JOBS', f'job_{i}_{animal}')
+        print('newdir: ', newjobdir)
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
         shutil.copy(BASE+'qsub_script.sh', newjobdir)
         shutil.copy(BASE+'criticality_script.py', newjobdir)
+        
         os.cwd(newjobdir)
         with open('qsub_criticality_script.sh', 'r') as f:
             shellfile = f.read()
