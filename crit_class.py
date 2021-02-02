@@ -1,6 +1,6 @@
 import numpy as np
 import criticality as cr
-from musclebeachtools_hlab import musclebeachtools as mbt
+import musclebeachtools as mbt
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
