@@ -1,11 +1,11 @@
 #!/bin/bash
-#PBS -N jqsub_spkint
+#PBS -N JOBNAME
 #PBS -l nodes=1:ppn=1,walltime=2:0:00
 
 # Make sure ncpus in spikeinterface_currentall.py is same as ppn
 # Please change BASEDIR
-BASEDIR=/scratch/khengen_lab/crit_sahara/job1/
-OUTDIR=/scratch/khengen_lab/crit_sahara/job1/
+BASEDIR=/scratch/khengen_lab/crit_sahara/JOBNAME/
+OUTDIR=/scratch/khengen_lab/crit_sahara/JOBNAME/
 
 # Get name for log file
 JOBID=`echo ${PBS_JOBID} | cut -c1-12`

@@ -38,7 +38,7 @@ def run_testing_chpc(paths, params, jobnum=0, animal = '', probe = '', rerun = T
     status_file = f'/scratch/sensley/STATUS_{jobnum}_test.txt'
     csv_file = f'/scratch/sensley/results_{jobnum}.csv'
     print('GOT HERE', flush=True)
-    all_objs, errors = lilo_and_stitch_on_blu_ray(paths, params, rerun = rerun, save = True, verbose=False)
+    all_objs, errors = lilo_and_stitch_on_blu_ray(paths, params, rerun = rerun, save = True, verbose=True)
     results = []
     for o in all_objs:
         appended = write_to_files(o, csv_file)

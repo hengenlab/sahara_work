@@ -714,7 +714,7 @@ def lilo_and_stitch_on_blu_ray(paths, params, rerun = False, save = True, overla
             continue
         for idx in np.arange(0, num_bins):
             signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(600)
+            signal.alarm(900)
             noerr = True
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
