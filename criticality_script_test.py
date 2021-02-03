@@ -22,5 +22,5 @@ params = {
         'verbose', False
 }
 
-s.run_testing_chpc(test_subset, params)
+s.run_testing_chpc(paths, params, rerun=False)
 
