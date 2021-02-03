@@ -97,7 +97,7 @@ def make_chpc_crit_jobs(paths_per_job):
     bins = np.arange(0, len(all_paths), paths_per_job)
     print(f'num paths: {len(all_paths)}')
     for i, b in enumerate(bins):
-        os.cwd(BASE)
+        os.chdir(BASE)
         if i == len(bins)-1:
             these_paths = all_paths[b:]
         else:
@@ -110,7 +110,7 @@ def make_chpc_crit_jobs(paths_per_job):
         shutil.copy(BASE+'qsub_script.sh', newjobdir)
         shutil.copy(BASE+'criticality_script.py', newjobdir)
         
-        os.cwd(newjobdir)
+        os.chdir(newjobdir)
         with open('qsub_criticality_script.sh', 'r') as f:
             shellfile = f.read()
         shellfile = shellfile.replace('REPLACEJOBNAME', f'crit_{i}_{animal}')
