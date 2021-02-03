@@ -54,7 +54,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     status_file = f'{JOBDIR}/STATUS_test.txt'
     csv_file = f'{JOBDIR}/results_test.csv'
 
-    all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=params['verbose'])
+    all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=params['verbose'], timeout=params['timeout'])
 
     results = []
     for o in all_objs:
@@ -88,6 +88,9 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
             f.write('\tERRORS:\n')
             for e in errors:
                 f.write(f'\t{e[0]}\n')
+                errored = np.load('/scratch/khengen_lab/crit_sahara/errored_paths.npy')
+                errored = np.append(errored, e[1])
+                np.save('/scratch/khengen_lab/crit_sahara/errored_paths.npy', errored)
     return 0
 
 def make_chpc_crit_jobs(paths_per_job):

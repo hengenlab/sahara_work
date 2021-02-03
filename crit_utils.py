@@ -502,7 +502,7 @@ params = {
 }
 
 
-def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True):
+def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -558,7 +558,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
             continue
         for idx in np.arange(0, num_bins):
             signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(600)
+            signal.alarm(timeout)
             noerr = True
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
@@ -598,7 +598,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
             if rerun and noerr:
                 while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
                     signal.signal(signal.SIGALRM, signal_handler)
-                    signal.alarm(900)
+                    signal.alarm(timeout)
                     print('\nRERUNNING BLOCK', flush = True)
                     if crit.nfactor_tm_tail < 0.75 or crit.nfactor_bm_tail < 0.75:
                         print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')

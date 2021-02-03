@@ -20,7 +20,8 @@ def run(basedir):
             'cell_type': ['FS', 'RSU'],
             'plot': True,
             'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS',
-            'verbose': False
+            'verbose': False, 
+            'timeout': 1200
     }
 
     s.run_testing_chpc(paths, params, JOBDIR = basedir, rerun=False)
