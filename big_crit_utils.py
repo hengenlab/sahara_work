@@ -3,7 +3,7 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-from sahara_work import lilo_and_stitch_on_blu_ray
+
 import sahara_work as sw
 from datetime import datetime as dt
 import signal
