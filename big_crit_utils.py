@@ -95,7 +95,7 @@ def make_chpc_crit_jobs(paths_per_job):
     print(f'base dir: ', BASE)
     all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy'))
     bins = np.arange(0, len(all_paths), paths_per_job)
-
+    print(f'num paths: {len(all_paths)}')
     for i, b in enumerate(bins):
         os.cwd(BASE)
         if i == len(bins)-1:
