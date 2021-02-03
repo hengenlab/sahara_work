@@ -108,7 +108,7 @@ def make_chpc_crit_jobs(paths_per_job):
         if not os.path.exists(newjobdir):
             os.makedirs(newjobdir)
         shutil.copy(BASE+'qsub_criticality_chpc.sh', newjobdir+'/qsub_criticality_chpc.sh')
-        shutil.copy(BASE+'criticality_script.py', newjobdir+'/criticality_script.py')
+        shutil.copy(BASE+'criticality_script_test.py', newjobdir+'/criticality_script_test.py')
         
         os.chdir(newjobdir)
         with open('qsub_criticality_chpc.sh', 'r') as f:
