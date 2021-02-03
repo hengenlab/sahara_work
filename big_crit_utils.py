@@ -49,16 +49,16 @@ params = {
         'verbose': False
     }
 
-def run_testing_chpc(paths, params, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
+def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
     tic = time.time()
-    status_file = f'/scratch/khengen_lab/crit_sahara/STATUS/STATUS_{jobname}_test.txt'
-    csv_file = f'/scratch/khengen_lab/crit_sahara/STATUS/results_{jobname}.csv'
+    status_file = f'{JOBDIR}/STATUS_test.txt'
+    csv_file = f'{JOBDIR}/results_test.csv'
 
-    all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=params['verbose'])
+    all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=params['verbose'])
 
     results = []
     for o in all_objs:
-        appended = write_to_files(o, csv_file)
+        appended = write_to_files_chpc(o, csv_file)
         results.append(appended)
 
     if len(all_objs) > 0:

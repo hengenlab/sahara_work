@@ -26,5 +26,5 @@ export PYTHONPATH=/scratch/khengen_lab/git/:$PYTHONPATH
 export PYTHONPATH=/scratch/khengen_lab/crit_sahara/git/:$PYTHONPATH
 
 cd $BASEDIR
-python  $BASEDIR/criticality_script_test.py &> $OUTDIR/$output_name
+python  $BASEDIR/criticality_script_test.py $BASEDIR &> $OUTDIR/$output_name
 
