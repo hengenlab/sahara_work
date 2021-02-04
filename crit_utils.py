@@ -506,6 +506,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
+        tic = time.time()
         basepath = path[:path.rfind('/')]
         
         print(f'\n\nWorking on ---- {path}', flush = True)
@@ -558,6 +559,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
             errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
             continue
         for idx in np.arange(0, num_bins):
+            liltic = time.time()
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(timeout)
             noerr = True
@@ -628,9 +630,11 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                     to_save = np.array([crit])
                     np.save(crit.filename, to_save)
                 all_objs.append(crit)
+            liltoc = time.time()
+            print(f'Time for 1 block: {(liltoc-liltic)/60/60}')
+        toc = time.time()
+        print(f'TOTAL PATH TIME: {(toc-tic)/60/60} min')
 
-        with open(f'{basepath}/done.txt', 'w+') as f:
-            f.write('done')
 
     return all_objs, errors
 

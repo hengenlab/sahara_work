@@ -80,7 +80,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     with open(status_file, 'a+') as f:
         f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
         f.write(f'{jobnum} PATHS DONE - of this job\n')
-        f.write(f'{(toc-tic)/60/60} hours to complete this job')
+        f.write(f'{(toc-tic)/60/60} hours to complete these paths')
         if len(all_objs) > 0: 
             for s in strs:
                 f.write(f'{s}\n')

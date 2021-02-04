@@ -21,7 +21,7 @@ def run(basedir):
             'plot': True,
             'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS',
             'verbose': False, 
-            'timeout': 1200
+            'timeout': 5000
     }
 
     s.run_testing_chpc(paths, params, JOBDIR = basedir, rerun=False)
