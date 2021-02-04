@@ -19,6 +19,7 @@ import os
 import signal
 import gc
 from copy import deepcopy as cdc
+import time
 
 def get_all_results(csvloc, loaded_file, re_load):
     """
