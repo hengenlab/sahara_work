@@ -632,9 +632,9 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                     np.save(crit.filename, to_save)
                 all_objs.append(crit)
             liltoc = time.time()
-            print(f'Time for 1 block: {(liltoc-liltic)/60/60}')
+            print(f'Time for 1 block: {(liltoc-liltic)/60} min')
         toc = time.time()
-        print(f'TOTAL PATH TIME: {(toc-tic)/60/60} min')
+        print(f'TOTAL PATH TIME: {(toc-tic)/60} min')
 
 
     return all_objs, errors
