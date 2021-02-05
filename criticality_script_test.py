@@ -9,7 +9,7 @@ def run(basedir):
             paths.append(line.strip())
 
     params = {
-            'flag': 2,  # 1 is DCC 2 is p_val and DCC
+            'flag': 1,  # 1 is DCC 2 is p_val and DCC
             'ava_binsz': 0.04,  # in seconds
             'hour_bins': 4,  # durration of block to look at
             'perc': 0.35,
@@ -21,7 +21,9 @@ def run(basedir):
             'plot': True,
             'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS',
             'verbose': False, 
-            'timeout': 5000
+            'timeout': 5000,
+            'none_fact': 5,
+            'save': False
     }
 
     s.run_testing_chpc(paths, params, JOBDIR = basedir, rerun=False)

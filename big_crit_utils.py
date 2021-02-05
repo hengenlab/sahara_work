@@ -46,7 +46,9 @@ params = {
         'cell_type': ['FS', 'RSU'],
         'plot': True,
         'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS/',
-        'verbose': False
+        'verbose': False,
+        'none_fact': 40,
+        'save': True
     }
 
 def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
@@ -54,7 +56,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     status_file = f'{JOBDIR}/STATUS_test.txt'
     csv_file = f'{JOBDIR}/results_test.csv'
 
-    all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=params['verbose'], timeout=params['timeout'])
+    all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = params['save'], verbose=params['verbose'], timeout=params['timeout'])
 
     results = []
     for o in all_objs:
