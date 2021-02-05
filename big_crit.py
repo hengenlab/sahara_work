@@ -8,38 +8,18 @@ from datetime import datetime as dt
 import signal
 import sys
 import os
-
-
-def run(animal = '', probe = '', rerun = True, redo = False):
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/{probe}*/co/*scored_*.npy'
-    print(s)
-    og = [f for f in glob.glob(s)]
-    print(f'total # of paths: {len(og)}', flush = True)
-
-    csvloc = '/media/HlabShare/clayton_sahara_work/criticality/all_results.csv'
-
-    if redo:
-        paths = og
-        sw.write_csv_header(csvloc)
-        loaded = []
-        np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+def write_to_files(o, csvloc):
+    err, appended = sw.write_to_results_csv(o, csvloc)
+    if err:
+        print('something weird happened, this should not have errored')
     else:
+        new_path = o.pathname
         loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
-        paths = []
-        for p in og:
-            if p not in loaded:
-                paths.append(p)
-    paths = sorted(paths)
-    now = dt.now()
-    with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
-        f.write('------ JOB START -------- ')
-        f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-        f.write(f'{len(paths)} PATHS TO DO - of this job - lol fuck u right?')
-
-    print(f'Number of paths left to analyze: {len(paths)}', flush = True)
-
-    params = {
-        'redo_paths': True, # eventually this should just be deleted entirely but for now, here we are
+        loaded = np.append(loaded, new_path)
+        np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+    return appended
+    
+params = {
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
         'ava_binsz': 0.04,  # in seconds
         'hour_bins': 4,  # durration of block to look at
@@ -52,33 +32,17 @@ def run(animal = '', probe = '', rerun = True, redo = False):
         'plot': True
     }
 
-    bins = np.arange(0, len(paths), 10)
-    for i, b in enumerate(bins):
-        print(f"\n\n{b} ---- PATHS COMPLETE \n\n", flush = True)
-        if b == bins[-1]:
-            ps = paths[b:]
-        else:
-            ps = paths[b: bins[i + 1]]
+def run(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
 
-        all_objs, errors = lilo_and_stitch(ps, params, rerun = rerun)
+    all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=False)
+    results = []
+    for o in all_objs:
+        appended = write_to_files(o, csvloc)
+        results.append(appended)
 
-        results = []
-        for o in all_objs:
-            results.append([o.animal, o.scored_by, o.probe, o.date, o.time_frame, o.block_num, o.p_value_burst, o.p_value_t, o.dcc, (o.p_value_burst > 0.05 and o.p_value_t > 0.05)])
-            err, appended = sw.write_to_results_csv(o, csvloc)
-
-            if err:
-                print('something weird happened, this should not have errored')
-            else:
-                new_path = o.filename
-                loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
-                loaded = np.append(loaded, new_path)
-                np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
-
-        df = pd.DataFrame(results, columns = ['animal', 'scored', 'probe', 'date', 'time_frame', 'block_num', 'p_value_burst', 'p_value_t', 'dcc', 'passed'])
-
+    if len(all_objs) > 0:
+        df = pd.DataFrame(results, columns = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t'])
         group = df.groupby(['animal', 'probe', 'date', 'scored'])
-
         strs = []
         for i, row in group:
             num_passed = row[row["passed"]].count()['passed']
@@ -90,17 +54,24 @@ def run(animal = '', probe = '', rerun = True, redo = False):
             scored = row['scored'].to_numpy()[0]
             s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
+    
+    now = dt.now()
+    with open(f'/media/HlabShare/clayton_sahara_work/criticality/STATUS_{jobnum}.txt', 'a+') as f:
+        f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
+        f.write(f'{b} PATHS DONE - of this job\n')
+        f.write(f'worker:\t{mp.current_process()}\n')
+        if len(all_objs) > 0: 
+            for s in strs:
+                f.write(f'{s}\n')
+        if len(errors) > 0:
+            f.write('\tERRORS:\n')
+            for e in errors:
+                f.write(f'\t{e[0]}\n')
+                errored = np.load('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy')
+                errored = np.append(errored, e[1])
+                np.save('/media/HlabShare/clayton_sahara_work/criticality/errored_paths.npy', errored)
 
-        now = dt.now()
-        if len(all_objs) > 0:
-            with open('/media/HlabShare/clayton_sahara_work/criticality/STATUS.txt', 'a+') as f:
-                f.write(f'{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
-                f.write(f'{b} PATHS DONE - of this job')
-                for s in strs:
-                    f.write(f'{s}\n')
-                f.write('\tERRORS:\n')
-                for e in errors:
-                    f.write(f'\t{e}\n')
+    return 0
 
 
 if __name__ == "__main__":

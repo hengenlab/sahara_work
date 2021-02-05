@@ -1,6 +1,6 @@
 import numpy as np
-from criticality_hlab import criticality as cr
-from musclebeachtools_hlab import musclebeachtools as mbt
+import criticality as cr
+import musclebeachtools as mbt
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
@@ -39,7 +39,7 @@ class Crit:
     
     
     """
-    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True):
+    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True, none_fact = 40):
 
         # required parameters
         self.perc = perc
@@ -54,6 +54,7 @@ class Crit:
         self.nfactor_tm = nfactor_tm
         self.nfactor_bm_tail = nfactor_bm_tail
         self.nfactor_tm_tail = nfactor_tm_tail
+        self.none_fact = none_fact
 
         # all parameters set by run_crit
         self.burst = None
@@ -180,10 +181,6 @@ class Crit:
         self.burst = burst
         self.T = T
 
-        if self.bm is None:
-            self.bm = int(np.max(burst) / 20)
-            self.tm = int(np.max(T) / 20)
-
         crit_params = {
             'flag': flag,
             'pltname': self.pltname,
@@ -194,7 +191,7 @@ class Crit:
         }
 
         Result = cr.AV_analysis(burst, T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
-                                nfactor_tm_tail = self.nfactor_tm_tail, verbose = verbose)
+                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose)
 
         if flag == 2:
             self.p_value_burst = Result['P_burst']

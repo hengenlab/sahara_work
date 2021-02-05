@@ -1,7 +1,7 @@
 from sahara_work.crit_class import Crit
 import numpy as np
-from criticality_hlab import criticality as cr
-from musclebeachtools_hlab import musclebeachtools as mbt
+import criticality as cr
+import musclebeachtools as mbt
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection

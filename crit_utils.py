@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 import seaborn as sns
-from criticality_hlab import criticality as cr
-from musclebeachtools_hlab import musclebeachtools as mbt
+import criticality as cr
+import musclebeachtools as mbt
 import csv
 import os
 import numpy as np
@@ -19,6 +19,7 @@ import os
 import signal
 import gc
 from copy import deepcopy as cdc
+import time
 
 def get_all_results(csvloc, loaded_file, re_load):
     """
@@ -80,7 +81,7 @@ def write_to_csv(data, cols, loc):
 
 
 def write_to_results_csv(crit, loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax']
     err, data = s.lil_helper_boi(crit)
     if err:
         print('this path failed, plz just fucking delete it and re-do this path ffs')
@@ -90,7 +91,7 @@ def write_to_results_csv(crit, loc):
 
 
 def write_csv_header(loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax']
     with open(loc, 'w', newline = '') as c:
         w = csv.DictWriter(c, fieldnames = cols)
         w.writeheader()
@@ -122,7 +123,7 @@ def lil_helper_boi(crit):
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
         geno = s.get_genotype(crit.animal)
-        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t]
+        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax]
     except Exception as e:
         print(f'error: {e}')
         err = True
@@ -180,6 +181,7 @@ def get_birthday(animal):
         'caf73': dt(2020, 1, 5, 7, 30),
         'caf74': dt(2019, 12, 5, 7, 30),
         'caf75': dt(2020, 1, 5, 7, 30),
+        'caf77': dt(2020, 1, 5, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -236,6 +238,7 @@ def get_regions(animal):
         'caf73': ['ACaD','CA1','RSPv','V1'],
         'caf74': ['ACaD','RSPv','CA1','V1'],
         'caf75': ['ACaD','CA1','RSPv','V1'],
+        'caf77': ['CA1','RSPv','ACaD','V1'],
         'eab52': ['CA1','V1'],
         'eab47': ['M1_M2','CA1','V2'],
         'eab': ['M1_M2','CA1','V2'],
@@ -243,6 +246,45 @@ def get_regions(animal):
         'eab40': ['S1','CA1','M1','M2']
     }
     return regions[animal]
+
+
+def get_sex(animal):
+    sex = {
+        'caf01': 'M',
+        'caf19': 'F',
+        'caf22': 'F',
+        'caf26': 'F',
+        'caf34': 'F',
+        'caf37': 'M',
+        'caf40': 'F',
+        'caf42': 'F',
+        'caf48': 'M',
+        'caf49': 'M',
+        'caf50': 'M',
+        'caf52': 'F',
+        'caf54': 'M',
+        'caf55': 'M',
+        'caf58': 'F',
+        'caf60': 'F',
+        'caf61': 'F',
+        'caf62': 'F',
+        'caf66': 'M',
+        'caf69': 'F',
+        'caf71': 'M',
+        'caf72': 'F',
+        'caf73': 'F',
+        'caf74': 'M',
+        'caf75': 'M',
+        'caf77': 'F',
+        'eab52': 'F',
+        'eab47': 'M',
+        'eab': 'M',
+        'eab50': 'F',
+        'eab40': 'F'
+    }
+
+    return sex[animal]
+
 
 
 def get_genotype(animal):
@@ -272,6 +314,7 @@ def get_genotype(animal):
         'caf73': 'app_ps1',
         'caf74': 'app_ps1',
         'caf75': 'app_ps1',
+        'caf77': 'wt',
         'eab52': 'te4',
         'eab47': 'te4',
         'eab': 'te4',
@@ -497,21 +540,25 @@ params = {
     'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
     'plot': True,
-    'quals': None
+    'quals': None, 
+    'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
+    'none_fact':40
 }
 
 
-def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True):
+def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
+        tic = time.time()
         basepath = path[:path.rfind('/')]
         
         print(f'\n\nWorking on ---- {path}', flush = True)
         animal, date, time_frame, probe = get_info_from_path(path)
         print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
         total_time = __get_totaltime(time_frame)
-        saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
+        saveloc = os.path.join(params['base_saveloc'], animal, date, probe) + '/'
+        print(f'saveloc: {saveloc}', flush=True)
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
 
@@ -553,10 +600,12 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
         except Exception as err:
             print("Neuron File Won't Load")
             print(err)
-            pass
+            errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
+            continue
         for idx in np.arange(0, num_bins):
+            liltic = time.time()
             signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(600)
+            signal.alarm(timeout)
             noerr = True
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
@@ -596,7 +645,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
             if rerun and noerr:
                 while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
                     signal.signal(signal.SIGALRM, signal_handler)
-                    signal.alarm(900)
+                    signal.alarm(timeout)
                     print('\nRERUNNING BLOCK', flush = True)
                     if crit.nfactor_tm_tail < 0.75 or crit.nfactor_bm_tail < 0.75:
                         print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
@@ -625,43 +674,47 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                     to_save = np.array([crit])
                     np.save(crit.filename, to_save)
                 all_objs.append(crit)
+            liltoc = time.time()
+            print(f'Time for 1 block: {(liltoc-liltic)/60} min')
+        toc = time.time()
+        print(f'TOTAL PATH TIME: {(toc-tic)/60} min')
 
-        with open(f'{basepath}/done.txt', 'w+') as f:
-            f.write('done')
 
     return all_objs, errors
 
 
-# this isnt gonna work. talk to keith
-def smooth_crit(paths, params):
+def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
-    all_errs = []
-
+    errors = []
     for idx, path in enumerate(paths):
+        tic = time.time()
         basepath = path[:path.rfind('/')]
-
+        
         print(f'\n\nWorking on ---- {path}', flush = True)
         animal, date, time_frame, probe = get_info_from_path(path)
         print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
-
         total_time = __get_totaltime(time_frame)
-        saveloc = f'/media/HlabShare/clayton_sahara_work/criticality/{animal}/{date}/{probe}/'
-
+        saveloc = os.path.join(params['base_saveloc'], animal, date, probe) + '/'
+        print(f'saveloc: {saveloc}', flush=True)
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
 
-        scorer = path[path.find('scored')+7:path.find('.npy')]
+        if path.find('scored') < 0:
+            scorer = 'xgb'
+        else:
+            scorer = path[path.find('scored')+7:path.find('.npy')]
 
         num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
 
         quals = [1, 2, 3]
-        fr_cutoff = 10
+        fr_cutoff = 50
         try:
             cells = np.load(path, allow_pickle = True)
             good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-
+            num_cells = len(good_cells)
+    
             if len(good_cells) < 10:
                 quals = [1, 2, 3]
                 good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
@@ -673,9 +726,6 @@ def smooth_crit(paths, params):
                 quals = [1]
                 good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
 
-                # if len(good_cells) > 100:
-                #     cell_idxs = np.random.choice(len(good_cells), 50, replace=False)
-                #     good_cells = good_cells[cell_idxs]
             if overlap :
                 start = 3600
             else:
@@ -684,10 +734,12 @@ def smooth_crit(paths, params):
         except Exception as err:
             print("Neuron File Won't Load")
             print(err)
-            pass
+            errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
+            continue
         for idx in np.arange(0, num_bins):
+            liltic = time.time()
             signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(600)
+            signal.alarm(timeout)
             noerr = True
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
@@ -698,10 +750,10 @@ def smooth_crit(paths, params):
 
                 param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
-                            nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], saveloc = saveloc,
+                            nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'])
 
-                crit.run_crit(flag = params['flag'])
+                crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
                 crit.block_num = idx
                 crit.qualities = quals
@@ -720,44 +772,20 @@ def smooth_crit(paths, params):
             except Exception as err:
                 print('TIMEOUT or ERROR', flush = True)
                 print(err)
-                errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
+                errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED', path])
                 noerr = False
                 signal.alarm(0)
 
-            if rerun and noerr:
-                while crit.p_value_burst < 0.05 or crit.p_value_t < 0.05:
-                    signal.signal(signal.SIGALRM, signal_handler)
-                    signal.alarm(900)
-                    print('\nRERUNNING BLOCK', flush = True)
-                    if crit.nfactor_tm_tail < 0.75 or crit.nfactor_bm_tail < 0.75:
-                        print('DONE RERUNNNING -- BLOCK WILL NOT PASS\n')
-                        signal.alarm(0)
-                        break
-                    if crit.p_value_burst < 0.05:
-                        crit.nfactor_bm_tail -= 0.05
-                        #crit.bm += 5
-                    if crit.p_value_t < 0.05:
-                        crit.nfactor_tm_tail -= 0.05
-                        #crit.tm += 5
-                    try:
-                        crit.run_crit(flag = params['flag'])
-
-                    except Exception:
-                        print('TIMEOUT or ERROR', flush = True)
-                        errors.append(f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED')
-                        signal.alarm(0)
-                        noerr = False
-                        break
-                    signal.alarm(0)
-
-            if noerr and save:
+            if noerr:
                 print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
-                to_save = np.array([crit])
-                np.save(crit.filename, to_save)
+                if save:
+                    to_save = np.array([crit])
+                    np.save(crit.filename, to_save)
                 all_objs.append(crit)
-
-        with open(f'{basepath}/done.txt', 'w+') as f:
-            f.write('done')
+            liltoc = time.time()
+            print(f'Time for 1 block: {(liltoc-liltic)/60} min')
+        toc = time.time()
+        print(f'TOTAL PATH TIME: {(toc-tic)/60} min')
 
 
     return all_objs, errors
