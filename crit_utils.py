@@ -515,7 +515,7 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
         print(f'INFO: {animal} -- {date} -- {time_frame} -- {probe}')
         total_time = __get_totaltime(time_frame)
         saveloc = os.path.join(params['base_saveloc'], animal, date, probe,'/')
-        print('saveloc: {saveloc}', flush=True)
+        print(f'saveloc: {saveloc}', flush=True)
         if not os.path.exists(saveloc):
             os.makedirs(saveloc)
 
