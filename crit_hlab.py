@@ -30,7 +30,8 @@ class Crit_hlab(Crit):
             nfactor_tm_tail = kwargs.get('nfactor_tm_tail'),
             saveloc = kwargs.get('saveloc'),
             pltname = kwargs.get('pltname'),
-            plot = kwargs.get('plot')
+            plot = kwargs.get('plot'),
+            none_fact = kwargs.get('none_fact')
         )
 
         # all parameters set by run_crit
