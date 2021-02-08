@@ -66,19 +66,22 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     if len(all_objs) > 0:
         cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax']
         df = pd.DataFrame(results, columns = cols)
-        print('results ', results, flush=True)
-        print('df ', df, flush=True)
+        
         group = df.groupby(['animal', 'probe', 'date', 'scored'])
         strs = []
         for i, row in group:
-            num_passed = row[row["passed"]].count()['passed']
+            if params['flag'] == 1:
+                num_passed = 0
+            else:
+                num_passed = row[row["passed"]].count()['passed']
             total_num = row.count()['passed']
             avg_dcc = row.mean()['dcc']
             animal = row['animal'].to_numpy()[0]
             date = row['date'].to_numpy()[0]
             probe = row['probe'].to_numpy()[0]
             scored = row['scored'].to_numpy()[0]
-            s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
+            age = row['age'][0]
+            s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- {age}-- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
     toc = time.time()
     now = dt.now()
