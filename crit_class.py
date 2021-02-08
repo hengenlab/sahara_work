@@ -40,7 +40,7 @@ class Crit:
     
     """
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True, none_fact = 40):
-
+        print('for debugging: I got to crit class init')
         # required parameters
         self.perc = perc
         self.spikewords = spikewords
@@ -74,7 +74,7 @@ class Crit:
         self.tmin = None
         self.tmax = None
         self.alpha = None
-
+        print('i finished crit class init')
 
     def __repr__(self):
         """

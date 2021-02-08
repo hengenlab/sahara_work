@@ -21,6 +21,7 @@ from copy import deepcopy as cdc
 class Crit_hlab(Crit):
 
     def __init__(self, **kwargs):
+        print('debugging, in crit_hlab init before super')
         super().__init__(
             spikewords = kwargs.get('spikewords'),
             perc = kwargs.get('perc'),
@@ -33,7 +34,7 @@ class Crit_hlab(Crit):
             plot = kwargs.get('plot'),
             none_fact = kwargs.get('none_fact')
         )
-
+        print('finished super init in crit_hlab')
         # all parameters set by run_crit
         self.burst = kwargs.get('burst')
         self.T = kwargs.get('T')
@@ -68,7 +69,7 @@ class Crit_hlab(Crit):
         self.scored_by = kwargs.get('scored_by')
         self.pathname = kwargs.get('pathname')
         self.filename = kwargs.get('filename')
-
+        print('finished init in crit_hlab')
 
 
     def __repr__(self):
