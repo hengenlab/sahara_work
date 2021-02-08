@@ -21,6 +21,7 @@ import gc
 from copy import deepcopy as cdc
 import time
 
+
 def get_all_results(csvloc, loaded_file, re_load):
     """
     because python refuses to play nice with memory. This will load all crit info into
