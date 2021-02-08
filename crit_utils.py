@@ -285,6 +285,14 @@ def get_sex(animal):
 
     return sex[animal]
 
+def get_probe(animal, region): 
+    region = region.upper() 
+    probes = np.array(get_regions(animal)) 
+    probenum = np.where(probes == region)[0] 
+    if len(probenum)==0: 
+        return -1 
+    probe = f'probe{probenum[0]+1}' 
+    return probe 
 
 
 def get_genotype(animal):
