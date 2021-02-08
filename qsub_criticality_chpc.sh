@@ -6,6 +6,7 @@
 # Please change BASEDIR
 BASEDIR=REPLACEBASE
 OUTDIR=REPLACEOUT
+PATHCOUNT=REPLACECOUNT
 
 # Get name for log file
 JOBID=`echo ${PBS_JOBID} | cut -c1-12`
@@ -26,5 +27,5 @@ export PYTHONPATH=/scratch/khengen_lab/git/:$PYTHONPATH
 export PYTHONPATH=/scratch/khengen_lab/crit_sahara/git/:$PYTHONPATH
 
 cd $BASEDIR
-python  $BASEDIR/criticality_script_test.py $BASEDIR &> $OUTDIR/$output_name
+python  $BASEDIR/criticality_script_test.py $BASEDIR $PATHCOUNT&> $OUTDIR/$output_name
 

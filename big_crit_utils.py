@@ -88,7 +88,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     with open(status_file, 'a+') as f:
         f.write(f'\n{now.strftime("%d/%m/%Y %H:%M:%S")} ------------ \n')
         f.write(f'{jobnum} PATHS DONE - of this job\n')
-        f.write(f'{(toc-tic)/60/60} hours to complete these paths')
+        f.write(f'{(toc-tic)/60/60} hours to complete these paths\n')
         if len(all_objs) > 0: 
             for s in strs:
                 f.write(f'{s}\n')
@@ -108,7 +108,7 @@ def make_chpc_crit_jobs(paths_per_job):
     print(f'total num paths: {len(all_paths)}', flush=True)
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
     print(f'total num animals: {len(all_animals)}', flush=True)
-
+    pathcount = 0
     for animal in all_animals:
         probe = s.get_probe(animal, region = 'CA1')
         animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}/co/*neurons_group0.npy'))
@@ -132,12 +132,16 @@ def make_chpc_crit_jobs(paths_per_job):
             shellfile = shellfile.replace('REPLACEJOBNAME', f'crit_{i}_{animal}')
             shellfile = shellfile.replace('REPLACEBASE', newjobdir)
             shellfile = shellfile.replace('REPLACEOUT', newjobdir)
+            shellfile = shellfile.replace('REPLACECOUNT', str(pathcount))
+
             with open('qsub_criticality_chpc.sh', 'w') as f:
                 f.write(shellfile)
 
             with open('job_paths.txt', 'w') as pathfile:
                 for p in these_paths:
                     pathfile.write(f'{p}\n')
+
+            pathcount+=paths_per_job
 
 
 def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
