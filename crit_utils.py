@@ -124,7 +124,7 @@ def lil_helper_boi(crit):
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
         geno = s.get_genotype(crit.animal)
-        if crit.p_val_burst is None:
+        if crit.p_value_burst is None:
             passed = None
         else:
             passed = (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)
