@@ -123,7 +123,11 @@ def lil_helper_boi(crit):
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
         geno = s.get_genotype(crit.animal)
-        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05), crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax]
+        if crit.p_val_burst is None:
+            passed = None
+        else:
+            passed = (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)
+        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax]
     except Exception as e:
         print(f'error: {e}')
         err = True
@@ -554,6 +558,7 @@ params = {
 }
 
 
+#this bad boy reruns paths if it fails a pval. not the best
 def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
