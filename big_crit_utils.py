@@ -80,7 +80,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
             date = row['date'].to_numpy()[0]
             probe = row['probe'].to_numpy()[0]
             scored = row['scored'].to_numpy()[0]
-            age = row['age'][0]
+            age = row['age'].to_numpy()[0]
             s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- {age}-- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
     toc = time.time()
