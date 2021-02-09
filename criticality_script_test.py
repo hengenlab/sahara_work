@@ -2,7 +2,7 @@ import sahara_work as s
 import glob
 import sys
 
-def run(basedir):
+def run(basedir, pathnum, jobname):
     paths = []
     with open('job_paths.txt', 'r') as f:
         for line in f:
@@ -26,9 +26,11 @@ def run(basedir):
             'save': False
     }
 
-    s.run_testing_chpc(paths, params, JOBDIR = basedir, rerun=False)
+    s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname, rerun=False)
 
 if __name__ == '__main__':
     basedir = sys.argv[1]
-    run(basedir)
+    pathnum = sys.argv[2]
+    jobname = sys.argv[3]
+    run(basedir, pathnum, jobname)
 
