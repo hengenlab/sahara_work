@@ -53,8 +53,8 @@ params = {
 
 def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
     tic = time.time()
-    status_file = f'{JOBDIR}/STATUS_test.txt'
-    csv_file = f'{JOBDIR}/results_test.csv'
+    status_file = f'{JOBDIR}/STATUS_{jobname}.txt'
+    csv_file = f'{JOBDIR}/results_{jobname}.csv'
 
     all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = params['save'], verbose=params['verbose'], timeout=params['timeout'])
 
@@ -80,7 +80,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
             date = row['date'].to_numpy()[0]
             probe = row['probe'].to_numpy()[0]
             scored = row['scored'].to_numpy()[0]
-            age = row['age'].to_numpy()[0]
+            age = row['age'].astype(str).to_numpy()[0] # check this line
             s = f'{str(animal)} -- {probe} -- {date} -- {scored} -- {age}-- passed {num_passed}/{total_num} -- avg dcc {avg_dcc}'
             strs.append(s)
     toc = time.time()
@@ -129,7 +129,7 @@ def make_chpc_crit_jobs(paths_per_job):
             os.chdir(newjobdir)
             with open('qsub_criticality_chpc.sh', 'r') as f:
                 shellfile = f.read()
-            shellfile = shellfile.replace('REPLACEJOBNAME', f'crit_{i}_{animal}')
+            shellfile = shellfile.replace('REPLACEJOBNAME', f'{animal}_job_{i}')
             shellfile = shellfile.replace('REPLACEBASE', newjobdir)
             shellfile = shellfile.replace('REPLACEOUT', newjobdir)
             shellfile = shellfile.replace('REPLACECOUNT', str(pathcount))

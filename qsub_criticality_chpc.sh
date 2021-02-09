@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N REPLACEJOBNAME
-#PBS -l nodes=1:ppn=1,walltime=2:0:00
+#PBS -l nodes=1:ppn=1,walltime=2:0:00,mem=18gb
 
 # Make sure ncpus in spikeinterface_currentall.py is same as ppn
 # Please change BASEDIR
@@ -27,5 +27,5 @@ export PYTHONPATH=/scratch/khengen_lab/git/:$PYTHONPATH
 export PYTHONPATH=/scratch/khengen_lab/crit_sahara/git/:$PYTHONPATH
 
 cd $BASEDIR
-python  $BASEDIR/criticality_script_test.py $BASEDIR $PATHCOUNT&> $OUTDIR/$output_name
+python  $BASEDIR/criticality_script_test.py $BASEDIR $PATHCOUNT ${PBS_JOBNAME}&> $OUTDIR/$output_name
 
