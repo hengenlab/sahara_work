@@ -82,7 +82,7 @@ def write_to_csv(data, cols, loc):
 
 
 def write_to_results_csv(crit, loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burst', 'T']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc']
     err, data = s.lil_helper_boi(crit)
     if err:
         print('this path failed, plz just fucking delete it and re-do this path ffs')
@@ -92,7 +92,7 @@ def write_to_results_csv(crit, loc):
 
 
 def write_csv_header(loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burst', 'T']
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc']
     with open(loc, 'w', newline = '') as c:
         w = csv.DictWriter(c, fieldnames = cols)
         w.writeheader()
@@ -114,6 +114,12 @@ def write_to_results_csv_from_path(p, loc):
     return err, data
 
 
+def get_data_perc(burst, xmin, xmax):
+    burst = np.array(burst)
+    good_index = np.where(np.logical_and(burst>xmin, burst<xmax))[0]
+    perc = len(good_index)/len(burst)
+    return perc
+
 def lil_helper_boi(crit):
     err = False
 
@@ -124,11 +130,13 @@ def lil_helper_boi(crit):
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
         geno = s.get_genotype(crit.animal)
+        burstperc = get_data_perc(crit.burst, crit.xmin, crit.xmax)
+        Tperc = get_data_perc(crit.T, crit.tmin, crit.tmax)
         if crit.p_value_burst is None:
             passed = None
         else:
             passed = (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)
-        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, crit.burst, crit.T]
+        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc]
     except Exception as e:
         print(f'error: {e}')
         err = True
