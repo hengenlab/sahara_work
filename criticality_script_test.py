@@ -1,6 +1,7 @@
 import sahara_work as s 
 import glob
 import sys
+import time
 
 def run(basedir, pathnum, jobname):
     paths = []
@@ -31,9 +32,10 @@ def run(basedir, pathnum, jobname):
         'exclude_diff_t':10,
         'save': True
     }
-
+    tic = time.time()
     s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname)
-
+    toc = time.time()
+    print(f'\nTOTAL JOB TIME: {(toc-tic)/60} min')
 if __name__ == '__main__':
     basedir = sys.argv[1]
     pathnum = sys.argv[2]
