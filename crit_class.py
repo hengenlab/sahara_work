@@ -55,6 +55,9 @@ class Crit:
         self.nfactor_bm_tail = nfactor_bm_tail
         self.nfactor_tm_tail = nfactor_tm_tail
         self.none_fact = none_fact
+        self.exclude = exclude
+        self.exclude_burst = exclude_burst
+        self.exclude_time = exclude_time
         self.exclude_diff_b = exclude_diff_b
         self.exclude_diff_t = exclude_diff_t
 
