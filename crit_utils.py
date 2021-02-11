@@ -809,7 +809,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
                             exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'])
                 
-                crit.run_crit(flag = 1, verbose = verbose)
+                crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
                 crit.block_num = idx
                 crit.qualities = quals

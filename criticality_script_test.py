@@ -24,7 +24,7 @@ def run(basedir, pathnum, jobname):
         'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/',
         'verbose':False,
         'timeout':5000,
-        'none_fact':40, 
+        'none_fact':5, 
         'exclude':True, 
         'exclude_burst':50,
         'exclude_time':20,
