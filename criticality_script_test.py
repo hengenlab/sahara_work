@@ -20,7 +20,7 @@ def run(basedir, pathnum, jobname):
         'cell_type': ['FS', 'RSU'],
         'plot': True,
         'quals': None, 
-        'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
+        'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/',
         'verbose':False,
         'timeout':5000,
         'none_fact':40, 
