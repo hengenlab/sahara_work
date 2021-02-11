@@ -108,7 +108,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
                 np.save('/scratch/khengen_lab/crit_sahara/errored_paths.npy', errored)
     return 0
 
-def make_chpc_crit_jobs(paths_per_job):
+def make_chpc_crit_jobs(paths_per_job, total_jobs=None):
     BASE = '/scratch/khengen_lab/crit_sahara/'
     print(f'base dir: ', BASE)
     all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy'))
@@ -116,11 +116,15 @@ def make_chpc_crit_jobs(paths_per_job):
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
     print(f'total num animals: {len(all_animals)}', flush=True)
     pathcount = 0
+    jobcount = 0
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}/co/*neurons_group0.npy'))
         bins = np.arange(0, len(animal_paths), paths_per_job)
         for i, b in enumerate(bins):
+            if total_jobs is not None and jobcount > total_jobs:
+                print('Killing this, jobnum reached')
+                return
             os.chdir(BASE)
             if i == len(bins)-1:
                 these_paths = animal_paths[b:]
@@ -149,7 +153,7 @@ def make_chpc_crit_jobs(paths_per_job):
                     pathfile.write(f'{p}\n')
 
             pathcount+=paths_per_job
-
+            jobcount+=1
 
 def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
     paths = sw.get_paths(animal = animal, probe = probe)
