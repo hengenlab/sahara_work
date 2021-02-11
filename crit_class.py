@@ -219,8 +219,8 @@ class Crit:
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
         self.beta = Result['beta']
-        self.EXCLUDED_b = Results['EX_b']
-        self.EXCLUDED_t = Results['EX_t']
+        self.EXCLUDED_b = Result['EX_b']
+        self.EXCLUDED_t = Result['EX_t']
         self.__gen_kappa()
         self.__gen_k2()
         self.__gen_kprob()
