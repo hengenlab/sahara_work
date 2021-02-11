@@ -32,7 +32,7 @@ def run(basedir, pathnum, jobname):
         'save': True
     }
 
-    s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname, rerun=False)
+    s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname)
 
 if __name__ == '__main__':
     basedir = sys.argv[1]
