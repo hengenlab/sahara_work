@@ -39,7 +39,8 @@ class Crit:
     
     
     """
-    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, saveloc = '', pltname = '', plot = True, none_fact = 40):
+    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, 
+                saveloc = '', pltname = '', plot = True, none_fact = 40, exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10):
         # required parameters
         self.perc = perc
         self.spikewords = spikewords
@@ -54,6 +55,8 @@ class Crit:
         self.nfactor_bm_tail = nfactor_bm_tail
         self.nfactor_tm_tail = nfactor_tm_tail
         self.none_fact = none_fact
+        self.exclude_diff_b = exclude_diff_b
+        self.exclude_diff_t = exclude_diff_t
 
         # all parameters set by run_crit
         self.burst = None
@@ -73,6 +76,8 @@ class Crit:
         self.tmin = None
         self.tmax = None
         self.alpha = None
+        self.EXCLUDED_b = None
+        self.EXCLUDED_t = None
 
     def __repr__(self):
         """
@@ -189,7 +194,7 @@ class Crit:
         }
 
         Result = cr.AV_analysis(burst, T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
-                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose)
+                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, exclude_burst = self.exclude_burst, exclude_time = self.exclude_time)
 
         if flag == 2:
             self.p_value_burst = Result['P_burst']
@@ -211,6 +216,8 @@ class Crit:
         self.tmax = Result['tmax']
         self.alpha = Result['alpha']
         self.beta = Result['beta']
+        self.EXCLUDED_b = Results['EX_b']
+        self.EXCLUDED_t = Results['EX_t']
         self.__gen_kappa()
         self.__gen_k2()
         self.__gen_kprob()

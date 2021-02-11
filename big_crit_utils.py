@@ -42,12 +42,19 @@ params = {
         'nfactor_bm': 0,
         'nfactor_tm': 0,
         'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
-        'nfactor_tm_tail': .9,  # upper bound to start exclude for time
+        'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
         'cell_type': ['FS', 'RSU'],
         'plot': True,
-        'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS/',
-        'verbose': False,
-        'none_fact': 40,
+        'quals': None, 
+        'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
+        'verbose':False,
+        'timeout':5000,
+        'none_fact':40, 
+        'exclude':True, 
+        'exclude_burst':50,
+        'exclude_time':20,
+        'exclude_diff_b':20,
+        'exclude_diff_t':10,
         'save': True
     }
 
@@ -64,7 +71,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
         results.append(appended)
 
     if len(all_objs) > 0:
-        cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc']
+        cols = sw.get_cols()
         df = pd.DataFrame(results, columns = cols)
         
         group = df.groupby(['animal', 'probe', 'date', 'scored'])
@@ -74,7 +81,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
                 num_passed = 0
             else:
                 num_passed = row[row["passed"]].count()['passed']
-            total_num = row.count()['passed']
+            total_num = row.count()['dcc']
             avg_dcc = row.mean()['dcc']
             animal = row['animal'].to_numpy()[0]
             date = row['date'].to_numpy()[0]

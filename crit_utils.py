@@ -21,6 +21,12 @@ import gc
 from copy import deepcopy as cdc
 import time
 
+def get_cols():
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
+             'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
+              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t']   
+    return cols
+
 def get_all_results(csvloc, loaded_file, re_load):
     """
     because python refuses to play nice with memory. This will load all crit info into
@@ -81,7 +87,7 @@ def write_to_csv(data, cols, loc):
 
 
 def write_to_results_csv(crit, loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc']
+    cols = get_cols()
     err, data = s.lil_helper_boi(crit)
     if err:
         print('this path failed, plz just fucking delete it and re-do this path ffs')
@@ -91,7 +97,8 @@ def write_to_results_csv(crit, loc):
 
 
 def write_csv_header(loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc']
+    cols = get_cols()
+
     with open(loc, 'w', newline = '') as c:
         w = csv.DictWriter(c, fieldnames = cols)
         w.writeheader()
@@ -119,6 +126,8 @@ def get_data_perc(burst, xmin, xmax):
     perc = len(good_index)/len(burst)
     return perc
 
+
+
 def lil_helper_boi(crit):
     err = False
 
@@ -131,11 +140,14 @@ def lil_helper_boi(crit):
         geno = s.get_genotype(crit.animal)
         burstperc = get_data_perc(crit.burst, crit.xmin, crit.xmax)
         Tperc = get_data_perc(crit.T, crit.tmin, crit.tmax)
-        if crit.p_value_burst is None:
+        if crit.p_value_burst is None or crit.p_value_t is None:
             passed = None
         else:
             passed = (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)
-        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc]
+
+        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
+                crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
+                crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t]
     except Exception as e:
         print(f'error: {e}')
         err = True
@@ -143,7 +155,7 @@ def lil_helper_boi(crit):
     return err, info
 
 def get_paths(scorer = '', geno=None, animal = '', probe = ''):
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}*/co/'
+    s = f'/media/HlabShare/Clustering_Data/{animal}*/*/*/{probe}*/co/'
     print(s)
     basepaths = [f for f in glob.glob(s)]
     print(f'total # of folders: {len(basepaths)}', flush = True)
@@ -254,7 +266,6 @@ def get_regions(animal):
         'caf74': ['ACaD','RSPv','CA1','V1'],
         'caf75': ['ACaD','CA1','RSPv','V1'],
         'caf77': ['CA1','RSPv','ACaD','V1'],
-        'caf72': ['CA1'],
         'caf78': ['CA1'],
         'caf79': ['CA1'],
         'caf80': ['CA1'],
@@ -577,7 +588,15 @@ params = {
     'plot': True,
     'quals': None, 
     'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
-    'none_fact':40
+    'verbose':False,
+    'timeout':5000,
+    'none_fact':40, 
+    'exclude':True, 
+    'exclude_burst':50,
+    'exclude_time':20,
+    'exclude_diff_b':20,
+    'exclude_diff_t':10,
+    'save':True
 }
 
 
@@ -719,7 +738,7 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
+def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -787,7 +806,8 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                 param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
-                            pltname = f'{param_str}_{scorer}', plot = params['plot'])
+                            pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
+                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'])
                 
                 crit.run_crit(flag = 1, verbose = verbose)
                 crit.time_frame = time_frame
