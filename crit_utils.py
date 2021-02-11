@@ -398,7 +398,7 @@ def signal_handler(signum, frame):
 
 
 def get_info_from_path(path):
-    animal_pattern = '((caf|eab)\d{2})'
+    animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
     matches = re.findall(animal_pattern, path)
     animal = matches[0][0]
 
@@ -413,7 +413,9 @@ def get_info_from_path(path):
 
     probe = path[path.find('probe'):path.find('probe') + 6]
 
-    return animal, date, time_frame, probe
+    animal_clean = animal[:3].lower() + str(int(animal[3:]))
+
+    return animal_clean, date, time_frame, probe
 
 def get_cell_stats(cell):
     fr, xbins = cell.plotFR(binsz = 3600, start = False, end = False,
@@ -773,8 +775,8 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'])
-
-                crit.run_crit(flag = params['flag'], verbose = verbose)
+                
+                crit.run_crit(flag = 1, verbose = verbose)
                 crit.time_frame = time_frame
                 crit.block_num = idx
                 crit.qualities = quals
