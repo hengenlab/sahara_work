@@ -22,7 +22,6 @@ def run(basedir, pathnum, jobname):
         'quals':[1,2,3],
         'fr_cutoff':50,
         'plot': True,
-        'quals': None, 
         'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/----addjobname-----',
         'verbose':False,
         'timeout':5000,

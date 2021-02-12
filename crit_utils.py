@@ -769,8 +769,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
         fr_cutoff = params['fr_cutoff']
         try:
             cells = np.load(path, allow_pickle = True)
-            good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] 
-                        and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
+            good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
             
             num_cells = len(good_cells)
 
