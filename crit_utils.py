@@ -21,6 +21,11 @@ import gc
 from copy import deepcopy as cdc
 import time
 
+def get_cols():
+    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
+             'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
+              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t']   
+    return cols
 
 def get_all_results(csvloc, loaded_file, re_load):
     """
@@ -82,7 +87,7 @@ def write_to_csv(data, cols, loc):
 
 
 def write_to_results_csv(crit, loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax']
+    cols = get_cols()
     err, data = s.lil_helper_boi(crit)
     if err:
         print('this path failed, plz just fucking delete it and re-do this path ffs')
@@ -92,7 +97,8 @@ def write_to_results_csv(crit, loc):
 
 
 def write_csv_header(loc):
-    cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax']
+    cols = get_cols()
+
     with open(loc, 'w', newline = '') as c:
         w = csv.DictWriter(c, fieldnames = cols)
         w.writeheader()
@@ -114,6 +120,14 @@ def write_to_results_csv_from_path(p, loc):
     return err, data
 
 
+def get_data_perc(burst, xmin, xmax):
+    burst = np.array(burst)
+    good_index = np.where(np.logical_and(burst>xmin, burst<xmax))[0]
+    perc = len(good_index)/len(burst)
+    return perc
+
+
+
 def lil_helper_boi(crit):
     err = False
 
@@ -124,11 +138,16 @@ def lil_helper_boi(crit):
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
         geno = s.get_genotype(crit.animal)
-        if crit.p_value_burst is None:
+        burstperc = get_data_perc(crit.burst, crit.xmin, crit.xmax)
+        Tperc = get_data_perc(crit.T, crit.tmin, crit.tmax)
+        if crit.p_value_burst is None or crit.p_value_t is None:
             passed = None
         else:
             passed = (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)
-        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno, crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t, crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax]
+
+        info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
+                crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
+                crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t]
     except Exception as e:
         print(f'error: {e}')
         err = True
@@ -136,7 +155,7 @@ def lil_helper_boi(crit):
     return err, info
 
 def get_paths(scorer = '', geno=None, animal = '', probe = ''):
-    s = f'/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}*/co/'
+    s = f'/media/HlabShare/Clustering_Data/{animal}*/*/*/{probe}*/co/'
     print(s)
     basepaths = [f for f in glob.glob(s)]
     print(f'total # of folders: {len(basepaths)}', flush = True)
@@ -187,6 +206,9 @@ def get_birthday(animal):
         'caf74': dt(2019, 12, 5, 7, 30),
         'caf75': dt(2020, 1, 5, 7, 30),
         'caf77': dt(2020, 1, 5, 7, 30),
+        'caf78': dt(2020, 4, 19, 20, 30),
+        'caf79': dt(2020, 4, 19, 20, 30),
+        'caf80': dt(2020, 4, 19, 20, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -244,6 +266,9 @@ def get_regions(animal):
         'caf74': ['ACaD','RSPv','CA1','V1'],
         'caf75': ['ACaD','CA1','RSPv','V1'],
         'caf77': ['CA1','RSPv','ACaD','V1'],
+        'caf78': ['CA1'],
+        'caf79': ['CA1'],
+        'caf80': ['CA1'],
         'eab52': ['CA1','V1'],
         'eab47': ['M1_M2','CA1','V2'],
         'eab': ['M1_M2','CA1','V2'],
@@ -281,6 +306,9 @@ def get_sex(animal):
         'caf74': 'M',
         'caf75': 'M',
         'caf77': 'F',
+        'caf78': 'F',
+        'caf79': 'F',
+        'caf80': 'M',
         'eab52': 'F',
         'eab47': 'M',
         'eab': 'M',
@@ -328,6 +356,9 @@ def get_genotype(animal):
         'caf74': 'app_ps1',
         'caf75': 'app_ps1',
         'caf77': 'wt',
+        'caf78': 'te4',
+        'caf79': 'te4',
+        'caf80': 'te4',
         'eab52': 'te4',
         'eab47': 'te4',
         'eab': 'te4',
@@ -391,7 +422,7 @@ def signal_handler(signum, frame):
 
 
 def get_info_from_path(path):
-    animal_pattern = '((caf|eab)\d{2})'
+    animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
     matches = re.findall(animal_pattern, path)
     animal = matches[0][0]
 
@@ -406,7 +437,9 @@ def get_info_from_path(path):
 
     probe = path[path.find('probe'):path.find('probe') + 6]
 
-    return animal, date, time_frame, probe
+    animal_clean = animal[:3].lower() + str(int(animal[3:]))
+
+    return animal_clean, date, time_frame, probe
 
 def get_cell_stats(cell):
     fr, xbins = cell.plotFR(binsz = 3600, start = False, end = False,
@@ -552,10 +585,20 @@ params = {
     'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
     'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
+    'quals':[1,2,3],
     'plot': True,
     'quals': None, 
     'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
-    'none_fact':40
+    'verbose':False,
+    'timeout':5000,
+    'none_fact':40, 
+    'exclude':True, 
+    'exclude_burst':50,
+    'exclude_time':20,
+    'exclude_diff_b':20,
+    'exclude_diff_t':10,
+    'fr_cutoff':50,
+    'save':True
 }
 
 
@@ -697,7 +740,7 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
+def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
     for idx, path in enumerate(paths):
@@ -722,25 +765,16 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
 
-        quals = [1, 2, 3]
-        fr_cutoff = 50
+        quals = params['quals']
+        fr_cutoff = params['fr_cutoff']
         try:
             cells = np.load(path, allow_pickle = True)
             good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
+            
             num_cells = len(good_cells)
-    
-            if len(good_cells) < 10:
-                quals = [1, 2, 3]
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-
-            elif len(good_cells) < 60:
-                quals = [1, 2]
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-            elif len(good_cells) >= 60:
-                quals = [1]
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
 
             if overlap :
+                pritn('There is an overlap so cutting out the first hour')
                 start = 3600
             else:
                 start = False
@@ -765,8 +799,9 @@ def lilo_and_stitch(paths, params, rerun = False, save = True, overlap = False, 
                 param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
-                            pltname = f'{param_str}_{scorer}', plot = params['plot'])
-
+                            pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
+                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'])
+                
                 crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
                 crit.block_num = idx

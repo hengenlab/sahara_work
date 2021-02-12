@@ -31,7 +31,12 @@ class Crit_hlab(Crit):
             saveloc = kwargs.get('saveloc'),
             pltname = kwargs.get('pltname'),
             plot = kwargs.get('plot'),
-            none_fact = kwargs.get('none_fact')
+            none_fact = kwargs.get('none_fact'),
+            exclude = kwargs.get('exclude'),
+            exclude_burst = kwargs.get('exclude_burst'),
+            exclude_time = kwargs.get('exclude_time'),
+            exclude_diff_b = kwargs.get('exclude_diff_b'),
+            exclude_diff_t = kwargs.get('exclude_diff_t')
         )
         # all parameters set by run_crit
         self.burst = kwargs.get('burst')
@@ -51,6 +56,8 @@ class Crit_hlab(Crit):
         self.tmin = kwargs.get('tmin')
         self.tmax = kwargs.get('tmax')
         self.alpha = kwargs.get('alpha')
+        self.EXCLUDED_b = kwargs.get('EXCLUDED_b')
+        self.EXCLUDED_t = kwargs.get('EXCLUDED_t')
 
         # all parameters that can be set by lilo and stitch
         self.time_frame = kwargs.get('time_frame')

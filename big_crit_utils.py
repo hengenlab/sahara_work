@@ -3,7 +3,6 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-
 import sahara_work as sw
 from datetime import datetime as dt
 import signal
@@ -11,7 +10,7 @@ import sys
 import os
 import shutil
 import time
-
+ 
 def write_to_files(o, csvloc):
     err, appended = sw.write_to_results_csv(o, csvloc)
     if err:
@@ -42,12 +41,19 @@ params = {
         'nfactor_bm': 0,
         'nfactor_tm': 0,
         'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
-        'nfactor_tm_tail': .9,  # upper bound to start exclude for time
+        'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
         'cell_type': ['FS', 'RSU'],
         'plot': True,
-        'base_saveloc': '/scratch/khengen_lab/crit_sahara/RESULTS/',
-        'verbose': False,
-        'none_fact': 40,
+        'quals': None, 
+        'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
+        'verbose':False,
+        'timeout':5000,
+        'none_fact':40, 
+        'exclude':True, 
+        'exclude_burst':50,
+        'exclude_time':20,
+        'exclude_diff_b':20,
+        'exclude_diff_t':10,
         'save': True
     }
 
@@ -56,7 +62,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     status_file = f'{JOBDIR}/STATUS_{jobname}.txt'
     csv_file = f'{JOBDIR}/results_{jobname}.csv'
 
-    all_objs, errors = sw.lilo_and_stitch(paths, params, rerun = rerun, save = params['save'], verbose=params['verbose'], timeout=params['timeout'])
+    all_objs, errors = sw.lilo_and_stitch(paths, params, save = params['save'], verbose=params['verbose'], timeout=params['timeout'])
 
     results = []
     for o in all_objs:
@@ -64,7 +70,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
         results.append(appended)
 
     if len(all_objs) > 0:
-        cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno', 'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t', 'xmin', 'xmax', 'tmin', 'tmax']
+        cols = sw.get_cols()
         df = pd.DataFrame(results, columns = cols)
         
         group = df.groupby(['animal', 'probe', 'date', 'scored'])
@@ -74,7 +80,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
                 num_passed = 0
             else:
                 num_passed = row[row["passed"]].count()['passed']
-            total_num = row.count()['passed']
+            total_num = row.count()['dcc']
             avg_dcc = row.mean()['dcc']
             animal = row['animal'].to_numpy()[0]
             date = row['date'].to_numpy()[0]
@@ -101,7 +107,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
                 np.save('/scratch/khengen_lab/crit_sahara/errored_paths.npy', errored)
     return 0
 
-def make_chpc_crit_jobs(paths_per_job):
+def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
     BASE = '/scratch/khengen_lab/crit_sahara/'
     print(f'base dir: ', BASE)
     all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy'))
@@ -109,32 +115,37 @@ def make_chpc_crit_jobs(paths_per_job):
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
     print(f'total num animals: {len(all_animals)}', flush=True)
     pathcount = 0
+    jobcount = 0
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/{animal}*/*/*/{probe}/co/*neurons_group0.npy'))
         bins = np.arange(0, len(animal_paths), paths_per_job)
         for i, b in enumerate(bins):
+            if total_jobs is not None and jobcount > total_jobs:
+                print('Killing this, jobnum reached')
+                return
             os.chdir(BASE)
             if i == len(bins)-1:
                 these_paths = animal_paths[b:]
             else:
                 these_paths = animal_paths[b:b+paths_per_job]
-            newjobdir = os.path.join(BASE, 'JOBS', f'{animal}_job_{i}')
+            newjobdir = os.path.join(BASE, 'JOBS', jobname, f'{animal}_job_{i}')
             print('newdir: ', newjobdir)
             if not os.path.exists(newjobdir):
                 os.makedirs(newjobdir)
-            shutil.copyfile(BASE+'qsub_criticality_chpc.sh', newjobdir+'/qsub_criticality_chpc.sh')
-            shutil.copyfile(BASE+'criticality_script_test.py', newjobdir+'/criticality_script_test.py')
+            shutil.copyfile(BASE+f'qsub_criticality_chpc_{jobname}.sh', newjobdir+f'/qsub_criticality_chpc_{jobname}.sh')
+            shutil.copyfile(BASE+f'criticality_script_{jobname}.py', newjobdir+f'/criticality_script_{jobname}.py')
             
             os.chdir(newjobdir)
-            with open('qsub_criticality_chpc.sh', 'r') as f:
+            with open(f'qsub_criticality_chpc_{jobname}.sh', 'r') as f:
                 shellfile = f.read()
-            shellfile = shellfile.replace('REPLACEJOBNAME', f'{animal}_job_{i}')
+            shellfile = shellfile.replace('REPLACEJOBNAME', f'{animal}_job_{i}_{jobname}')
             shellfile = shellfile.replace('REPLACEBASE', newjobdir)
             shellfile = shellfile.replace('REPLACEOUT', newjobdir)
             shellfile = shellfile.replace('REPLACECOUNT', str(pathcount))
+            shellfile = shellfile.replace('SCRIPTNAME', f'criticality_script_{jobname}.py')
 
-            with open('qsub_criticality_chpc.sh', 'w') as f:
+            with open(f'qsub_criticality_chpc_{jobname}.sh', 'w') as f:
                 f.write(shellfile)
 
             with open('job_paths.txt', 'w') as pathfile:
@@ -142,7 +153,7 @@ def make_chpc_crit_jobs(paths_per_job):
                     pathfile.write(f'{p}\n')
 
             pathcount+=paths_per_job
-
+            jobcount+=1
 
 def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
     paths = sw.get_paths(animal = animal, probe = probe)
