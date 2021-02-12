@@ -585,6 +585,7 @@ params = {
     'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
     'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'],
+    'quals':[1,2,3],
     'plot': True,
     'quals': None, 
     'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
@@ -596,6 +597,7 @@ params = {
     'exclude_time':20,
     'exclude_diff_b':20,
     'exclude_diff_t':10,
+    'fr_cutoff':50,
     'save':True
 }
 
@@ -763,25 +765,17 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
 
-        quals = [1, 2, 3]
-        fr_cutoff = 50
+        quals = params['quals']
+        fr_cutoff = params['fr_cutoff']
         try:
             cells = np.load(path, allow_pickle = True)
-            good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
+            good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] 
+                        and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
+            
             num_cells = len(good_cells)
-    
-            if len(good_cells) < 10:
-                quals = [1, 2, 3]
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-
-            elif len(good_cells) < 60:
-                quals = [1, 2]
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
-            elif len(good_cells) >= 60:
-                quals = [1]
-                good_cells = [cell for cell in cells if cell.quality in quals and cell.cell_type in params['cell_type'] and cell.plotFR(binsz=cell.end_time, lplot=0, lonoff=0)[0][0] < fr_cutoff and cell.presence_ratio() > .99]
 
             if overlap :
+                pritn('There is an overlap so cutting out the first hour')
                 start = 3600
             else:
                 start = False

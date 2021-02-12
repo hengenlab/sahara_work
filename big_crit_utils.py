@@ -3,7 +3,6 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-
 import sahara_work as sw
 from datetime import datetime as dt
 import signal
@@ -11,7 +10,7 @@ import sys
 import os
 import shutil
 import time
-
+ 
 def write_to_files(o, csvloc):
     err, appended = sw.write_to_results_csv(o, csvloc)
     if err:
@@ -108,7 +107,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
                 np.save('/scratch/khengen_lab/crit_sahara/errored_paths.npy', errored)
     return 0
 
-def make_chpc_crit_jobs(paths_per_job, total_jobs=None):
+def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
     BASE = '/scratch/khengen_lab/crit_sahara/'
     print(f'base dir: ', BASE)
     all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy'))
@@ -130,22 +129,22 @@ def make_chpc_crit_jobs(paths_per_job, total_jobs=None):
                 these_paths = animal_paths[b:]
             else:
                 these_paths = animal_paths[b:b+paths_per_job]
-            newjobdir = os.path.join(BASE, 'JOBS', f'{animal}_job_{i}')
+            newjobdir = os.path.join(BASE, 'JOBS', jobname, f'{animal}_job_{i}')
             print('newdir: ', newjobdir)
             if not os.path.exists(newjobdir):
                 os.makedirs(newjobdir)
-            shutil.copyfile(BASE+'qsub_criticality_chpc.sh', newjobdir+'/qsub_criticality_chpc.sh')
-            shutil.copyfile(BASE+'criticality_script_test.py', newjobdir+'/criticality_script_test.py')
+            shutil.copyfile(BASE+f'qsub_criticality_chpc_{jobname}.sh', newjobdir+f'/qsub_criticality_chpc_{jobname}.sh')
+            shutil.copyfile(BASE+f'criticality_script_{jobname}.py', newjobdir+f'/criticality_script_test_{jobname}.py')
             
             os.chdir(newjobdir)
-            with open('qsub_criticality_chpc.sh', 'r') as f:
+            with open(f'qsub_criticality_chpc_{jobname}.sh', 'r') as f:
                 shellfile = f.read()
-            shellfile = shellfile.replace('REPLACEJOBNAME', f'{animal}_job_{i}')
+            shellfile = shellfile.replace('REPLACEJOBNAME', f'{animal}_job_{i}_{jobname}')
             shellfile = shellfile.replace('REPLACEBASE', newjobdir)
             shellfile = shellfile.replace('REPLACEOUT', newjobdir)
             shellfile = shellfile.replace('REPLACECOUNT', str(pathcount))
 
-            with open('qsub_criticality_chpc.sh', 'w') as f:
+            with open(f'qsub_criticality_chpc_{jobname}.sh', 'w') as f:
                 f.write(shellfile)
 
             with open('job_paths.txt', 'w') as pathfile:

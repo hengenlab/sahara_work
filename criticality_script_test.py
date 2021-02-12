@@ -19,9 +19,11 @@ def run(basedir, pathnum, jobname):
         'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
         'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
         'cell_type': ['FS', 'RSU'],
+        'quals':[1,2,3],
+        'fr_cutoff':50,
         'plot': True,
         'quals': None, 
-        'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/',
+        'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/----addjobname-----',
         'verbose':False,
         'timeout':5000,
         'none_fact':5, 
@@ -36,6 +38,7 @@ def run(basedir, pathnum, jobname):
     s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname)
     toc = time.time()
     print(f'\nTOTAL JOB TIME: {(toc-tic)/60} min')
+
 if __name__ == '__main__':
     basedir = sys.argv[1]
     pathnum = sys.argv[2]
