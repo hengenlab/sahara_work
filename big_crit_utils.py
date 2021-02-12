@@ -134,7 +134,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
             if not os.path.exists(newjobdir):
                 os.makedirs(newjobdir)
             shutil.copyfile(BASE+f'qsub_criticality_chpc_{jobname}.sh', newjobdir+f'/qsub_criticality_chpc_{jobname}.sh')
-            shutil.copyfile(BASE+f'criticality_script_{jobname}.py', newjobdir+f'/criticality_script_test_{jobname}.py')
+            shutil.copyfile(BASE+f'criticality_script_{jobname}.py', newjobdir+f'/criticality_script_{jobname}.py')
             
             os.chdir(newjobdir)
             with open(f'qsub_criticality_chpc_{jobname}.sh', 'r') as f:
@@ -143,6 +143,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
             shellfile = shellfile.replace('REPLACEBASE', newjobdir)
             shellfile = shellfile.replace('REPLACEOUT', newjobdir)
             shellfile = shellfile.replace('REPLACECOUNT', str(pathcount))
+            shellfile = shellfile.replace('SCRIPTNAME', f'criticality_script_{jobname}.py')
 
             with open(f'qsub_criticality_chpc_{jobname}.sh', 'w') as f:
                 f.write(shellfile)
