@@ -197,7 +197,8 @@ class Crit:
         }
 
         Result = cr.AV_analysis(burst, T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
-                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, exclude_burst = self.exclude_burst, exclude_time = self.exclude_time)
+                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, 
+                                exclude_burst = self.exclude_burst, exclude_time = self.exclude_time, exclude_diff_b = self.exclude_diff_b, exclude_diff_t=self.exclude_diff_t)
 
         if flag == 2:
             self.p_value_burst = Result['P_burst']

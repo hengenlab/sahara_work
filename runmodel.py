@@ -5,10 +5,10 @@ import h5py
 import criticality_hlab.criticality as cr
 import time
 
-DCC = np.zeros((19,4))
-perc = 0.0
-burstM = 10
-tM = 10
+
+# perc = 0.0
+# burstM = 10
+# tM = 10
 # m=1
 # n=1
 # name = "sub_eig" + str(m) + "_num" + str(n) + ".mat"
@@ -21,6 +21,7 @@ tM = 10
 # y = r['T'] 
 # Result3 = cr.AV_analysis_new(x, y, burstM, tM, pltname, saveloc='/media/bs001s/caf/model_stuff/', plot=True) 
 
+
 def get_data_from_sparse(name, idxs):
     f = h5py.File(name)
     datamat = f['Data']
@@ -29,6 +30,12 @@ def get_data_from_sparse(name, idxs):
         d = d[idxs,:]
     data = np.asarray(d.todense())
     return data
+
+def get_fucking_burried(f, datname, row, col):
+    name = h5py.h5r.get_name(f[datname][row][col], f.id)
+    dat = f[name]
+    d = scipy.sparse.csc_matrix((dat['data'], dat['ir'], dat['jc']))
+    return d.toarray()
 
 def get_data_normal(name, idxs):
     datamat = sio.loadmat(name)
@@ -48,39 +55,121 @@ def get_txt_data(name):
     data = np.asarray(data)
     return data
 
-# DCC[m-1,n-1] = Result3['df']
+
 params = {
     'flag': 1,
-    'bm': 10,
-    'tm': 10,
-    'pltname': "testing",
-    'saveloc': "/media/bs001s/caf/model_stuff/figures/output_figs/",
-    'burst_shuffled': None,
-    'T_shuffled': None,
-    'plot_shuffled': False,
-    'plot': True
+    'pltname': 'testing',
+    'saveloc': "/media/HlabShare/clayton_sahara_work/model_shit/figures/output_figs",
+    'plot': True,
+    'perc':0.35,
+    'bm': 20,
+    'tm': 5,
+    'none_fact': 20,
+    'exclude':False,
+    'verbose':False,
+    'nfactor_tm':0,
+    'nfactor_bm':0,
+    'nfactor_tm_tail':1,
+    'nfactor_bm_tail':1,
+    'exclude_burst':50,
+    'exclude_time':20,
+    'exclude_diff_b':20,
+    'exclude_diff_t':10
 }
+
+# Result = cr.AV_analysis(x, y, params, nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'], 
+#                         nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], 
+#                         none_fact = params['none_fact'], verbose = params['verbose'], exclude = params['exclude'], 
+#                         exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
+#                         exclude_diff_b = params['exclude_diff_b'], exclude_diff_t = params['exclude_diff_t'])
+
+DCC = np.zeros((19,4))
+
+fulldata = h5py.File('Sub_Super/SubSummary.mat')
+fulldata = datamat['Data_sub']
+for m in np.arange(1, 20):
+    eig = 20-m
+    print(f'EIG {eig}')
+    for n in np.arange(1, 5):
+        pltname = f'sub_eig{m}_{n}'
+        params['pltname'] = pltname
+        
+        d = fulldata[n-1, eig-1]
+        d = scipy.sparse.csr_matrix(d)
+        data = d.toarray()
+        r = cr.get_avalanches(data, perc = params['perc'])
+        x = r['S']
+        y = r['T']
+        worked = True
+        try:
+            Result3 = cr.AV_analysis(x, y, params, nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'], 
+                            nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], 
+                            none_fact = params['none_fact'], verbose = params['verbose'], exclude = params['exclude'], 
+                            exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
+                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t = params['exclude_diff_t'])
+        except Exception as err:
+            print(err)
+            worked = False
+        if worked:
+            DCC[m - 1, n - 1] = Result3['df']
+            del Result3
+        else:
+            DCC[m - 1, n - 1] = np.nan
+
+        del data
+
+params = {
+    'flag': 1,
+    'pltname': 'testing',
+    'saveloc': "/media/HlabShare/clayton_sahara_work/model_shit/figures/output_figs",
+    'plot': True,
+    'perc':0.35,
+    'none_fact': 20,
+    'exclude':False,
+    'verbose':False,
+    'bm':20,
+    'tm':5,
+    'nfactor_tm':0,
+    'nfactor_bm':0,
+    'nfactor_tm_tail':1,
+    'nfactor_bm_tail':1,
+    'exclude_burst':50,
+    'exclude_time':20,
+    'exclude_diff_b':20,
+    'exclude_diff_t':10
+}
+
+DCC = np.zeros((19,4))
+
+fulldata = h5py.File('Sub_Super/SuperSummary.mat')
 for m in np.arange(1, 20):
     print(f'EIG {m}')
     for n in np.arange(1, 5):
-        name = "10000_cells/sub_10000_5mil_sparse_eig" + str(m) + "_num" + str(n) + ".mat"
-        pltname = "sub_10000_5mil_sparse_eig" + str(m) + "_num" + str(n)
+        pltname = f'super_eig{m}_{n}'
         params['pltname'] = pltname
-        rand_nums = np.random.randint(low = 0, high = 10000, size = 300)
-        try:
-            data = get_data_from_sparse(name, rand_nums)
-        except OSError:
-            data = get_data_normal(name, rand_nums)
-        d = data
-        r = cr.get_avalanches(data, perc = perc)
+        data = get_fucking_burried(fulldata, 'Data_super', m-1, n-1)
+        r = cr.get_avalanches(data, perc = params['perc'])
         x = r['S']
         y = r['T']
+        worked = True
+        try:
+            Result3 = cr.AV_analysis(x, y, params, nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'], 
+                            nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], 
+                            none_fact = params['none_fact'], verbose = params['verbose'], exclude = params['exclude'], 
+                            exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
+                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t = params['exclude_diff_t'])
+        except Exception as err:
+            print(err)
+            worked = False
+        if worked:
+            DCC[m - 1, n - 1] = Result3['df']
+            del Result3
+        else:
+            DCC[m - 1, n - 1] = np.nan
 
-        Result3 = AV_analysis(x, y, params, nfactor_bm_tail=0.8, nfactor_tm_tail=1.0)
-        DCC[m - 1, n - 1] = Result3['df']
-        del Result3
         del data
-np.save('sub_10000_5mil_sparse_300subsampled.npy', DCC)
+
+#np.save('sub_10000_5mil_sparse_300subsampled.npy', DCC)
 
 
 for m in np.arange(19, 20):
