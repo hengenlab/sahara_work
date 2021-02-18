@@ -37,7 +37,7 @@ class Crit_hlab(Crit):
             exclude_time = kwargs.get('exclude_time'),
             exclude_diff_b = kwargs.get('exclude_diff_b'),
             exclude_diff_t = kwargs.get('exclude_diff_t'),
-            bm = kwargs.get('bm')
+            bm = kwargs.get('bm'),
             tm = kwargs.get('tm')
         )
         # all parameters set by run_crit
