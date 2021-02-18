@@ -588,6 +588,8 @@ params = {
     'ava_binsz': 0.04,  # in seconds
     'hour_bins': 4,  # durration of block to look at
     'perc': 0.35,
+    'bm':None,
+    'tm':None,
     'nfactor_bm': 0,
     'nfactor_tm': 0,
     'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
@@ -805,7 +807,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                     data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
 
                 param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
-                crit = Crit_hlab(spikewords = data, perc = params['perc'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
+                crit = Crit_hlab(spikewords = data, perc = params['perc'], bm = params['bm'], tm = params['tm'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
                             exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'])

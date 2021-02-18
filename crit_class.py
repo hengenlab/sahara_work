@@ -39,8 +39,9 @@ class Crit:
     
     
     """
-    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, 
-                saveloc = '', pltname = '', plot = True, none_fact = 40, exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10):
+    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1,
+                bm = None, tm = None, saveloc = '', pltname = '', plot = True, none_fact = 40, 
+                exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10):
         # required parameters
         self.perc = perc
         self.spikewords = spikewords
@@ -60,12 +61,12 @@ class Crit:
         self.exclude_time = exclude_time
         self.exclude_diff_b = exclude_diff_b
         self.exclude_diff_t = exclude_diff_t
+        self.bm = bm
+        self.tm = tm
 
         # all parameters set by run_crit
         self.burst = None
         self.T = None
-        self.bm = None
-        self.tm = None
         self.p_value_burst = None
         self.p_value_t = None
         self.dcc = None
