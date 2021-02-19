@@ -776,7 +776,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
         num_bins = params['end']
         if start is None:
             start = 0
-        if end is None:
+        if num_bins is None:
             num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
