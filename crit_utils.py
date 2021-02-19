@@ -773,9 +773,9 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
         else:
             scorer = path[path.find('scored')+7:path.find('.npy')]
 
-        if start is None:
+        if params['start'] is None:
             start = 0
-        if end is None:
+        if params['end'] is None:
             end = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
 
