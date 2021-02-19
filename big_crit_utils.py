@@ -79,7 +79,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
             if params['flag'] == 1:
                 num_passed = 0
             else:
-                num_passed = row[row["passed"]].count()['passed']
+                num_passed = row[row["passed"]==True].count()['passed']
             total_num = row.count()['dcc']
             avg_dcc = row.mean()['dcc']
             animal = row['animal'].to_numpy()[0]

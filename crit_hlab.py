@@ -36,13 +36,13 @@ class Crit_hlab(Crit):
             exclude_burst = kwargs.get('exclude_burst'),
             exclude_time = kwargs.get('exclude_time'),
             exclude_diff_b = kwargs.get('exclude_diff_b'),
-            exclude_diff_t = kwargs.get('exclude_diff_t')
+            exclude_diff_t = kwargs.get('exclude_diff_t'),
+            bm = kwargs.get('bm'),
+            tm = kwargs.get('tm')
         )
         # all parameters set by run_crit
         self.burst = kwargs.get('burst')
         self.T = kwargs.get('T')
-        self.bm = kwargs.get('bm')
-        self.tm = kwargs.get('tm')
         self.p_value_burst = kwargs.get('p_value_burst')
         self.p_value_t = kwargs.get('p_value_t')
         self.dcc = kwargs.get('dcc')
@@ -90,6 +90,7 @@ class Crit_hlab(Crit):
               f'nfactor_tm: {self.nfactor_tm}\n'
               f'nfactor_bm_tail: {self.nfactor_bm_tail}\n'
               f'nfactor_tm_tail: {self.nfactor_tm_tail}\n')
+
 
     def run_crit_from_start(self, flag = 2, save = False):
 

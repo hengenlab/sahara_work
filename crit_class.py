@@ -39,8 +39,9 @@ class Crit:
     
     
     """
-    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1, 
-                saveloc = '', pltname = '', plot = True, none_fact = 40, exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10):
+    def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1,
+                bm = None, tm = None, saveloc = '', pltname = '', plot = True, none_fact = 40, 
+                exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10):
         # required parameters
         self.perc = perc
         self.spikewords = spikewords
@@ -60,12 +61,12 @@ class Crit:
         self.exclude_time = exclude_time
         self.exclude_diff_b = exclude_diff_b
         self.exclude_diff_t = exclude_diff_t
+        self.bm = bm
+        self.tm = tm
 
         # all parameters set by run_crit
         self.burst = None
         self.T = None
-        self.bm = None
-        self.tm = None
         self.p_value_burst = None
         self.p_value_t = None
         self.dcc = None
@@ -197,7 +198,8 @@ class Crit:
         }
 
         Result = cr.AV_analysis(burst, T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
-                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, exclude_burst = self.exclude_burst, exclude_time = self.exclude_time)
+                                nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, 
+                                exclude_burst = self.exclude_burst, exclude_time = self.exclude_time, exclude_diff_b = self.exclude_diff_b, exclude_diff_t=self.exclude_diff_t)
 
         if flag == 2:
             self.p_value_burst = Result['P_burst']
