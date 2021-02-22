@@ -772,15 +772,15 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
             scorer = 'xgb'
         else:
             scorer = path[path.find('scored')+7:path.find('.npy')]
-        start = params['start']
+        start_bin = params['start']
         num_bins = params['end']
 
-        if start is None:
-            start = 0
+        if start_bin is None:
+            start_bin = 0
         if num_bins is None:
             num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
-        print('start: ', start, ' end ', num_bins, ' bin_len ', bin_len)
+        print('start: ', start_bin, ' end ', num_bins, ' bin_len ', bin_len)
 
         quals = params['quals']
         fr_cutoff = params['fr_cutoff']
@@ -801,9 +801,9 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
             print(err)
             errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
             continue
-            
-        for idx in np.arange(start, num_bins):
-            print('np.arange: ', np.arange(start, num_bins))
+
+        for idx in np.arange(start_bin, num_bins):
+            print('np.arange: ', np.arange(start_bin, num_bins))
             liltic = time.time()
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(timeout)
