@@ -755,7 +755,7 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
 def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
-    for idx, path in enumerate(paths):
+    for i, path in enumerate(paths):
         tic = time.time()
         basepath = path[:path.rfind('/')]
         
@@ -774,12 +774,13 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
             scorer = path[path.find('scored')+7:path.find('.npy')]
         start = params['start']
         num_bins = params['end']
+
         if start is None:
             start = 0
         if num_bins is None:
             num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
-
+        print('start: ', start, ' end ', num_bins, ' bin_len ', bin_len)
 
         quals = params['quals']
         fr_cutoff = params['fr_cutoff']
@@ -811,7 +812,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                     data = spikewords[:, (idx * bin_len):]
                 else:
                     data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
-
+                print('shape data: ', np.shape(data), ' shape total: ', np.shape(spikewords))
                 param_str = __get_paramstr(animal, probe, date, time_frame, params['hour_bins'], params['perc'], params['ava_binsz'], quals, params['cell_type'], idx)
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], bm = params['bm'], tm = params['tm'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
