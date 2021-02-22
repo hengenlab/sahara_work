@@ -801,7 +801,9 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
             print(err)
             errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
             continue
+            
         for idx in np.arange(start, num_bins):
+            print('np.arange: ', np.arange(start, num_bins))
             liltic = time.time()
             signal.signal(signal.SIGALRM, signal_handler)
             signal.alarm(timeout)
@@ -809,6 +811,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
                 if idx == num_bins - 1:
+                    print('last bin')
                     data = spikewords[:, (idx * bin_len):]
                 else:
                     data = spikewords[:, (idx * bin_len): ((idx + 1) * bin_len)]
