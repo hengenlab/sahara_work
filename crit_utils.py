@@ -582,6 +582,22 @@ def get_age_sec(start_time, birthday):
     seconds = age.total_seconds()
     return seconds
 
+# function names are getting a bit ambiguous
+# this shuffles spiketimes and returns shuffled burst and time distributions
+def cha_cha_slide(cells, ava_binsize, perc, start = False, return_cells = False):
+    shuffled_cells = cdc(cells)
+    for cell in shuffled_cells:
+        cell.shuffle_times()
+    
+    spikewords = mbt.n_spiketimes_to_spikewords(shuffled_cells, binsz = ava_binsize, binarize = 1, start = start)
+    R = cr.get_avalanches(spikewords, perc = perc)
+    burstS = R['S']
+    TS = R['T']
+    if return_cells:
+        return burstS, TS, shuffled_cells
+    else:
+        return burstS, TS
+
 
 params = {
     'flag': 2,  # 1 is DCC 2 is p_val and DCC
@@ -610,7 +626,8 @@ params = {
     'fr_cutoff':50,
     'save':True,
     'start': None,
-    'end': None
+    'end': None,
+    'shuffle':True
 }
 
 
@@ -752,7 +769,7 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True, timeout = 600):
+def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True, timeout = False):
     all_objs = []
     errors = []
     for i, path in enumerate(paths):
@@ -805,8 +822,9 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
         for idx in np.arange(start_bin, num_bins):
             print('np.arange: ', np.arange(start_bin, num_bins))
             liltic = time.time()
-            signal.signal(signal.SIGALRM, signal_handler)
-            signal.alarm(timeout)
+            if timeout is not False:
+                signal.signal(signal.SIGALRM, signal_handler)
+                signal.alarm(timeout)
             noerr = True
             try:
                 print(f'Working on block {idx} --- hours {idx * params["hour_bins"]}-{(idx + 1) * params["hour_bins"]}', flush = True)
@@ -820,7 +838,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], bm = params['bm'], tm = params['tm'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
-                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'])
+                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'], shuffle = params['shuffle'])
                 
                 crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
@@ -832,18 +850,24 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                 crit.animal = animal
                 crit.date = date
                 crit.final = False
-                crit.cells = [cell for cell in cells if cell.quality < 4]
+                crit.all_cells = [cell for cell in cells if cell.quality < 4]
+                crit.used_cells = [cell.clust_idx for cell in good_cells]
                 crit.probe = probe
                 crit.scored_by = scorer
                 crit.pathname = path
                 crit.filename = f'{saveloc}Crit_{param_str}_{scorer}'
+                if params['shuffle']:
+                    burstS, TS = cha_cha_slide(good_cells, params['ava_binsz'], params['perc'], start = start, return_cells = False)
+                    crit.burstS = burstS
+                    crit.TS = TS
 
             except Exception as err:
                 print('TIMEOUT or ERROR', flush = True)
                 print(err)
                 errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED', path])
                 noerr = False
-                signal.alarm(0)
+                if timeout is not False:
+                    signal.alarm(0)
 
             if noerr:
                 print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)

@@ -69,7 +69,8 @@ class Crit_hlab(Crit):
         self.animal = kwargs.get('animal')
         self.date = kwargs.get('date')
         self.final = kwargs.get('final')
-        self.cells = kwargs.get('cells')
+        self.all_cells = kwargs.get('all_cells')
+        self.used_cells = kwargs.get('used_cells')
         self.probe = kwargs.get('probe')
         self.scored_by = kwargs.get('scored_by')
         self.pathname = kwargs.get('pathname')
@@ -90,7 +91,6 @@ class Crit_hlab(Crit):
               f'nfactor_tm: {self.nfactor_tm}\n'
               f'nfactor_bm_tail: {self.nfactor_bm_tail}\n'
               f'nfactor_tm_tail: {self.nfactor_tm_tail}\n')
-
 
     def run_crit_from_start(self, flag = 2, save = False):
 
