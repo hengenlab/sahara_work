@@ -38,7 +38,10 @@ class Crit_hlab(Crit):
             exclude_diff_b = kwargs.get('exclude_diff_b'),
             exclude_diff_t = kwargs.get('exclude_diff_t'),
             bm = kwargs.get('bm'),
-            tm = kwargs.get('tm')
+            tm = kwargs.get('tm'),
+            subsample = kwargs.get('subsample'),
+            subsample_factor = kwargs.get('subsample_factor'), 
+            subsample_iter = kwargs.get('subsample_iter')
         )
         # all parameters set by run_crit
         self.burst = kwargs.get('burst')

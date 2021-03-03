@@ -15,6 +15,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 import csv
 from copy import deepcopy as cdc
+import sys
 
 class Crit:
     """
@@ -41,7 +42,8 @@ class Crit:
     """
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1,
                 bm = None, tm = None, saveloc = '', pltname = '', plot = True, none_fact = 40, 
-                exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10):
+                exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10, subsample = False,
+                subsample_factor = None, subsample_iter = None):
         # required parameters
         self.perc = perc
         self.spikewords = spikewords
@@ -63,6 +65,9 @@ class Crit:
         self.exclude_diff_t = exclude_diff_t
         self.bm = bm
         self.tm = tm
+        self.subsample = subsample
+        self.subsample_factor = subsample_factor
+        self.subsample_iter = subsample_iter
 
         # all parameters set by run_crit
         self.burst = None
@@ -181,10 +186,28 @@ class Crit:
         - run get avalanches
         - run av_analyses
         """
+        burst = []
+        T = []
+        if self.subsample:
+            try:
+                idxs = np.random.choice(np.arange(self.num_cells), size=[self.subsample_iter, self.subsample_factor], replace = False)
+            except ValueError as err:
+                print(err)
+                print('Please choose different subsample parameters')
+                sys.exit()
+            self.subsample_idxs = idxs
+            for i in idxs:
+                temp_dat = self.spikewords[i]
+                temp_R = cr.get_avalanches(temp_dat, perc = self.perc)
+                burst.append(temp_R['S'])
+                T.append(temp_R['T'])
+            burst = np.concatenate(burst)
+            T = np.concatenate(T)
+        else:
+            R = cr.get_avalanches(self.spikewords, perc = self.perc)
+            burst = R['S']
+            T = R['T']
 
-        R = cr.get_avalanches(self.spikewords, perc = self.perc)
-        burst = R['S']
-        T = R['T']
         self.burst = burst
         self.T = T
 
@@ -197,7 +220,7 @@ class Crit:
             'tm': self.tm
         }
 
-        Result = cr.AV_analysis(burst, T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
+        Result = cr.AV_analysis(self.burst, self.T, crit_params, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
                                 nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, 
                                 exclude_burst = self.exclude_burst, exclude_time = self.exclude_time, exclude_diff_b = self.exclude_diff_b, exclude_diff_t=self.exclude_diff_t)
 
