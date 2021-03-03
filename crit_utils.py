@@ -627,7 +627,10 @@ params = {
     'save':True,
     'start': None,
     'end': None,
-    'shuffle':True
+    'shuffle':True,
+    'subsample':False,
+    'subsample_factor':None,
+    'subsample_iter':None
 }
 
 
@@ -838,7 +841,8 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                 crit = Crit_hlab(spikewords = data, perc = params['perc'], bm = params['bm'], tm = params['tm'], nfactor_bm = params['nfactor_bm'], nfactor_tm = params['nfactor_tm'],
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
-                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'], shuffle = params['shuffle'])
+                            exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'], subsample = params['subsample'],
+                            subsample_factor = params['subsample_factor'], subsample_iter = params['subsample_iter'])
                 
                 crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame
@@ -850,7 +854,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                 crit.animal = animal
                 crit.date = date
                 crit.final = False
-                crit.all_cells = [cell for cell in cells if cell.quality < 4]
+                #crit.all_cells = [cell for cell in cells if cell.quality < 4]
                 crit.used_cells = [cell.clust_idx for cell in good_cells]
                 crit.probe = probe
                 crit.scored_by = scorer

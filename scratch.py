@@ -4,13 +4,15 @@ import numpy as np
 import pandas as pd
 import signal
 import glob
+from copy import deepcopy as cdc
 import pickle
 
-files = glob.glob('/media/HlabShare/Clustering_Data/CAF00037/*/*/*/co/*neurons_group0.npy') 
+files = glob.glob('/media/HlabShare/Clustering_Data/EAB00047/*/*/*/co/*neurons_group0.npy') 
 paths = [files[10]] 
- 
+
+
 params = { 
-    'flag': 1,  # 1 is DCC 2 is p_val and DCC 
+    'flag': 2,  # 1 is DCC 2 is p_val and DCC 
     'ava_binsz': None,  # in seconds 
     'hour_bins': 4,  # durration of block to look at 
     'perc': 0.35, 
@@ -25,7 +27,7 @@ params = {
     'plot': True,  
     'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/testing/paramchecks/', 
     'verbose':False, 
-    'timeout':5000, 
+    'timeout':False, 
     'none_fact':40,  
     'exclude':True,  
     'exclude_burst':50, 
@@ -39,9 +41,21 @@ params = {
     'shuffle': True 
 } 
 
+big = {}
 
+temp = {
+    '0.004' : { 
+            '[1]' : { 
+               
+            }, 
+            '[1, 2]' : {  
+                    
+            }, 
+            '[1, 2, 3]' : {  
+                    
+            },   
+    }, 
 
-R = {
     '0.01' : { 
             '[1]' : { 
                
@@ -77,34 +91,45 @@ R = {
             }  
 } 
     
-binz = [0.01, 0.02, 0.04]
-quals = [[1], [1, 2], [1, 2, 3]]    
-for b in binz: 
-    print(f'binsize: {b}') 
-    for q in quals: 
-        print(f'quals: {q}') 
-        
-        params['ava_binsz']=b 
-        params['quals']=q 
-             
-        results = saw.lilo_and_stitch(paths, params, save = params['save'], verbose = params['verbose']) 
-        if len(results[0]) > 0:
-            crit = results[0][0]     
-            R[str(b)][str(q)]['burst'] = crit.burst 
-            R[str(b)][str(q)]['xmin'] = crit.xmin 
-            R[str(b)][str(q)]['xmax'] = crit.xmax 
-            R[str(b)][str(q)]['alpha'] = crit.alpha
-            R[str(b)][str(q)]['T'] = crit.T 
-            R[str(b)][str(q)]['tmin'] = crit.tmin 
-            R[str(b)][str(q)]['tmax'] = crit.tmax 
-            R[str(b)][str(q)]['beta'] = crit.beta
-            R[str(b)][str(q)]['dcc'] = crit.dcc
-            R[str(b)][str(q)]['ncells'] = crit.num_cells
-            R[str(b)][str(q)]['burstS'] = crit.burstS
-            R[str(b)][str(q)]['TS'] = crit.TS
-            R[str(b)][str(q)]['failed'] = False
-        else:
-            R[str(b)][str(q)]['failed'] = True
-f = open("R_caf37.pkl","wb") 
+binz = [0.004, 0.01, 0.02, 0.04]
+quals = [[1], [1, 2], [1, 2, 3]] 
+i = 0
+for f files:   
+    for b in binz: 
+        print(f'binsize: {b}') 
+        for q in quals: 
+            print(f'quals: {q}') 
+            R = {}  
+            R['binsize'] = b
+            R['quals'] = q
+            params['ava_binsz']=b 
+            params['quals']=q 
+                
+            results = saw.lilo_and_stitch([files], params, save = params['save'], verbose = params['verbose']) 
+            if len(results[0]) > 0:
+                crit = results[0][0]
+                  
+                R['burst'] = crit.burst 
+                R['xmin'] = crit.xmin 
+                R['xmax'] = crit.xmax 
+                R['alpha'] = crit.alpha
+                R['T'] = crit.T 
+                R['tmin'] = crit.tmin 
+                R['tmax'] = crit.tmax 
+                R['beta'] = crit.beta
+                R['dcc'] = crit.dcc
+                R['ncells'] = crit.num_cells
+                R['pvalb'] = crit.p_value_burst
+                R['pvalt'] = crit.p_value_t
+                R['burstS'] = crit.burstS
+                R['TS'] = crit.TS
+                R['animal'] = crit.animal
+                R['failed'] = False
+            else:
+                R['failed'] = True
+            
+            big[str(i)] = R
+            i+=1
+f = open("R_eab47.pkl","wb") 
 pickle.dump(R,f) 
 f.close()   
