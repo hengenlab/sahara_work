@@ -43,7 +43,7 @@ class Crit:
     def __init__(self, spikewords, perc = 0.35, nfactor_bm = 0, nfactor_tm = 0, nfactor_bm_tail = 1, nfactor_tm_tail = 1,
                 bm = None, tm = None, saveloc = '', pltname = '', plot = True, none_fact = 40, 
                 exclude = False, exclude_burst=50, exclude_time=20, exclude_diff_b = 20, exclude_diff_t = 10, subsample = False,
-                subsample_factor = None, subsample_iter = None):
+                subsample_factor = None, subsample_iter = None, subsample_replace = False):
         # required parameters
         self.perc = perc
         self.spikewords = spikewords
@@ -68,6 +68,7 @@ class Crit:
         self.subsample = subsample
         self.subsample_factor = subsample_factor
         self.subsample_iter = subsample_iter
+        self.subsample_replace = subsample_replace
 
         # all parameters set by run_crit
         self.burst = None
@@ -190,7 +191,7 @@ class Crit:
         T = []
         if self.subsample:
             try:
-                idxs = np.random.choice(np.arange(self.num_cells), size=[self.subsample_iter, self.subsample_factor], replace = False)
+                idxs = np.random.choice(np.arange(self.num_cells), size=[self.subsample_iter, self.subsample_factor], replace = self.subsample_replace)
             except ValueError as err:
                 print(err)
                 print('Please choose different subsample parameters')

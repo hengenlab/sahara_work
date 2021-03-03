@@ -613,7 +613,6 @@ params = {
     'cell_type': ['FS', 'RSU'],
     'quals':[1,2,3],
     'plot': True,
-    'quals': None, 
     'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/',
     'verbose':False,
     'timeout':5000,
@@ -630,7 +629,8 @@ params = {
     'shuffle':True,
     'subsample':False,
     'subsample_factor':None,
-    'subsample_iter':None
+    'subsample_iter':None, 
+    'subsample_replace':False
 }
 
 
@@ -823,7 +823,6 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
             continue
 
         for idx in np.arange(start_bin, num_bins):
-            print('np.arange: ', np.arange(start_bin, num_bins))
             liltic = time.time()
             if timeout is not False:
                 signal.signal(signal.SIGALRM, signal_handler)
@@ -842,7 +841,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                             nfactor_bm_tail = params['nfactor_bm_tail'], nfactor_tm_tail = params['nfactor_tm_tail'], none_fact = params['none_fact'], saveloc = saveloc,
                             pltname = f'{param_str}_{scorer}', plot = params['plot'], exclude = params['exclude'], exclude_burst = params['exclude_burst'], exclude_time = params['exclude_time'], 
                             exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'], subsample = params['subsample'],
-                            subsample_factor = params['subsample_factor'], subsample_iter = params['subsample_iter'])
+                            subsample_factor = params['subsample_factor'], subsample_iter = params['subsample_iter'], subsample_replace = params['subsample_replace'])
                 
                 crit.run_crit(flag = params['flag'], verbose = verbose)
                 crit.time_frame = time_frame

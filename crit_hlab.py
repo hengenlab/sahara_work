@@ -41,7 +41,8 @@ class Crit_hlab(Crit):
             tm = kwargs.get('tm'),
             subsample = kwargs.get('subsample'),
             subsample_factor = kwargs.get('subsample_factor'), 
-            subsample_iter = kwargs.get('subsample_iter')
+            subsample_iter = kwargs.get('subsample_iter'),
+            subsample_replace = kwargs.get('subsample_replace')
         )
         # all parameters set by run_crit
         self.burst = kwargs.get('burst')
