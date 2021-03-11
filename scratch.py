@@ -6,6 +6,7 @@ import signal
 import glob
 from copy import deepcopy as cdc
 import pickle
+import musclebeachtools as mbt
 
 files = glob.glob('/media/HlabShare/Clustering_Data/EAB00047/*/*/*/co/*neurons_group0.npy') 
 paths = [files[10]] 
@@ -38,63 +39,21 @@ params = {
     'save':False, 
     'start': 1, 
     'end': 2, 
-    'shuffle': True 
+    'shuffle': True,
+    'subsample':False,
+    'subsample_factor':None,
+    'subsample_iter':None, 
+    'subsample_replace':False 
 } 
 
 big = {}
 
-temp = {
-    '0.004' : { 
-            '[1]' : { 
-               
-            }, 
-            '[1, 2]' : {  
-                    
-            }, 
-            '[1, 2, 3]' : {  
-                    
-            },   
-    }, 
 
-    '0.01' : { 
-            '[1]' : { 
-               
-            }, 
-            '[1, 2]' : {  
-                    
-            }, 
-            '[1, 2, 3]' : {  
-                    
-            },   
-    }, 
-        '0.02' : { 
-            '[1]' : { 
-               
-            }, 
-            '[1, 2]' : {  
-                    
-            }, 
-            '[1, 2, 3]' : {  
-                    
-            },   
-    }, 
-        '0.04' : {  
-                '[1]' : {  
-    
-                },  
-                '[1, 2]' : {   
-                       
-                },  
-                '[1, 2, 3]' : {   
-                        
-                },    
-            }  
-} 
     
 binz = [0.004, 0.01, 0.02, 0.04]
 quals = [[1], [1, 2], [1, 2, 3]] 
 i = 0
-for f files:   
+for f in allpaths:   
     for b in binz: 
         print(f'binsize: {b}') 
         for q in quals: 
@@ -105,7 +64,7 @@ for f files:
             params['ava_binsz']=b 
             params['quals']=q 
                 
-            results = saw.lilo_and_stitch([files], params, save = params['save'], verbose = params['verbose']) 
+            results = saw.lilo_and_stitch([f], params, save = params['save'], verbose = params['verbose']) 
             if len(results[0]) > 0:
                 crit = results[0][0]
                   
@@ -130,6 +89,6 @@ for f files:
             
             big[str(i)] = R
             i+=1
-f = open("R_eab47.pkl","wb") 
-pickle.dump(R,f) 
+f = open("R_all.pkl","wb") 
+pickle.dump(big,f) 
 f.close()   

@@ -22,6 +22,11 @@ from copy import deepcopy as cdc
 import time
 
 def get_cols():
+    '''
+    Returns the columns for the large data frame I use to look at data
+    nice to have them in one place so I don't have to change it in 4 different
+    functions when i add a column
+    '''
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
              'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
               'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t']   
@@ -33,6 +38,9 @@ def get_all_results(csvloc, loaded_file, re_load):
     a csv to be loaded into a pandas df at a later time
 
     it doesn't really work. Gonna eventually re-write this correctly but for now - a bandaid
+
+
+    **** deprecated **** don't use this unless you really know what you're doing and want to
     """
     paths = sorted(glob.glob(f'/media/HlabShare/clayton_sahara_work/criticality/*/*/*/Crit*'))
     print(f'Total # of paths: {len(paths)}')
@@ -80,6 +88,13 @@ def get_all_results(csvloc, loaded_file, re_load):
 
 
 def write_to_csv(data, cols, loc):
+    '''
+    writes information to a csv file
+
+    data: what to write, should be an array
+    cols: the columns corresponding to the array
+    loc: what csv you're writing to
+    '''
     d = dict(zip(cols, data))
     with open(loc, 'a', newline = '') as c:
         w = csv.DictWriter(c, fieldnames = cols)
@@ -87,6 +102,14 @@ def write_to_csv(data, cols, loc):
 
 
 def write_to_results_csv(crit, loc):
+    '''
+    pulls info from a crit object and writes it to a csv
+
+    crit: crit object
+    loc: csv to write to
+
+    returns: errors if they occur, array of data that was written to the file
+    '''
     cols = get_cols()
     err, data = s.lil_helper_boi(crit)
     if err:
@@ -97,6 +120,12 @@ def write_to_results_csv(crit, loc):
 
 
 def write_csv_header(loc):
+    '''
+    writes the columns into a csv so pandas is nicer later on
+    will overwrite the csv if it already exists so be ~careful~
+
+    loc: csv location
+    '''
     cols = get_cols()
 
     with open(loc, 'w', newline = '') as c:
@@ -105,6 +134,14 @@ def write_csv_header(loc):
 
 
 def write_to_results_csv_from_path(p, loc):
+    '''
+    loads a crit object from p and writes data to loc
+
+    p: path to object
+    loc: location of csv
+
+    returns: errors if they occur, data written to file
+    '''
     err = False
     crit = None
     try:
@@ -121,6 +158,12 @@ def write_to_results_csv_from_path(p, loc):
 
 
 def get_data_perc(burst, xmin, xmax):
+    '''
+    given a distribution of AVs (size or durration) and a min and max
+    determins the percentage of data that was included in analysis
+
+    returns: percentage (0-1) of data between min and max
+    '''
     burst = np.array(burst)
     good_index = np.where(np.logical_and(burst>xmin, burst<xmax))[0]
     perc = len(good_index)/len(burst)
@@ -129,6 +172,11 @@ def get_data_perc(burst, xmin, xmax):
 
 
 def lil_helper_boi(crit):
+    '''
+    my lil helper boi function
+
+    pulls all necessary info from a crit object to be written to the results csv
+    '''
     err = False
 
     try:
@@ -155,6 +203,11 @@ def lil_helper_boi(crit):
     return err, info
 
 def get_paths(scorer = '', geno=None, animal = '', probe = ''):
+    '''
+    **** deprecated as fuck ****
+    meant to pull all paths that need to be analyzed for criticality
+    now things are on the chpc so get w it
+    '''
     s = f'/media/HlabShare/Clustering_Data/{animal}*/*/*/{probe}*/co/'
     print(s)
     basepaths = [f for f in glob.glob(s)]
@@ -179,6 +232,10 @@ def get_paths(scorer = '', geno=None, animal = '', probe = ''):
     return og
 
 def get_birthday(animal):
+    '''
+    animal: string animal name in format 'abc123'
+    returns: datetime object of animals birthday at 7:30am on the day
+    '''
     bdays = {
         'caf01': dt(2019, 12, 24, 7, 30),
         'caf19': dt(2020, 1, 19, 7, 30),
@@ -221,6 +278,12 @@ def get_birthday(animal):
     return bdays[animal]
 
 def encode_animal(animal):
+    '''
+    meant to help lower the size of arrays carrying information, turns animal into 
+    number (cause strings are large compared to ints)
+
+    needs to be updated
+    '''
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74', 
@@ -232,6 +295,9 @@ def encode_animal(animal):
     return keys[animal]
 
 def decode_animal(num):
+    '''
+    decodes the number from encode_animal() back into a string
+    '''
 
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
@@ -241,6 +307,9 @@ def decode_animal(num):
     return animals[num]
 
 def get_regions(animal):
+    '''
+    returns a list of regions that was recorded from that animal
+    '''
     regions = {
         'caf01': ['CA1'],
         'caf19': ['CA1'],
@@ -283,6 +352,9 @@ def get_regions(animal):
 
 
 def get_sex(animal):
+    '''
+    returns the sex of an animal recorded from
+    '''
     sex = {
         'caf01': 'M',
         'caf19': 'F',
@@ -325,6 +397,10 @@ def get_sex(animal):
     return sex[animal]
 
 def get_probe(animal, region): 
+    '''
+    given an animal and a region, it returns the probe that region is on
+    returns: probe, as a string ('probe1') to play nice with our paths
+    '''
     region = region.upper() 
     probes = np.array(get_regions(animal)) 
     probenum = np.where(probes == region)[0] 
@@ -335,6 +411,9 @@ def get_probe(animal, region):
 
 
 def get_genotype(animal):
+    '''
+    returns genotype of animal
+    '''
     genos = {
         'caf01': 'e4',
         'caf19': 'te4',
@@ -378,9 +457,15 @@ def get_genotype(animal):
 
 
 def load_crit(path):
+    '''
+    loads a crit object
+    '''
     return np.load(path, allow_pickle = True)[0]
 
 def update_object(old, save_new = False):
+    '''
+    cute thought. might not work
+    '''
     new_obj = Crit_hlab(
 
         spikewords = old.spikewords, perc = old.perc, nfactor_bm = old.nfactor_bm,
@@ -400,6 +485,10 @@ def update_object(old, save_new = False):
     return new_obj
 
 def __get_totaltime(time_frame):
+    '''
+    given a string in the format '12_24' it tells you how much time is between those
+    two hours
+    '''
     start_time = int(time_frame[0:time_frame.find('_')])
     stop_time = int(time_frame[time_frame.find('_') + 1:])
     total_time = stop_time - start_time
@@ -407,6 +496,9 @@ def __get_totaltime(time_frame):
 
 
 def __get_paramstr(animal, probe, date, time_frame, hour_bins, perc, ava_binsize, quals, cells, idx):
+    '''
+    just does some string stuff to make the final path name
+    '''
     qual_str = '_'.join(map(str, quals))
     cell_str = '_'.join(cells)
     s = f'{animal}_{probe}_{date}_{time_frame}_{str(hour_bins)}hrs_perc{str(int(perc * 100))}_binsz{str(int(ava_binsize * 1000))}ms_q{qual_str}_cells{cell_str}_{idx}'
@@ -414,22 +506,39 @@ def __get_paramstr(animal, probe, date, time_frame, hour_bins, perc, ava_binsize
 
 
 def generate_timeframes(start, end, blocksize):
+    '''
+    lmfao
+    the good old days
+    dont need but dont want to delete
+    '''
     ts = np.arange(start, end + 1, blocksize)
     time_frames = [str(a) + "_" + str(b) for a, b in zip(ts[:-1], ts[1:])]
     return time_frames
 
 
 def save_obj(crit):
+    '''
+    save shit
+    gotta get saved as an actual array so numpy doesn't flip
+    '''
     to_save = np.array([crit])
     np.save(f'{crit.saveloc}Crit_{crit.pltname}', to_save)
 
 
 def signal_handler(signum, frame):
+    '''
+    stuff for signal
+    '''
     print("timeout")
     raise Exception('timeout')
 
 
 def get_info_from_path(path):
+    '''
+    if you're using a full and completed path from /media/HlabShare/Clustering_Data/
+    this function will pull out the animal, restart date, and probe
+    and return all that
+    '''
     animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
     matches = re.findall(animal_pattern, path)
     animal = matches[0][0]
@@ -450,6 +559,9 @@ def get_info_from_path(path):
     return animal_clean, date, time_frame, probe
 
 def get_cell_stats(cell):
+    '''
+    nope
+    '''
     fr, xbins = cell.plotFR(binsz = 3600, start = False, end = False,
                             lplot = 0)
 
@@ -475,6 +587,10 @@ def get_cell_stats(cell):
 
 
 def construct_fr_df(paths):
+    '''
+    **** deprecated **** dont use
+    but if you need to canabalize some code - go for it
+    '''
     bdays = {
         'caf01': dt(2019, 12, 24, 7, 30),
         'caf19': dt(2020, 1, 19, 7, 30),
@@ -577,6 +693,12 @@ def construct_fr_df(paths):
     return obj
 
 def get_age_sec(start_time, birthday):
+    '''
+    given a start time of a recording (found in the neuron objects)
+    and a date time birthday of an animal
+    this will return the age of the animal in seconds at the start of the 
+    recording
+    '''
     start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
     age = start_time - birthday
     seconds = age.total_seconds()
@@ -585,6 +707,9 @@ def get_age_sec(start_time, birthday):
 # function names are getting a bit ambiguous
 # this shuffles spiketimes and returns shuffled burst and time distributions
 def cha_cha_slide(cells, ava_binsize, perc, start = False, return_cells = False):
+    '''
+    shuffles spiketimes and returns shuffled burst and time distributions
+    '''
     shuffled_cells = cdc(cells)
     for cell in shuffled_cells:
         cell.shuffle_times()
@@ -634,7 +759,7 @@ params = {
 }
 
 
-#this bad boy reruns paths if it fails a pval. not the best
+#this bad boy reruns paths if it fails a pval. not the best, wouldn't recomend
 def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, overlap = False, verbose = True, timeout = 600):
     all_objs = []
     errors = []
@@ -772,7 +897,11 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True, timeout = False):
+def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False):
+    '''
+    read the readme online. too much to put here. not that hard. i'll even link it for you
+    https://github.com/hengenlab/sahara_work/blob/master/README.md
+    '''
     all_objs = []
     errors = []
     for i, path in enumerate(paths):
@@ -843,7 +972,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, verbose = True,
                             exclude_diff_b = params['exclude_diff_b'], exclude_diff_t=params['exclude_diff_t'], subsample = params['subsample'],
                             subsample_factor = params['subsample_factor'], subsample_iter = params['subsample_iter'], subsample_replace = params['subsample_replace'])
                 
-                crit.run_crit(flag = params['flag'], verbose = verbose)
+                crit.run_crit(flag = params['flag'], verbose = params['verbose'])
                 crit.time_frame = time_frame
                 crit.block_num = idx
                 crit.qualities = quals

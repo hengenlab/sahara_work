@@ -85,8 +85,8 @@ params = {
 
 DCC = np.zeros((19,4))
 
-fulldata = h5py.File('Sub_Super/SubSummary.mat')
-fulldata = datamat['Data_sub']
+fulldata = sio.loadmat('Sub_Super/SubSummary.mat')
+fulldata = fulldata['Data_sub']
 for m in np.arange(1, 20):
     eig = 20-m
     print(f'EIG {eig}')
