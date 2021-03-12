@@ -1093,23 +1093,35 @@ def SEARCH(user, pwd):
     query = 'SELECT animal_name FROM clusteringdb.animals'
     cursor.execute(query)
     current_animals = np.asarray(cursor.fetchall()).flatten()
-    current_animals = np.insert(current_animals, 0, 'any')
+    if len('current_animals')==0:
+        current_animals = ['any']
+    else:
+        current_animals = np.insert(current_animals, 0, 'any')
 
     query = 'SELECT manipulations FROM clusteringdb.restarts'
     cursor.execute(query)
     current_manipulations = np.unique(np.asarray(cursor.fetchall()).flatten())
-    current_manipulations= np.insert(current_manipulations, 0, 'any')
+    if len(current_manipulations) == 0:
+        current_manipulations = ['any']
+    else:
+        current_manipulations= np.insert(current_manipulations, 0, 'any')
 
 
     query = 'SELECT region FROM clusteringdb.probes'
     cursor.execute(query)
     current_sites = np.unique(np.asarray(cursor.fetchall()).flatten())
-    current_sites = np.insert(current_sites, 0, 'any')
+    if len(current_sites)==0:
+        current_sites = ['any']
+    else:
+        current_sites = np.insert(current_sites, 0, 'any')
 
     query = 'SELECT genotype FROM clusteringdb.animals'
     cursor.execute(query)
     current_genos = np.unique(np.asarray(cursor.fetchall()).flatten())
-    current_genos = np.insert(current_genos, 0, 'any')
+    if len(current_genos) == 0:
+        current_genos = ['any']
+    else:
+        current_genos = np.insert(current_genos, 0, 'any')
 
     g = __search_gui(current_sites, current_manipulations, current_genos, current_animals, 'main_view')
     if g.exit:

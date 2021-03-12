@@ -268,6 +268,7 @@ def get_birthday(animal):
         'caf80': dt(2020, 4, 19, 20, 30),
         'caf81': dt(2019, 12, 5, 7, 30),
         'caf82': dt(2019, 12, 5, 7,30),
+        'caf84':dt(2020, 8, 10, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -342,6 +343,7 @@ def get_regions(animal):
         'caf80': ['CA1'],
         'caf81': ['ACAd','V1', 'CA1', 'RSPv'],
         'caf82': ['CA1','RSPv','V1','ACAd'],
+        'caf84':['CA1'],
         'eab52': ['CA1','V1'],
         'eab47': ['M1_M2','CA1','V2'],
         'eab': ['M1_M2','CA1','V2'],
@@ -387,6 +389,7 @@ def get_sex(animal):
         'caf80': 'M',
         'caf81': 'F',
         'caf82': 'M',
+        'caf84':'F',
         'eab52': 'F',
         'eab47': 'M',
         'eab': 'M',
@@ -446,6 +449,7 @@ def get_genotype(animal):
         'caf80': 'te4',
         'caf81': 'wt',
         'caf82': 'wt',
+        'caf84':'te4',
         'eab52': 'te4',
         'eab47': 'te4',
         'eab': 'te4',
@@ -455,6 +459,41 @@ def get_genotype(animal):
 
     return genos[animal]
 
+def get_hstype(animal):
+    regions = {
+        'caf01': ['EAB50chmap_00'],
+        'caf19': ['EAB50chmap_00'],
+        'caf22': ['EAB50chmap_00','EAB50chmap_00'],
+        'caf26': ['EAB50chmap_00','APT_PCB','APT_PCB'],
+        'caf34': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf37': ['APT_PCB'],
+        'caf40': ['APT_PCB'],
+        'caf42': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf48': ['hs64'],
+        'caf49': ['hs64'],
+        'caf50': ['hs64'],
+        'caf52': ['hs64'],
+        'caf60': ['APT_PCB'],
+        'caf61': ['hs64'],
+        'caf62': ['hs64'],
+        'caf69': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf71': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf72': ['hs64'],
+        'caf73': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf74': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf75': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf77': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf78': ['hs64'],
+        'caf79': ['hs64'],
+        'caf80': ['hs64'],
+        'caf81': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf82': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf84':['hs64'],
+        'eab52': ['EAB50champ_00','EAB50champ_00'],
+        'eab47': ['EAB50champ_00','EAB50champ_00','EAB50champ_00'],
+        'eab50': ['EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00'],
+    }
+    return regions[animal]
 
 def load_crit(path):
     '''
@@ -514,6 +553,39 @@ def generate_timeframes(start, end, blocksize):
     ts = np.arange(start, end + 1, blocksize)
     time_frames = [str(a) + "_" + str(b) for a, b in zip(ts[:-1], ts[1:])]
     return time_frames
+
+
+def gen_timeline():
+    locs = ['bs001r', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r']
+    dat = {}
+    for loc in locs:
+        print(loc)
+        restarts = glob.glob(f'/media/{loc}/*/')
+        for folder in restarts:
+            animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
+            matches = re.findall(animal_pattern, folder)
+            if len(matches) > 0:
+                animal = matches[0][0]
+                animal_clean = animal[:3].lower() + str(int(animal[3:]))
+                if get_genotype(animal_clean) in ['te4', 'wt', 'e4']
+                files = sorted(glob.glob(folder+'*/*.bin'))
+                f1 = files[0]
+                f2 = files[-1]
+                d1 = f1[f1.find('int16_')+6:f1.find('.bin')]
+                d2 = f2[f2.find('int16_')+6:f2.find('.bin')]
+                if animal_clean not in dat.keys():
+                    print(f'adding {animal_clean}')
+                    dat[animal_clean] = {'min':d1, 'max':d2}
+                else:
+                    if d1 < dat[animal_clean]['min']:
+                        dat[animal_clean]['min'] = d1
+                    if d2 > dat[animal_clean]['max']:
+                        dat[animal_clean]['max'] = d2
+    return dat
+                
+
+                
+
 
 
 def save_obj(crit):
@@ -699,7 +771,7 @@ def get_age_sec(start_time, birthday):
     this will return the age of the animal in seconds at the start of the 
     recording
     '''
-    start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
+    start_time = 
     age = start_time - birthday
     seconds = age.total_seconds()
     return seconds
