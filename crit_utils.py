@@ -771,7 +771,7 @@ def get_age_sec(start_time, birthday):
     this will return the age of the animal in seconds at the start of the 
     recording
     '''
-    start_time = 
+    start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S') 
     age = start_time - birthday
     seconds = age.total_seconds()
     return seconds
