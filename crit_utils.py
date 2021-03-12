@@ -567,20 +567,20 @@ def gen_timeline():
             if len(matches) > 0:
                 animal = matches[0][0]
                 animal_clean = animal[:3].lower() + str(int(animal[3:]))
-                if get_genotype(animal_clean) in ['te4', 'wt', 'e4']
-                files = sorted(glob.glob(folder+'*/*.bin'))
-                f1 = files[0]
-                f2 = files[-1]
-                d1 = f1[f1.find('int16_')+6:f1.find('.bin')]
-                d2 = f2[f2.find('int16_')+6:f2.find('.bin')]
-                if animal_clean not in dat.keys():
-                    print(f'adding {animal_clean}')
-                    dat[animal_clean] = {'min':d1, 'max':d2}
-                else:
-                    if d1 < dat[animal_clean]['min']:
-                        dat[animal_clean]['min'] = d1
-                    if d2 > dat[animal_clean]['max']:
-                        dat[animal_clean]['max'] = d2
+                if get_genotype(animal_clean) in ['te4', 'wt', 'e4']:
+                    files = sorted(glob.glob(folder+'*/*.bin'))
+                    f1 = files[0]
+                    f2 = files[-1]
+                    d1 = f1[f1.find('int16_')+6:f1.find('.bin')]
+                    d2 = f2[f2.find('int16_')+6:f2.find('.bin')]
+                    if animal_clean not in dat.keys():
+                        print(f'adding {animal_clean}')
+                        dat[animal_clean] = {'min':d1, 'max':d2}
+                    else:
+                        if d1 < dat[animal_clean]['min']:
+                            dat[animal_clean]['min'] = d1
+                        if d2 > dat[animal_clean]['max']:
+                            dat[animal_clean]['max'] = d2
     return dat
                 
 
