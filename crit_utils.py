@@ -556,7 +556,7 @@ def generate_timeframes(start, end, blocksize):
 
 
 def gen_timeline():
-    locs = ['bs001r', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r']
+    locs = ['bs001r/rawdata/', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r', 'bs003r/D1/', 'bs004r/D1/', 'bs005r/D1/', 'bs006r/D1/', 'bs007r/D1/']
     dat = {}
     for loc in locs:
         print(loc)
@@ -567,26 +567,39 @@ def gen_timeline():
             if len(matches) > 0:
                 animal = matches[0][0]
                 animal_clean = animal[:3].lower() + str(int(animal[3:]))
-                if get_genotype(animal_clean) in ['te4', 'wt', 'e4']:
-                    files = sorted(glob.glob(folder+'*/*.bin'))
-                    f1 = files[0]
-                    f2 = files[-1]
-                    d1 = f1[f1.find('int16_')+6:f1.find('.bin')]
-                    d2 = f2[f2.find('int16_')+6:f2.find('.bin')]
-                    if animal_clean not in dat.keys():
-                        print(f'adding {animal_clean}')
-                        dat[animal_clean] = {'min':d1, 'max':d2}
+                try:
+                    g = saw.get_genotype(animal_clean)
+                except KeyError:
+                    print(f'dont have records for {animal_clean} ---- skipping')
+                    g=None
+                    pass
+                if g in ['te4', 'wt', 'e4']:
+                    if 'D1' in folder:
+                        files = sorted(glob.glob(folder+'*.bin'))
                     else:
-                        if d1 < dat[animal_clean]['min']:
-                            dat[animal_clean]['min'] = d1
-                        if d2 > dat[animal_clean]['max']:
-                            dat[animal_clean]['max'] = d2
+                        files = sorted(glob.glob(folder+'*/*.bin'))
+                    if len(files) > 0:
+                        f1 = files[0]
+                        f2 = files[-1]
+                        d1 = f1[-23:f1.find('.bin')]
+                        d2 = f2[-23:f2.find('.bin')]
+                        d1 = dt.strptime(d1, '%Y-%m-%d_%H-%M-%S')
+                        d2 = dt.strptime(d2, '%Y-%m-%d_%H-%M-%S') 
+                        if animal_clean not in dat.keys():
+                            print(f'adding {animal_clean}')
+                            dat[animal_clean] = {'min':d1, 'max':d2, 'geno':g}
+                        else:
+                            if d1 < dat[animal_clean]['min']:
+                                dat[animal_clean]['min'] = d1
+                            if d2 > dat[animal_clean]['max']:
+                                dat[animal_clean]['max'] = d2
+    for a in dat.keys():
+        bday = saw.get_birthday(a)
+        min_age = dat[a]['min'] - bday
+        max_age = dat[a]['max'] - bday
+        dat[a]['min_age'] = int(min_age.total_seconds()/60/60/24)
+        dat[a]['max_age'] = int(max_age.total_seconds()/60/60/24)
     return dat
-                
-
-                
-
-
 
 def save_obj(crit):
     '''
