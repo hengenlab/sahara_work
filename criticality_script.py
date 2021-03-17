@@ -14,25 +14,35 @@ def run(basedir, pathnum, jobname):
         'ava_binsz': 0.04,  # in seconds
         'hour_bins': 4,  # durration of block to look at
         'perc': 0.35,
+        'bm':None,
+        'tm':None,
         'nfactor_bm': 0,
         'nfactor_tm': 0,
         'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
         'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
         'cell_type': ['FS', 'RSU'],
         'quals':[1,2,3],
-        'fr_cutoff':50,
         'plot': True,
         'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/----addjobname-----',
         'verbose':False,
         'timeout':5000,
-        'none_fact':5, 
+        'none_fact':40, 
         'exclude':True, 
         'exclude_burst':50,
         'exclude_time':20,
         'exclude_diff_b':20,
         'exclude_diff_t':10,
-        'save': True
+        'fr_cutoff':50,
+        'save':True,
+        'start': None,
+        'end': None,
+        'shuffle':True,
+        'subsample':False,
+        'subsample_factor':None,
+        'subsample_iter':None, 
+        'subsample_replace':False
     }
+    
     tic = time.time()
     s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname)
     toc = time.time()

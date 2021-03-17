@@ -1,4 +1,4 @@
-rsync -avrn --relative -e "ssh" /media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy sensley@login02.chpc.wustl.edu:/scratch/khengen_lab/crit_sahara/DATA/
+rsync -avrn --relative -e "ssh" /media/HlabShare/Clustering_Data/*/*/*/*/co/*neurons_group0.npy sensley@login02.chpc.wustl.edu:/scratch/khengen_lab/crit_sahara/DATA/
 
 qsub -I -l nodes=1:ppn=1:gpus=1,walltime=1:00:00
 

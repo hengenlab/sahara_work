@@ -9,6 +9,7 @@ import musclebeachtools as mbt
 import csv
 import os
 import numpy as np
+import sahara_work as saw
 from datetime import datetime as dt
 from datetime import timedelta
 from sahara_work import Crit
@@ -984,7 +985,7 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
 
 def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False):
     '''
-    read the readme online. too much to put here. not that hard. i'll even link it for you
+    read the readme online. too much to put here. i'll even link it for you
     https://github.com/hengenlab/sahara_work/blob/master/README.md
     '''
     all_objs = []
