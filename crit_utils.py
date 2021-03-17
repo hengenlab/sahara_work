@@ -182,7 +182,7 @@ def lil_helper_boi(crit):
 
     try:
         birth = s.get_birthday(crit.animal)
-        start_time = crit.cells[0].rstart_time
+        start_time = crit.rstart_time
         start_time = dt.strptime(start_time, '%Y-%m-%d_%H-%M-%S')
         age = start_time - birth
         age = age + timedelta(hours = int((crit.block_num * crit.hour_bins)))
@@ -1068,6 +1068,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
                 crit.animal = animal
                 crit.date = date
                 crit.final = False
+                crit.rstart_time = good_cells[0].rstart_time
                 #crit.all_cells = [cell for cell in cells if cell.quality < 4]
                 crit.used_cells = [cell.clust_idx for cell in good_cells]
                 crit.probe = probe
