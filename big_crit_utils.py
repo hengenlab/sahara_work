@@ -121,7 +121,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
 def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
     BASE = '/scratch/khengen_lab/crit_sahara/'
     print(f'base dir: ', BASE)
-    all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/clayton_sahara_work/clustering/*/*/*/*/co/*neurons_group0.npy'))
+    all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/*/*/*/*/co/*neurons_group0.npy'))
     print(f'total num paths: {len(all_paths)}', flush=True)
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
     print(f'total num animals: {len(all_animals)}', flush=True)
