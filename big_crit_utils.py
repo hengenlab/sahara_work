@@ -130,6 +130,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{animal}*/*/*/{probe}/co/*neurons_group0.npy'))
+        print(f'{animal}: {len(animal_paths)}')
         bins = np.arange(0, len(animal_paths), paths_per_job)
         for i, b in enumerate(bins):
             if total_jobs is not None and jobcount > total_jobs:
