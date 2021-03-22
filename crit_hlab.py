@@ -140,12 +140,7 @@ class Crit_hlab(Crit):
         kmax: number of bins to wait between activity essentially
         pltname: what to save the plot as (if None no plot is made)
         '''
-        br1, br2, acc1, acc2 =
-        mbt.n_branching_ratio(cells, ava_binsz=binsize
-                      kmax=kmax,
-                      start=start, end=end,
-                      binarize=1,
-                      plotname=pltname)
+        br1, br2, acc1, acc2 = mbt.n_branching_ratio(cells, ava_binsz=binsize, kmax=kmax, start=start, end=end, binarize=1, plotname=pltname)
         self.br1 = br1
         self.br2 = br2
         self.acc1 = acc1 
