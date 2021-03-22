@@ -1121,7 +1121,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
                     binlen = params['br_binlen']/60
                     s = start_hour + mid
                     e = round(s + binlen, 2)
-                    crit.run_branching_ratio(cells = good_cells, binsize=params['br_binsize'], start = s, end = e, kmax = params['kmax'])
+                    crit.run_branching_ratio(cells = good_cells, binsize=params['br_binsize'], start = s, end = e, kmax = params['br_kmax'])
                     print(f'BRANCHING RATIO: {crit.acc1}, {crit.acc2}, {crit.br1}, {crit.br2}')
                 except Exception as err:
                     print('ERROR IN BRANCHING RATIO')
