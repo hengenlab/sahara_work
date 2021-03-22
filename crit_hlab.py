@@ -63,6 +63,14 @@ class Crit_hlab(Crit):
         self.EXCLUDED_b = kwargs.get('EXCLUDED_b')
         self.EXCLUDED_t = kwargs.get('EXCLUDED_t')
 
+        # all parameters set by run_branching_ratio
+        self.br1 = kwargs.get('br1')
+        self.br2 = kwargs.get('br2')
+        self.acc1 = kwargs.get('acc1')
+        self.acc2 = kwargs.get('acc2')
+        self.kmax = kwargs.get('kmax')
+        self.br_binsize = kwargs.get('br_binsize')
+
         # all parameters that can be set by lilo and stitch
         self.time_frame = kwargs.get('time_frame')
         self.block_num = kwargs.get('block_num')
@@ -122,6 +130,30 @@ class Crit_hlab(Crit):
         if save:
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
+
+    def run_branching_ratio(cells, binsize=0.004, start = 0, end = 1, kmax=500, pltname = None):
+        '''
+        cells: mbt neuron list
+        binsize: ava_binsize length for spikewords
+        start: where to start BR (hours)
+        end: where to end BR (hours)
+        kmax: number of bins to wait between activity essentially
+        pltname: what to save the plot as (if None no plot is made)
+        '''
+        br1, br2, acc1, acc2 =
+        mbt.n_branching_ratio(cells, ava_binsz=binsize
+                      kmax=kmax,
+                      start=start, end=end,
+                      binarize=1,
+                      plotname=pltname)
+        self.br1 = br1
+        self.br2 = br2
+        self.acc1 = acc1 
+        self.acc2 = acc2 
+        self.br_binsize = binsize
+        self.kmax = kmax
+
+
 
     def plot_raster(self, window_start = 200, window_end = 400, saveplot = False, show = True):
         # window of time to look at

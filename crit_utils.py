@@ -30,7 +30,7 @@ def get_cols():
     '''
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
              'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
-              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t']   
+              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2']   
     return cols
 
 def get_all_results(csvloc, loaded_file, re_load):
@@ -196,7 +196,8 @@ def lil_helper_boi(crit):
 
         info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
                 crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
-                crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t]
+                crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t, 
+                crit.acc1, crit.acc2, crit.br1, crit.br2]
     except Exception as e:
         print(f'error: {e}')
         err = True
@@ -237,6 +238,8 @@ def get_birthday(animal):
     animal: string animal name in format 'abc123'
     returns: datetime object of animals birthday at 7:30am on the day
     '''
+    if len(animal) > 6:
+        animal = animal[:3].lower() + animal[-2:]
     bdays = {
         'caf01': dt(2019, 12, 24, 7, 30),
         'caf19': dt(2020, 1, 19, 7, 30),
@@ -312,6 +315,8 @@ def get_regions(animal):
     '''
     returns a list of regions that was recorded from that animal
     '''
+    if len(animal) > 6:
+        animal = animal[:3].lower() + animal[-2:]
     regions = {
         'caf01': ['CA1'],
         'caf19': ['CA1'],
@@ -358,6 +363,8 @@ def get_sex(animal):
     '''
     returns the sex of an animal recorded from
     '''
+    if len(animal) > 6:
+        animal = animal[:3].lower() + animal[-2:]
     sex = {
         'caf01': 'M',
         'caf19': 'F',
@@ -404,11 +411,17 @@ def get_probe(animal, region):
     '''
     given an animal and a region, it returns the probe that region is on
     returns: probe, as a string ('probe1') to play nice with our paths
+
+    region must be in the correct format
     '''
-    region = region.upper() 
+    if len(animal) > 6:
+        animal = animal[:3].lower() + animal[-2:]
     probes = np.array(get_regions(animal)) 
     probenum = np.where(probes == region)[0] 
     if len(probenum)==0: 
+        print('That region isnt in this animal. Make sure the region formatting is correct.')
+        print(' - '.join(['ACAd', 'ACaD', 'CA1', 'CA1_DG', 'C_Pu', 'LGN', 'M1', 'M1_M2',
+       'M2', 'NAc', 'RSPv', 'S1', 'Sup_col', 'V1', 'V1_V2', 'V2']))
         return -1 
     probe = f'probe{probenum[0]+1}' 
     return probe 
@@ -418,6 +431,8 @@ def get_genotype(animal):
     '''
     returns genotype of animal
     '''
+    if len(animal) > 6:
+        animal = animal[:3].lower() + animal[-2:]
     genos = {
         'caf01': 'e4',
         'caf19': 'te4',
@@ -461,6 +476,8 @@ def get_genotype(animal):
     return genos[animal]
 
 def get_hstype(animal):
+    if len(animal) > 6:
+        animal = animal[:3].lower() + animal[-2:]
     regions = {
         'caf01': ['EAB50chmap_00'],
         'caf19': ['EAB50chmap_00'],
@@ -504,7 +521,7 @@ def load_crit(path):
 
 def update_object(old, save_new = False):
     '''
-    cute thought. might not work
+    cute thought. needs to be fixed, probably doesn't need to exist
     '''
     new_obj = Crit_hlab(
 
@@ -841,7 +858,12 @@ params = {
     'subsample':False,
     'subsample_factor':None,
     'subsample_iter':None, 
-    'subsample_replace':False
+    'subsample_replace':False,
+    'branching_ratio': False,
+    'br_binsize': 0.004,
+    'br_kmax': 500,
+    'br_binlen': 5, # in minutes
+    'br_numbins': 3 # begining middle end - this isn't implemented right now, it's just in the middle
 }
 
 
@@ -1083,11 +1105,28 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
             except Exception as err:
                 print('TIMEOUT or ERROR', flush = True)
                 print(err)
-                errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- {idx} --- {scorer} --- ERRORED', path])
+                errors.append([animal, probe, date, time_frame, idx, scorer, path, err, dt.now(), 'crit'])
                 noerr = False
                 if timeout is not False:
                     signal.alarm(0)
-
+            
+            if params['branching_ratio']:
+                try:
+                    start_hour = idx*params['hour_bins']
+                    if idx == num_bins -1:
+                        end_hour = int(good_cells[0].end_time/60/60)
+                    else:
+                        end_hour = (idx+1) * params['hour_bins']
+                    mid = (end_hour - start_hour)/2
+                    binlen = params['br_binlen']/60
+                    s = start_hour + mid
+                    e = round(s + binlen, 2)
+                    crit.run_branching_ratio(cells = good_cells, binsize=params['br_binsize'], start = s, end = e, kmax = params['kmax'])
+                    print(f'BRANCHING RATIO: {crit.acc1}, {crit.acc2}, {crit.br1}, {crit.br2}')
+                except Exception as err:
+                    print('ERROR IN BRANCHING RATIO')
+                    print(err)
+                    errors.append([animal, probe, date, time_frame, idx, scorer, path, err, dt.now(), 'branching ratio'])
             if noerr:
                 print(f'BLOCK RESULTS: P_vals - {crit.p_value_burst}   {crit.p_value_t} \n DCC: {crit.dcc}', flush = True)
                 if save:

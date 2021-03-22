@@ -11,17 +11,17 @@ def run(basedir, pathnum, jobname):
 
     params = {
         'flag': 2,  # 1 is DCC 2 is p_val and DCC
-        'ava_binsz': 0.04,  # in seconds
+        'ava_binsz': 0.02,  # in seconds
         'hour_bins': 4,  # durration of block to look at
         'perc': 0.35,
-        'bm':None,
-        'tm':None,
+        'bm':50,
+        'tm':20,
         'nfactor_bm': 0,
         'nfactor_tm': 0,
-        'nfactor_bm_tail': .9,  # upper bound to start exclude for burst
-        'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
+        'nfactor_bm_tail': .8,  # upper bound to start exclude for burst
+        'nfactor_tm_tail': .8,  # upper bound to start exclude for time 
         'cell_type': ['FS', 'RSU'],
-        'quals':[1,2,3],
+        'quals':[1,2],
         'plot': True,
         'base_saveloc': f'/scratch/khengen_lab/crit_sahara/RESULTS/----addjobname-----',
         'verbose':False,
@@ -40,9 +40,14 @@ def run(basedir, pathnum, jobname):
         'subsample':False,
         'subsample_factor':None,
         'subsample_iter':None, 
-        'subsample_replace':False
+        'subsample_replace':False,
+        'branching_ratio': True,
+        'br_binsize': 0.004,
+        'br_kmax': 500,
+        'br_binlen': 5, # in minutes
+        'br_numbins': 3 # begining middle end
     }
-    
+
     tic = time.time()
     s.run_testing_chpc(paths, params, JOBDIR = basedir, jobnum = pathnum, jobname = jobname)
     toc = time.time()
