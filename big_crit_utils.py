@@ -113,7 +113,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
             f.write('\tERRORS:\n')
             for e in errors:
                 f.write(f'\t{e[0]} --- {e[1]} --- {e[2]} --- {e[3]} --- {e[4]} --- {e[5]}: {e[-1]}\n')
-                errored = np.load('/scratch/khengen_lab/crit_sahara/errored_paths.npy')
+                errored = np.load('/scratch/khengen_lab/crit_sahara/errored_paths.npy', allow_pickle=True)
                 errored = np.append(errored, e)
                 np.save('/scratch/khengen_lab/crit_sahara/errored_paths.npy', errored)
     return 0

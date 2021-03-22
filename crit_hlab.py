@@ -131,7 +131,7 @@ class Crit_hlab(Crit):
             to_save = np.array([obj])
             np.save(f'{obj.saveloc}Crit_{param_str}', to_save)
 
-    def run_branching_ratio(cells, binsize=0.004, start = 0, end = 1, kmax=500, pltname = None):
+    def run_branching_ratio(self, cells, binsize=0.004, start = 0, end = 1, kmax=500, pltname = None):
         '''
         cells: mbt neuron list
         binsize: ava_binsize length for spikewords
