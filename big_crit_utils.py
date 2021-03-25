@@ -132,10 +132,11 @@ def get_all_paths(animal):
     allpaths = []
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
-        a = animal[:3].upper() + '000' + animal[-2:]
-        animal_paths = sorted([p for p in all_paths if a in p and probe in p])
-        print(f'{animal}: {len(animal_paths)}')
-        allpaths.append(animal_paths)
+        if probe != -1:
+            a = animal[:3].upper() + '000' + animal[-2:]
+            animal_paths = sorted([p for p in all_paths if a in p and probe in p])
+            print(f'{animal}: {len(animal_paths)}')
+            allpaths.append(animal_paths)
     
     allpaths = np.concatenate(allpaths)
     return allpaths
@@ -146,11 +147,12 @@ def get_rand_subset(per_animal = 2):
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in allpaths])
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
-        a = animal[:3].upper() + '000' + animal[-2:]
-        animal_paths = np.sort([p for p in allpaths if a in p and probe in p])
-        rand = np.random.randint(low=0, high = len(animal_paths), size=per_animal)
-        ps = animal_paths[rand]
-        paths.append(ps)
+        if probe != -1:
+            a = animal[:3].upper() + '000' + animal[-2:]
+            animal_paths = np.sort([p for p in allpaths if a in p and probe in p])
+            rand = np.random.randint(low=0, high = len(animal_paths), size=per_animal)
+            ps = animal_paths[rand]
+            paths.append(ps)
     paths = np.concatenate(paths)
     return paths
     
