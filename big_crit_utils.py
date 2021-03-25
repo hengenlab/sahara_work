@@ -140,7 +140,7 @@ def get_all_paths(animal):
 def get_rand_subset(per_animal = 2):
     paths = []
     allpaths = get_all_paths('')
-    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
+    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in allpaths])
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         a = animal[:3].upper() + '000' + animal[-2:]
