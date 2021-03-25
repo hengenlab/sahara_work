@@ -1296,7 +1296,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
         except Exception as err:
             print("Neuron File Won't Load")
             print(err)
-            errors.append([f'{animal} -- {probe} -- {date} -- {time_frame} -- ALL --- {scorer} --- ERRORED', path])
+            errors.append([animal, probe, date, time_frame, 'ALL', scorer, path, err, dt.now(), 'cells'])
             continue
 
         for idx in np.arange(start_bin, num_bins):
