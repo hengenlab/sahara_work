@@ -427,6 +427,241 @@ def get_probe(animal, region):
     return probe 
 
 
+def get_params(animal):
+
+    base = {
+        'nfactor_bm': 0,
+        'nfactor_tm':0,
+        'bm': 50,
+        'tm':20,
+        'nfactor_bm_tail':0.8,
+        'nfactor_tm_tail':0.8
+    }
+
+    params = {
+        'caf22': base = {
+                    'nfactor_bm': 5,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf26': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf34': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf37': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf40': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 40,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.75
+                    },
+        'caf42': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 15,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf48': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf49': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf50': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf52': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf58': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf60': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':20,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf61': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':20,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf62': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf66': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf69': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf72': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf77': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf78': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf79': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf80': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf81': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf82': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'caf84':base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'eab47': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'eab50': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    },
+        'eab40': base = {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
+                    }
+    }
+
+    if animal not in params.keys():
+        return base
+    else:
+        return params[animal]
+
 def get_genotype(animal):
     '''
     returns genotype of animal
@@ -1038,6 +1273,11 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
             num_bins = int(total_time / params['hour_bins'])
         bin_len = int((params['hour_bins'] * 3600) / params['ava_binsz'])
         print('start: ', start_bin, ' end ', num_bins, ' bin_len ', bin_len)
+
+        # set individual params
+        indiv = get_params(animal)
+        for key in indiv.keys():
+            params[key] = indiv[key]
 
         quals = params['quals']
         fr_cutoff = params['fr_cutoff']

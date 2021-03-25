@@ -118,19 +118,53 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
                 np.save('/scratch/khengen_lab/crit_sahara/errored_paths.npy', errored)
     return 0
 
-def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None):
-    BASE = '/scratch/khengen_lab/crit_sahara/'
-    print(f'base dir: ', BASE)
-    all_paths = sorted(glob.glob('/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/*/*/*/*/co/*neurons_group0.npy'))
+
+
+def get_all_paths(animal):
+    all_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{animal}*/*/*/*/co/*neurons_group0.npy'))
+    all_paths = [p for p in all_paths if 'block' not in p]
     print(f'total num paths: {len(all_paths)}', flush=True)
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
     print(f'total num animals: {len(all_animals)}', flush=True)
-    pathcount = 0
-    jobcount = 0
+    allpaths = []
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         a = animal[:3].upper() + '000' + animal[-2:]
         animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{a}*/*/*/{probe}/co/*neurons_group0.npy'))
+        print(f'{animal}: {len(animal_paths)}')
+        allpaths.append(animal_paths)
+    
+    allpaths = np.concatenate(allpaths)
+    return allpaths
+
+def get_rand_subset(per_animal = 2):
+    paths = []
+    allpaths = get_all_paths('')
+    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
+    for animal in all_animals:
+        probe = sw.get_probe(animal, region = 'CA1')
+        a = animal[:3].upper() + '000' + animal[-2:]
+        animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{a}*/*/*/{probe}/co/*neurons_group0.npy'))
+        rand = np.random.randint(low=0, high = len(animal_paths), size=per_animal)
+        ps = animal_paths[rand]
+        paths.append(ps)
+    paths = np.concatenate(paths)
+    return paths
+    
+
+def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, animal = ''):
+    BASE = '/scratch/khengen_lab/crit_sahara/'
+    print(f'base dir: ', BASE)
+
+    if paths is None:
+        paths = get_all_paths(animal)
+
+    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in paths])
+    pathcount = 0
+    jobcount = 0
+    for animal in all_animals:
+        a = animal[:3].upper() + '000' + animal[-2:]
+        animal_paths = [p for p in paths if a in p]
         print(f'{animal}: {len(animal_paths)}')
         bins = np.arange(0, len(animal_paths), paths_per_job)
         for i, b in enumerate(bins):

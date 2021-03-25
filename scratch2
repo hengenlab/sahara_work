@@ -1,0 +1,45 @@
+import glob
+import shutil
+import numpy as np
+import os
+
+folders = glob.glob('/media/HlabShare/Clustering_Data/*/*/rawcheck/')
+
+def text_to_array(fls):
+    text = []
+    for f in fls:
+        with open(f, 'r') as fl:
+            text.append(fl.read().split('\n'))
+    text = np.concatenate(text)
+    text = np.unique(text)
+    text = [t for t in text if len(t) > 0]
+    return text
+
+for f in folders:
+    print(f)
+    relavent_files = glob.glob(f+'*.txt')
+    if len(relavent_files) > 0:
+        to_keep = text_to_array(relavent_files)
+        to_keep = [x.replace('Volumes', 'media') for x in to_keep]
+        rec_dir = to_keep[0][:to_keep[0].find('Headstage')]
+        all_files = glob.glob(rec_dir+'*.bin')
+        to_del = [l for l in all_files if l not in to_keep and 'settings' not in l and 'to_delete' not in l]
+
+        if len(all_files)==len(to_keep):
+            print('\tno files to move')
+        else:
+            total_files = len(to_del) + len(to_keep)
+            if total_files != len(all_files):
+                print('something is wrong in this dir')
+            else:
+                print(f'\tTotal files: {len(all_files)} DELETING: {len(to_del)} num clust jobs: {len(relavent_files)}')
+                print('\tmoving files......')
+                new_folder = rec_dir+'to_delete'
+                if not os.path.exists(new_folder):
+                    os.mkdir(new_folder)
+                for d in to_del:
+                    binfile = d[d.find('Headstage'):]
+                    moved = shutil.move(d, new_folder+'/'+binfile)
+
+    else:
+        print('\tNo text files')
