@@ -130,7 +130,7 @@ def get_all_paths(animal):
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         a = animal[:3].upper() + '000' + animal[-2:]
-        animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{a}*/*/*/{probe}/co/*neurons_group0.npy'))
+        animal_paths = sorted([p for p in all_paths if a in p])
         print(f'{animal}: {len(animal_paths)}')
         allpaths.append(animal_paths)
     
@@ -144,7 +144,7 @@ def get_rand_subset(per_animal = 2):
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         a = animal[:3].upper() + '000' + animal[-2:]
-        animal_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{a}*/*/*/{probe}/co/*neurons_group0.npy'))
+        animal_paths = np.sort([p for p in allpaths if a in p])
         rand = np.random.randint(low=0, high = len(animal_paths), size=per_animal)
         ps = animal_paths[rand]
         paths.append(ps)
