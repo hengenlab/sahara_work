@@ -69,11 +69,13 @@ params = {
 }
 
 def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', probe = '', rerun = True, redo = False):
-    errcols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'file', 'error', 'now', 'when']
-    errf = basejobdir+'/errored.pkl'
+    
 
     tic = time.time()
     basejobdir = JOBDIR[:JOBDIR.rfind('/')]
+
+    errcols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'file', 'error', 'now', 'when']
+    errf = basejobdir+'/errored.pkl'
 
 
     status_file = f'{JOBDIR}/STATUS_{jobname}.txt'
