@@ -81,6 +81,8 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     status_file = f'{JOBDIR}/STATUS_{jobname}.txt'
     csv_file = f'{JOBDIR}/results_{jobname}.csv'
 
+    sw.write_csv_header(csv_file)
+
     all_objs, errors = sw.lilo_and_stitch(paths, params, save = params['save'], timeout=params['timeout'])
 
     results = []
