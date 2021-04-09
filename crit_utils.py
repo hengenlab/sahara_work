@@ -677,10 +677,37 @@ def get_params(animal):
         'caf84': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 50,
-                    'tm':20,
+                    'bm': 20,
+                    'tm':15,
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf88': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf90': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf92': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 15,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.9,
                     'quals': [1,2]
                     },
         'eab47': {
