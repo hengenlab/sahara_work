@@ -250,7 +250,7 @@ def resubmit_jobs(efiles):
     write_qsub_header('qsub_tosubmit.sh')
     with open('qsub_tosubmit.sh', 'a+') as sub:
         for f in newdirs:
-            qsub = glob.glob(newdirs+'qsub*')[0]
+            qsub = glob.glob(f+'qsub*')[0]
             sub.write(f'qsub {f}/{qsub}\n')
     print('qsub_tosubmit.sh written -- done')
 
