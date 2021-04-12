@@ -678,9 +678,9 @@ def get_params(animal):
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
                     'bm': 20,
-                    'tm':15,
+                    'tm':10,
                     'nfactor_bm_tail':0.8,
-                    'nfactor_tm_tail':0.8,
+                    'nfactor_tm_tail':0.75,
                     'quals': [1,2]
                     },
         'caf88': {
