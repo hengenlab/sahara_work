@@ -246,7 +246,7 @@ def resubmit_jobs(efiles):
                 paths_to_fix.append(line.strip())
     print(f'TOTAL PATHS TO RERUN: {len(paths_to_fix)}')
     newdirs = make_chpc_crit_jobs(paths_per_job = 1, jobname = jobname, paths = paths_to_fix, resubmit = True)
-
+    os.chdir('/scratch/khengen_lab/crit_sahara')
     write_qsub_header('qsub_tosubmit.sh')
     with open('qsub_tosubmit.sh', 'a+') as sub:
         for f in newdirs:
