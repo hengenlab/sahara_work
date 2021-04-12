@@ -234,7 +234,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
 
 def resubmit_jobs(efiles):
 
-    ef = efile[0]
+    ef = efiles[0]
     jobname = ef[ef.rfind('_')+1:ef.rfind('.e')]
     print(f'JOBNAME: {jobname} --- FIXING {len(efiles)} JOBS')
     edirs = [f'JOBS/{jobname}/{e[:e.find(jobname)-1]}' for e in efiles]
