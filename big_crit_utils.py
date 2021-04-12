@@ -10,7 +10,17 @@ import sys
 import os
 import shutil
 import time
- 
+
+
+def write_qsub_header(shfile):
+    f = '''#!/bin/bash\n# Make sure ncpus in spikeinterface_currentall.py is same as ppn\n# Please change BASEDIR\nBASEDIR=/scratch/khengen_lab/crit_sahara/\
+        \nOUTDIR=/scratch/khengen_lab/crit_sahara/\n# Get name for log file\nJOBID=`echo ${PBS_JOBID} | cut -c1-12`\
+        \noutput_name=${PBS_JOBNAME}_${JOBID}.log\n# Load modules\nmodule purge all\nmodule load gcc-4.7.2\n\n'''
+    with open(shfile, 'w') as t:
+        t.write(f)
+
+
+
 def write_to_files(o, csvloc):
     err, appended = sw.write_to_results_csv(o, csvloc)
     if err:
@@ -165,7 +175,7 @@ def get_rand_subset(per_animal = 2):
     return paths
     
 
-def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, animal = ''):
+def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, animal = '', resubmit = False):
     BASE = '/scratch/khengen_lab/crit_sahara/'
     print(f'base dir: ', BASE)
 
@@ -175,6 +185,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
     all_animals = np.unique([sw.get_info_from_path(p)[0] for p in paths])
     pathcount = 0
     jobcount = 0
+    finalpaths = []
     for animal in all_animals:
         a = animal[:3].upper() + '000' + animal[-2:]
         animal_paths = [p for p in paths if a in p]
@@ -189,7 +200,10 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
                 these_paths = animal_paths[b:]
             else:
                 these_paths = animal_paths[b:b+paths_per_job]
-            newjobdir = os.path.join(BASE, 'JOBS', jobname, f'{animal}_job_{i}')
+            if resubmit:
+                newjobdir = os.path.join(BASE, 'JOBS', 'RERUN', jobname, f'{animal}_job_{i}')
+            else:
+                newjobdir = os.path.join(BASE, 'JOBS', jobname, f'{animal}_job_{i}')
             print('newdir: ', newjobdir)
             if not os.path.exists(newjobdir):
                 os.makedirs(newjobdir)
@@ -214,6 +228,32 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
 
             pathcount+=paths_per_job
             jobcount+=1
+            finalpaths.append(newjobdir)
+    return finalpaths
+
+
+def resubmit_jobs(efiles):
+
+    ef = efile[0]
+    jobname = ef[ef.rfind('_')+1:ef.rfind('.e')]
+    print(f'JOBNAME: {jobname} --- FIXING {len(efiles)} JOBS')
+    edirs = [f'JOBS/{jobname}/{e[:e.find(jobname)-1]}' for e in efiles]
+
+    paths_to_fix = []
+    for d in edirs:
+        with open(f'{d}/job_paths.txt', 'r') as f:
+            for line in f:
+                paths_to_fix.append(line.strip())
+    print(f'TOTAL PATHS TO RERUN: {len(paths_to_fix)}')
+    newdirs = make_chpc_crit_jobs(paths_per_job = 1, jobname = jobname, paths = paths_to_fix, resubmit = True)
+
+    write_qsub_header('qsub_tosubmit.sh')
+    with open('qsub_tosubmit.sh', 'a+') as sub:
+        for f in newdirs:
+            qsub = glob.glob(newdirs+'qsub*')[0]
+            sub.write(f'qsub {f}/{qsub}\n')
+    print('qsub_tosubmit.sh written -- done')
+
 
 def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
     paths = sw.get_paths(animal = animal, probe = probe)
