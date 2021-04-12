@@ -229,6 +229,13 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
             pathcount+=paths_per_job
             jobcount+=1
             finalpaths.append(newjobdir)
+    os.chdir('/scratch/khengen_lab/crit_sahara')
+    write_qsub_header('qsub_tosubmit.sh')
+    with open('qsub_tosubmit.sh', 'a+') as sub:
+        for f in finalpaths:
+            qsub = glob.glob(f+'/qsub*')[0]
+            sub.write(f'qsub {qsub}\n')
+    print('qsub_tosubmit.sh written -- done')
     return finalpaths
 
 
