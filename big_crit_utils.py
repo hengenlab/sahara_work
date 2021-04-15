@@ -194,7 +194,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
         for i, b in enumerate(bins):
             if total_jobs is not None and jobcount > total_jobs:
                 print('Killing this, jobnum reached')
-                return
+                break
             os.chdir(BASE)
             if i == len(bins)-1:
                 these_paths = animal_paths[b:]
