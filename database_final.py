@@ -1197,11 +1197,11 @@ def __desc_gui():
     """
     class descgui(HasTraits):
         animal_info_value_list = ['animal_name', 'surgeon', 'animal_dob', 'species', 'strain',
-                                  'genotype', 'sex', 'num_chan', 'num_sites', 'num_probes',
+                                  'genotype', 'sex', 'num_chan', 'num_probes',
                                   'implant_date', 'electrode', 'headstage', 'daqsys', 'alive', 'sac_date']
         animal_info_value_list = list(map(format_query, np.repeat('animals', len(animal_info_value_list)), animal_info_value_list))
         animal_info_key_list = ['Animal Name', 'Surgeon', 'Animal DOB', 'Species', 'Strain',
-                                'Genotype', 'Sex','# Channels', '# Sites', '# Probes',
+                                'Genotype', 'Sex','# Channels', '# Probes',
                                 'Implant Date', 'Electrode Type', 'Headstage', 'Daqsys', 'Active?', 'Sac Date']
 
         animal_info = list(zip(animal_info_value_list, animal_info_key_list))

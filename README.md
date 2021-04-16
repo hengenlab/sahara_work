@@ -17,7 +17,7 @@ This bad boy takes in a list of paths, in addition to a dictionary of parameters
 
 
 *Paths*: a list of paths to each of the scrubbed neurons you want to run criticality on. Make sure the path is **complete**, and goes all the way to a .npy file. 
-ex: paths = ['/media/Hlabshare/clayton_sahara_work/clustering/caf19/0326/0_12/caf_scrubbed.npy', ...]
+ex: paths = ['/media/Hlabshare/Clustering_Data/CAF00019/caf19_03262020/0_12/*neurons_group0.npy', ...]
 
 
 *Params*:
@@ -25,10 +25,10 @@ A dictionary with the necessary parameters, there are a many necessary inputs so
 
 ```python
 params = {
-    'flag': 2,  # 1 is DCC 2 is p_val and DCC
+    'flag': 2,  # 1 is DCC, 2 is p_val and DCC
     'ava_binsz': 0.04,  # in seconds
-    'hour_bins': 4,  # durration of block to look at
-    'perc': 0.35, # threshold percentage
+    'hour_bins': 4,  # durration of block to look at. One DCC value will be returned for every 4 hours, e.g.
+    'perc': 0.35, # threshold percentage for determining avalanche boarders
     'bm':None, # upper limit of the size min cut off
     'tm':None, # upper limit of the time min cut off
     'nfactor_bm': 0, # where to start the search for a size min
@@ -37,7 +37,7 @@ params = {
     'nfactor_tm_tail': .9,  # upper bound to start exclude for time 
     'cell_type': ['FS', 'RSU'], # list of cell types to include
     'quals':[1,2,3], # list of qualities to include
-    'plot': True, # boolean for criticality, if True it will output plots
+    'plot': True, # boolean for Criticality, if True it will output plots
     'base_saveloc': f'/media/HlabShare/clayton_sahara_work/criticality/', # where to save files. sub directories will be made in this directory
     'verbose':False, # if True criticality will print many statements while running, good for debugging
     'timeout':5000, # in seconds, how long criticality should spend running before moving on to the next block and assuming it won't pass a p-val test
@@ -51,9 +51,9 @@ params = {
     'start': None, # what block do you want to start at. (1 would start at hour 4 if hour_bins is 4)
     'end': None, # what block do you want to end at. 
     'shuffle':True, # do you want shuffled data to be generated at the end and added to the object?
-    'subsample':False, # if True, a subsample of facter cells is pulled iter times and the AVs are compiled before criticality is run
+    'subsample':False, # if True, a subsample of FACTOR cells is pulled ITER times and the AVs are compiled before criticality is run
     'subsample_factor':None, # number of cells pulled
-    'subsample_iter':None, # number of times factor cells are pulled
+    'subsample_iter':None, # number of times FACTOR cells are pulled
     'subsample_replace':False # if True then 1 cell can be pulled in multiple iterations, if False each cell will only be pulled once.
 }
 ```
