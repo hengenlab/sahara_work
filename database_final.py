@@ -113,87 +113,6 @@ def connectclusterdb(user, pwd):
     return db.cursor(), db
 
 
-# #create table functions not up to date, see MYSQL workbench query files
-# def __createanimaltable(cursor, db):
-#     cursor.execute("CREATE TABLE animals ( \
-#                     animal_id INTEGER NOT NULL AUTO_INCREMENT, \
-#                     animal_name VARCHAR(255) NOT NULL, \
-#                     species VARCHAR(255), \
-#                     strain VARCHAR(255), \
-#                     genotype VARCHAR(255), \
-#                     sex VARCHAR(255), \
-#                     animal_dob VARCHAR(20), \
-#                     num_chan SMALLINT NOT NULL, \
-#                     num_sites TINYINT NOT NULL, \
-#                     implant_date VARCHAR(255), \
-#                     surgeon VARCHAR(10), \
-#                     electrode VARCHAR(255), \
-#                     headstage VARCHAR(255),\
-#                     PRIMARY KEY(animal_id) ) ")
-#
-#
-# def __createprobetable(cursor,db):
-#     '''Create the implant_db table. This should NOT be used except during development.
-#     May be called after the deltable function. '''
-#     # ---------------------------- create table for implant/region info ------------
-#     #cursor = db.cursor()
-#     cursor.execute( "CREATE TABLE probes ( \
-#                     probe_id INTEGER PRIMARY KEY AUTO_INCREMENT, \
-#                     animal_id INTEGER NOT NULL, \
-#                     probe_num SMALLINT NOT NULL, \
-#                     region VARCHAR(255), \
-#                     chan_range VARCHAR(255), \
-#                     FOREIGN KEY(animal_id) REFERENCES animals(animal_id)")
-#
-#     #cursor.execute("ALTER TABLE implants ADD COLUMN implant_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST")
-#     print('Created table "implant_db" in the {} database'.format(db.db))
-#
-#
-# def __createrestarttable(cursor, db):
-#     cursor.execute( "CREATE TABLE restarts ( \
-#                 restart_id MEDIUMINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,\
-#                 animal_id INTEGER,\
-#                 start_day VARCHAR(255), \
-#                 end_day VARCHAR(255),\
-#                 save_loc VARCHAR(255), \
-#                 manipulations VARCHAR(255), \
-#                 FOREIGN KEY(animal_id) REFERENCES animals(animal_id)\
-#                 )")
-#
-#
-# def __createclusterstable(cursor,db):
-#     """Create the clusters table. This should NOT be used except during development.
-#     May be called after the deltable function. """
-#
-#     cursor.execute( "CREATE TABLE clusters ( \
-#                     cluster_id MEDIUMINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,\
-#                     animal_id INTEGER, \
-#                     probe_id INTEGER, \
-#                     restart_id MEDIUMINT UNSIGNED,\
-#                     quality TINYINT, \
-#                     neg_pos_t DOUBLE, \
-#                     half_width DOUBLE, \
-#                     slope_falling DOUBLE, \
-#                     mean_amplitude DOUBLE, \
-#                     fr DOUBLE, \
-#                     cluster_idx INT, \
-#                     duration DOUBLE, \
-#                     clustering_t0 VARCHAR(255), \
-#                     tracklinks VARCHAR(255), \
-#                     folder_location VARCHAR(255),\
-#                     FOREIGN KEY(animal_id) REFERENCES animals(animal_id),\
-#                     FOREIGN KEY(probe_id) REFERENCES probes(probe_id), \
-#                     FOREIGN KEY(restart_id) REFERENCES restarts(restart_id)\
-#                     )" )
-#
-#     # add a column for cluster barcodes and make it the primary key and make it first.
-#     #cursor.execute("ALTER TABLE clusters ADD COLUMN barcode DOUBLE NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST")
-#
-#     # make foreign keys in the clusters table
-#     #cursor.execute("ALTER TABLE clusters ADD FOREIGN KEY(implant_id) REFERENCES implant_db(implant_id) ")
-#     print('Created table "clusters" in the {} database'.format(db.db))
-
-
 def __probegui(animal_name, title):
     """
     GUI class for uploading to the probe database
@@ -1136,13 +1055,14 @@ def SEARCH(user, pwd):
             if cont != 'y':
                 return None
         if 'DROP' in q.upper():
-            print('Not a chance. If you think you need to drop a table go ask Sahara.')
+            print('Not a chance. If you think you need to drop a table go ask Sahara (or Kiran if its after May 2021 rip).')
             return None
         try:
             df = pd.read_sql(q, db)
-        except DatabaseError:
+        except DatabaseError as err:
             print("Your query didn't work ----- sorry ")
-            print(DatabaseError)
+            print(err)
+            return
 
         if df.empty:
             print('Sorry. There is nothing matching that query in the database')
@@ -1297,3 +1217,104 @@ def __search_gui(current_sites, current_manipulations, current_genotypes, all_an
         sgui.configure_traits(view = view)
 
     return sgui
+
+
+
+### NON GUI FUNCTIONS
+
+def get_all_animals():
+    t = []
+    with open('/media/HlabShare/db_creds.txt') as f:
+        for line in f:
+            t.append(line.rstrip())
+
+    pwd = base64.b64decode(t[0]).decode()
+    user = base64.b64decode(t[1]).decode()
+
+    cursor, db = connectclusterdb(user, pwd)
+
+    q = 'SELECT * from animals;'
+    try:
+        df = pd.read_sql(q, db)
+    except DatabaseError as err:
+        print("Your query didn't work ----- sorry ")
+        print(err)
+        return
+    if df.empty:
+        print('Sorry. Looks like there arent any animals in the animal table at the moment. seems fishy.')
+    else:
+        print("QUERY SUCCESSFUL -- dataframe will be returned")
+    return df
+
+def get_all_probes(animal=''):
+    t = []
+    with open('/media/HlabShare/db_creds.txt') as f:
+        for line in f:
+            t.append(line.rstrip())
+
+    pwd = base64.b64decode(t[0]).decode()
+    user = base64.b64decode(t[1]).decode()
+
+    cursor, db = connectclusterdb(user, pwd)
+    if len(animal) > 0:
+        q = f'SELECT animals.animal_name, probes.probe_num, probes.region, probes.chan_range, probes.ap, probes.ml, probes.dv\
+            FROM animals JOIN probes ON probes.animal_id = animals.animal_id WHERE animals.animal_name = "{animal}";'
+    else:
+        q = f'SELECT animals.animal_name, probes.probe_num, probes.region, probes.chan_range, probes.ap, probes.ml, probes.dv\
+            FROM animals JOIN probes ON probes.animal_id = animals.animal_id;'
+    try:
+        df = pd.read_sql(q, db)
+    except DatabaseError as err:
+        print("Your query didn't work ----- sorry ")
+        print(err)
+        return
+    if df.empty:
+        print('Sorry. Looks like there arent any probes in the probes table at the moment, at all or under the animal you asked for.')
+    else:
+        print("QUERY SUCCESSFUL -- dataframe will be returned")
+    return df
+
+def get_all_unclustered_restarts():
+    t = []
+    with open('/media/HlabShare/db_creds.txt') as f:
+        for line in f:
+            t.append(line.rstrip())
+
+    pwd = base64.b64decode(t[0]).decode()
+    user = base64.b64decode(t[1]).decode()
+
+    cursor, db = connectclusterdb(user, pwd)
+
+    q = 'SELECT DISTINCT animals.animal_name, restarts.start_day, restarts.save_loc, restarts.restart_id, "NO" as clustered FROM animals\
+            JOIN restarts ON animals.animal_id = restarts.animal_id\
+            WHERE restarts.restart_id NOT IN (SELECT clusters.restart_id FROM clusters)'
+    try:
+        df = pd.read_sql(q, db)
+    except DatabaseError as err:
+        print("Your query didn't work ----- sorry ")
+        print(err)
+        return
+    if df.empty:
+        print('Well, it looks like theres no restarts that need to be clustered. That seems highly unlikely so maybe check that out.')
+    else:
+        print("QUERY SUCCESSFUL -- dataframe will be returned")
+    return df
+
+def necromancy(animal):
+    '''Did you accidentally mark an animal as ded when it wasnt? Run this function and then go drink some coffee. 
+        necromancy('CAF00099')
+
+        It'll yell at you if it didn't work. Otherwise nothing exciting happens.
+    '''
+    t = []
+    with open('/media/HlabShare/db_creds.txt') as f:
+        for line in f:
+            t.append(line.rstrip())
+
+    pwd = base64.b64decode(t[0]).decode()
+    user = base64.b64decode(t[1]).decode()
+
+    cursor, db = connectclusterdb(user, pwd)
+
+    q = 'UPDATE animals SET animals.alive = 1 WHERE animals.animal_name = "{animal}";'   
+    cursor.execute(query)

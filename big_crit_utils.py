@@ -25,11 +25,11 @@ def write_to_files(o, csvloc):
     err, appended = sw.write_to_results_csv(o, csvloc)
     if err:
         print('something weird happened, this should not have errored')
-    else:
-        new_path = o.pathname
-        loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
-        loaded = np.append(loaded, new_path)
-        np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
+    # else:
+    #     new_path = o.pathname
+    #     loaded = np.load('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy')
+    #     loaded = np.append(loaded, new_path)
+    #     np.save('/media/HlabShare/clayton_sahara_work/criticality/loaded_paths_results.npy', loaded)
     return appended
 
 def write_to_files_chpc(o, csvloc):

@@ -5,3 +5,10 @@ qsub -I -l nodes=1:ppn=1:gpus=1,walltime=1:00:00
 find *.e* -size +0 -exec ls -lh {} \;
 
 qselect -u <username> | xargs qdel
+
+
+
+
+# for when you cant mount HlabShare
+sudo umount -l /media/HlabShare
+sudo mount /media/HlabShare/
