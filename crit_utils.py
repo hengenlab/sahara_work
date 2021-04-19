@@ -506,9 +506,9 @@ def get_params(animal):
         'caf40': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 40,
+                    'bm': 30,
                     'tm':10,
-                    'nfactor_bm_tail':0.8,
+                    'nfactor_bm_tail':0.75,
                     'nfactor_tm_tail':0.75,
                     'quals': [1,2]
                     },
@@ -569,8 +569,8 @@ def get_params(animal):
         'caf60': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 40,
-                    'tm':20,
+                    'bm': 25,
+                    'tm':10,
                     'nfactor_bm_tail':0.70,
                     'nfactor_tm_tail':0.8,
                     'quals': [1]
@@ -689,6 +689,15 @@ def get_params(animal):
                     'bm': 20,
                     'tm':10,
                     'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf89': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.75,
                     'nfactor_tm_tail':0.8,
                     'quals': [1,2]
                     },
