@@ -29,7 +29,7 @@ def get_cols():
     functions when i add a column
     '''
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
-             'p_val_b', 'p_val_t', 'dcc', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
+             'p_val_b', 'p_val_t', 'dcc', 'alpha', 'beta', 'fit_sigma', 'sigma', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
               'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2']   
     return cols
 
@@ -195,7 +195,7 @@ def lil_helper_boi(crit):
             passed = (crit.p_value_burst > 0.05 and crit.p_value_t > 0.05)
 
         info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
-                crit.p_value_burst, crit.p_value_t, crit.dcc, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
+                crit.p_value_burst, crit.p_value_t, crit.dcc, crit.alpha, crit.beta, crit.fit_sigma, crit.sigma, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
                 crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t, 
                 crit.acc1, crit.acc2, crit.br1, crit.br2]
     except Exception as e:

@@ -135,3 +135,23 @@ for i, fl in enumerate(fls):
         sys.exit()
     else:
         print('\nk i dont know how to take that. so were just gonna do another file\n')
+
+
+
+#nothing fancy, just scoring
+for fl in files:
+    tofix = []
+    print(fl)
+    cells = np.load(fl, allow_pickle=True)
+    for cell in cells:
+        OGq = cell.quality
+        cell.checkqual()
+        newQ = cell.quality
+        if OGq != newQ:
+            print('\nNEW QUAL DIFFERENT - saving cell')
+            tofix.append(cell)
+    if len(tofix) > 0:
+        print('---saving fixed cells---')
+        name = fl[fl.find('co/')+3:fl.find('.npy')]+'_changed_list.npy'
+        newname = f'/media/HlabShare/models/inputs_new_donotdelete_updated/{name}'
+        np.save(newname, tofix)

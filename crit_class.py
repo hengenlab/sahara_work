@@ -79,13 +79,14 @@ class Crit:
         self.scaling_plot = None
         self.burst_cdf_plot = None
         self.t_cdf_plot = None
-        self.pre = None
-        self.fit = None
+        self.sigma = None
+        self.fit_sigma = None
         self.xmin = None
         self.xmax = None
         self.tmin = None
         self.tmax = None
         self.alpha = None
+        self.beta = None
         self.EXCLUDED_b = None
         self.EXCLUDED_t = None
 
@@ -237,8 +238,8 @@ class Crit:
                 self.burst_cdf_plot = Result['burst_cdf']
                 self.t_cdf_plot = Result['time_cdf']
 
-        self.pre = Result['pre']
-        self.fit = Result['fit']
+        self.sigma = Result['pre']
+        self.fit_sigma = Result['fit']
         self.xmin = Result['xmin']
         self.xmax = Result['xmax']
         self.tmin = Result['tmin']
