@@ -301,7 +301,9 @@ def encode_animal(animal):
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74', 
-                'caf75','eab52', 'eab47', 'eab', 'eab50', 'eab40']
+                'caf75','caf77', 'caf78', 'caf79', 'caf80', 'caf81', 'caf82', 'caf84',
+                'caf88', 'caf89', 'caf90', 'caf91', 'caf92', 'caf94', 'caf95', 'caf96', 
+                'caf97','eab52', 'eab47', 'eab', 'eab50', 'eab40']
     nums = np.arange(len(animals))
 
     keys = dict(zip(animals, nums))
