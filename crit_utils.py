@@ -575,7 +575,8 @@ def get_params(animal):
                     'tm':10,
                     'nfactor_bm_tail':0.70,
                     'nfactor_tm_tail':0.8,
-                    'quals': [1,2]
+                    'quals': [1],
+                    'hour_bins':4
                     },
         'caf61': {
                     'nfactor_bm': 0,
