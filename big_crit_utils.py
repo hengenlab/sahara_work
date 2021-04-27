@@ -310,10 +310,11 @@ def plot_dist(ax, burst, xmin, alpha, c, shuffled):
     p[p==0] = np.nan
     ax.plot(np.arange(1, np.max(burst) + 1), p, color = c, alpha = 0.75, linewidth=1)
     
-    pdfs = np.histogram(shuffled, bins = np.arange(1, np.max(shuffled) + 2))[0]
-    ps = pdfs / np.sum(pdfs)
-    ax.plot(np.arange(1, np.max(shuffled) + 1), ps, color = 'gray', alpha = 0.75, linewidth=1)
-    
+    if shuffled is not None:
+        pdfs = np.histogram(shuffled, bins = np.arange(1, np.max(shuffled) + 2))[0]
+        ps = pdfs / np.sum(pdfs)
+        ax.plot(np.arange(1, np.max(shuffled) + 1), ps, color = 'gray', alpha = 0.75, linewidth=1)
+        
     x = np.arange(xmin, np.max(burst)**0.8)
     y = (np.size(np.where(burst == xmin + 6)[0]) / np.power(xmin + 6, -alpha)) *\
         np.power(x, -alpha)
@@ -329,10 +330,13 @@ def scrub_dists(crit_objs):
     for p in crit_objs:
         crit = saw.load_crit(p)
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
-        plot_dist(ax, crit.burst, crit.xmin, crit.alpha, 'lightseagreen', crit.shuffled_b)
+        plot_dist(ax, crit.burst, crit.xmin, crit.alpha, 'lightseagreen', None)
+        fig.show()
         score = input('rating?: ')
-        res.append([crit.animal, crit.restart_date, crit.time_frame, crit.block_num, crit.probe, crit.burst, 'burst', score])
-        plt.clear()
-        plot_dist(ax, crit.T, crit.tmin, crit.beta, 'lightseagreen', crit.shuffled_T)
+        res.append([crit.animal, crit.date, crit.time_frame, crit.block_num, crit.probe, crit.burst, 'burst', score])
+
+        fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
+        plot_dist(ax, crit.T, crit.tmin, crit.beta, 'lightcoral', None)
+        fig.show()
         score = input('rating?: ')
-        res.append([crit.animal, crit.restart_date, crit.time_frame, crit.block_num, crit.probe, crit.T, 'T', score])
+        res.append([crit.animal, crit.date, crit.time_frame, crit.block_num, crit.probe, crit.T, 'T', score])

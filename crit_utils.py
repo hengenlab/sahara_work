@@ -571,12 +571,11 @@ def get_params(animal):
         'caf60': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 10,
-                    'tm':10,
+                    'bm': 30,
+                    'tm':20,
                     'nfactor_bm_tail':0.75,
                     'nfactor_tm_tail':0.8,
-                    'quals': [1],
-                    'hour_bins':2
+                    'quals': [1]
                     },
         'caf61': {
                     'nfactor_bm': 0,

@@ -115,3 +115,14 @@ for f in paths:
 f = open("R_all.pkl","wb") 
 pickle.dump(big,f) 
 f.close()   
+
+
+
+# concat files
+import glob
+import pandas as pd
+files = glob.glob('*.csv')
+df = pd.read_csv(files[0])
+for f in files[1:]:
+    t = pd.read_csv(f)
+    df = df.append(t)

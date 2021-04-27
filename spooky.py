@@ -3,11 +3,11 @@ import numpy as np
 import os
 import datetime as dt 
 
-dirs = glob.glob('/media/HlabShare/Clustering_Data/CAF*/*/*/*/co/') 
+dirs = glob.glob('/media/HlabShare/Sleep_Scoring/CAF00022*/*/*/*/co/') 
 print(len(dirs)) 
 crashed = [] 
 for d in dirs: 
-    neurons = glob.glob(d+'*neurons_group0.npy') 
+    neurons = glob.glob(d+'*lfp_group0.npy') 
     if len(neurons) < 1: 
         crashed.append(d) 
 
@@ -15,7 +15,7 @@ crashed = [c for c in crashed if 'files_block' not in c]
 print(f'{len(crashed)} clustering directories with no neurons_group0 file')
 count = [] 
 now = dt.datetime.now() 
-lens = []
+running = []
 for f in crashed: 
     fls = glob.glob(f+'*') 
     if len(fls) > 0: 
@@ -23,7 +23,8 @@ for f in crashed:
         mtime = sorted(mtimes)[-1] 
         t = dt.datetime.fromtimestamp(mtime) 
         elapsed = now - t 
-        if elapsed.days < 1: 
+        if elapsed.days < 1:
+            running.append(f)
             print('Potentially Currently Clustering ', elapsed, ' ', f) 
         else:
             count.append(f) 
