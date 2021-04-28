@@ -170,8 +170,6 @@ def get_data_perc(burst, xmin, xmax):
     perc = len(good_index)/len(burst)
     return perc
 
-
-
 def lil_helper_boi(crit):
     '''
     my lil helper boi function
@@ -571,10 +569,10 @@ def get_params(animal):
         'caf60': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 30,
-                    'tm':20,
-                    'nfactor_bm_tail':0.75,
-                    'nfactor_tm_tail':0.8,
+                    'bm': 20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.85,
+                    'nfactor_tm_tail':0.85,
                     'quals': [1]
                     },
         'caf61': {
