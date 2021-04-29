@@ -213,7 +213,7 @@ class Crit:
         self.burst = burst
         self.T = T
 
-        Result = cr.AV_analysis(self.burst, self.T, crit_params, flag = flag, pltname = self.pltname, saveloc = self.saveloc, plot = plot, bm = self.bm, 
+        Result = cr.AV_analysis(self.burst, self.T, flag = flag, pltname = self.pltname, saveloc = self.saveloc, plot = plot, bm = self.bm, 
                                 tm = self.tm, nfactor_bm = self.nfactor_bm, nfactor_tm = self.nfactor_tm, nfactor_bm_tail = self.nfactor_bm_tail,
                                 nfactor_tm_tail = self.nfactor_tm_tail, none_fact = self.none_fact, verbose = verbose, exclude = self.exclude, 
                                 exclude_burst = self.exclude_burst, exclude_time = self.exclude_time, exclude_diff_b = self.exclude_diff_b, exclude_diff_t=self.exclude_diff_t)
