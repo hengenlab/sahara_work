@@ -162,7 +162,13 @@ def get_all_paths(animal):
     allpaths = []
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
-        if probe != -1:
+        geno = sw.get_genotype(animal)
+        if geno == 'app_ps1':
+            a = animal[:3].upper() + '000' + animal[-2:]
+            animal_paths = sorted([p for p in all_paths if a in p])
+            print(f'{animal}: {len(animal_paths)}')
+            allpaths.append(animal_paths)
+        elif probe != -1:
             a = animal[:3].upper() + '000' + animal[-2:]
             animal_paths = sorted([p for p in all_paths if a in p and probe in p])
             print(f'{animal}: {len(animal_paths)}')
