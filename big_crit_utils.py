@@ -43,6 +43,17 @@ def write_to_files_chpc(o, csvloc):
         np.save('/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy', loaded)
     return appended
 
+def write_to_pkl_chpc(o, pkl_loc):
+    err, appended = sw.write_to_results_pkl(o, pkl_loc)
+    if err:
+        print('something weird happened, this should not have errored')
+    else:
+        new_path = o.pathname
+        loaded = np.load('/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy')
+        loaded = np.append(loaded, new_path)
+        np.save('/scratch/khengen_lab/crit_sahara/loaded_paths_results.npy', loaded)
+    return appended
+
 
 params = {
     'flag': 2,  # 1 is DCC 2 is p_val and DCC
@@ -90,6 +101,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
 
     status_file = f'{JOBDIR}/STATUS_{jobname}.txt'
     csv_file = f'{JOBDIR}/results_{jobname}.csv'
+    pkl_file = f'{JOBDIR}/results_{jobname}.pkl'
 
     sw.write_csv_header(csv_file)
 
@@ -97,7 +109,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
 
     results = []
     for o in all_objs:
-        appended = write_to_files_chpc(o, csv_file)
+        appended = write_to_pkl_chpc(o, pkl_file)
         results.append(appended)
 
     if len(all_objs) > 0:

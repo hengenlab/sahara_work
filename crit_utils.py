@@ -30,7 +30,7 @@ def get_cols():
     '''
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
              'p_val_b', 'p_val_t', 'dcc', 'alpha', 'beta', 'fit_sigma', 'sigma', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
-              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2']   
+              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2', 'burst', 'T', 'npy_file']   
     return cols
 
 def get_all_results(csvloc, loaded_file, re_load):
@@ -101,6 +101,9 @@ def write_to_csv(data, cols, loc):
         w = csv.DictWriter(c, fieldnames = cols)
         w.writerow(d)
 
+def write_to_pkl(data, cols, loc):
+    df = pd.DataFrame(data, columns = cols)
+    df.to_pickle(loc)
 
 def write_to_results_csv(crit, loc):
     '''
@@ -117,6 +120,16 @@ def write_to_results_csv(crit, loc):
         print('this path failed, plz just fucking delete it and re-do this path ffs')
         return err, data
     write_to_csv(data, cols, loc)
+    return err, data
+
+def write_to_results_pkl(crit, loc):
+    cols = get_cols()
+    err, data = s.lil_helper_boi(crit)
+    if err:
+        print('This path failed, this really shouldnt happen idk what to tell ya')
+        print(err)
+        return err, data
+    write_to_pkl(data, cols, loc)
     return err, data
 
 
@@ -195,7 +208,7 @@ def lil_helper_boi(crit):
         info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
                 crit.p_value_burst, crit.p_value_t, crit.dcc, crit.alpha, crit.beta, crit.fit_sigma, crit.sigma, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
                 crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t, 
-                crit.acc1, crit.acc2, crit.br1, crit.br2]
+                crit.acc1, crit.acc2, crit.br1, crit.br2, crit.burst, crit.T, crit.pathname]
     except Exception as e:
         print(f'error: {e}')
         err = True
