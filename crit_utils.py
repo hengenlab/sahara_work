@@ -102,7 +102,7 @@ def write_to_csv(data, cols, loc):
         w.writerow(d)
 
 def write_to_pkl(data, cols, loc):
-    df = pd.DataFrame(data, columns = cols)
+    df = pd.DataFrame([data], columns = cols)
     df.to_pickle(loc)
 
 def write_to_results_csv(crit, loc):
