@@ -110,6 +110,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     results = []
     for o in all_objs:
         appended = write_to_pkl_chpc(o, pkl_file)
+        appended2 = write_to_files_chpc(o, csv_file)
         results.append(appended)
 
     if len(all_objs) > 0:
