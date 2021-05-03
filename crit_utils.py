@@ -260,7 +260,7 @@ def get_birthday(animal):
     returns: datetime object of animals birthday at 7:30am on the day
     '''
     if len(animal) > 6:
-        animal = animal[:3].lower() + animal[-2:]
+        animal = animal[:3].lower() + str(int(animal[3:]))
     bdays = {
         'caf01': dt(2019, 12, 24, 7, 30),
         'caf19': dt(2020, 1, 19, 7, 30),
@@ -348,7 +348,7 @@ def get_regions(animal):
     returns a list of regions that was recorded from that animal
     '''
     if len(animal) > 6:
-        animal = animal[:3].lower() + animal[-2:]
+        animal = animal[:3].lower() + str(int(animal[3:]))
     regions = {
         'caf01': ['CA1'],
         'caf19': ['CA1'],
@@ -405,7 +405,7 @@ def get_sex(animal):
     returns the sex of an animal recorded from
     '''
     if len(animal) > 6:
-        animal = animal[:3].lower() + animal[-2:]
+        animal = animal[:3].lower() + str(int(animal[3:]))
     sex = {
         'caf01': 'M',
         'caf19': 'F',
@@ -465,7 +465,7 @@ def get_probe(animal, region):
     region must be in the correct format
     '''
     if len(animal) > 6:
-        animal = animal[:3].lower() + animal[-2:]
+        animal = animal[:3].lower() + str(int(animal[3:]))
     probes = np.array(get_regions(animal)) 
     probenum = np.where(probes == region)[0] 
     if len(probenum)==0: 
@@ -479,6 +479,8 @@ def get_probe(animal, region):
 
 def get_params(animal):
 
+    if len(animal) > 6:
+        animal = animal[:3].lower() + str(int(animal[3:]))
     base = {
         'nfactor_bm': 0,
         'nfactor_tm':0,
@@ -1099,7 +1101,7 @@ def get_genotype(animal):
     returns genotype of animal
     '''
     if len(animal) > 6:
-        animal = animal[:3].lower() + animal[-2:]
+        animal = animal[:3].lower() + str(int(animal[3:]))
     genos = {
         'caf01': 'e4',
         'caf19': 'te4',
@@ -1153,7 +1155,7 @@ def get_genotype(animal):
 
 def get_hstype(animal):
     if len(animal) > 6:
-        animal = animal[:3].lower() + animal[-2:]
+        animal = animal[:3].lower() + str(int(animal[3:]))
     regions = {
         'caf01': ['EAB50chmap_00'],
         'caf19': ['EAB50chmap_00'],
