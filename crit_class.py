@@ -94,7 +94,7 @@ class Crit:
         """
         mild descriptors of the object - wont work
         """
-        return str(f'CRIT: {self.animal} -- {self.date} -- {self.time_frame}')
+        return str(f'CRIT: {self.num_cells} cells - {self.num_bins} bins')
 
     def __enter__(self):
         return self
