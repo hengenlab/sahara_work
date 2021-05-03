@@ -102,8 +102,18 @@ def write_to_csv(data, cols, loc):
         w.writerow(d)
 
 def write_to_pkl(data, cols, loc):
-    df = pd.DataFrame([data], columns = cols)
-    df.to_pickle(loc, protocol=4)
+    '''
+    appends to the pickle file if it exists, otherwise
+    it makes a new one
+    '''
+    if os.path.exists(loc):
+        df = pd.read_pickle(loc)
+        temp = pd.DataFrame([data], columns = cols)
+        df = df.append(temp)
+        df.to_pickle(loc, protocol=4)
+    else:
+        df = pd.DataFrame([data], columns = cols)
+        df.to_pickle(loc, protocol=4)
 
 def write_to_results_csv(crit, loc):
     '''

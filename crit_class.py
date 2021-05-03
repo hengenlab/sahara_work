@@ -92,7 +92,7 @@ class Crit:
 
     def __repr__(self):
         """
-        mild descriptors of the object
+        mild descriptors of the object - wont work
         """
         return str(f'CRIT: {self.animal} -- {self.date} -- {self.time_frame}')
 
