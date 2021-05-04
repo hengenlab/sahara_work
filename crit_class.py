@@ -243,6 +243,7 @@ class Crit:
         self.__gen_kappa()
         self.__gen_k2()
         self.__gen_kprob()
+        self.__gen_k3()
 
     def __gen_beta(self):
         tm = int(np.max(self.T) / 20)
@@ -379,6 +380,59 @@ class Crit:
         except Exception:
             print('kprob_t not working')
             self.kprob_t = None
+
+    def __gen_k3(self):
+        pdf = np.histogram(self.burst, bins = np.arange(1, np.max(self.burst) + 2))[0]
+        p = pdf / np.sum(pdf)
+        x = np.arange(self.xmin, np.max(self.burst) + 1)
+        y = (np.size(np.where(self.burst == self.xmin + 6)[0]) / np.power(self.xmin + 6, -self.alpha)) * \
+            np.power(x, -self.alpha)
+        y = y / np.sum(pdf)
+
+
+        half = int(math.sqrt(self.xmin*np.max(self.burst)))
+        xh = np.arange(x[half], np.max(self.burst) + 1)
+        yh = (np.size(np.where(self.burst == self.xmin + 6)[0]) / np.power(self.xmin + 6, -self.alpha)) * \
+            np.power(xh, -self.alpha)
+        yh = yh / np.sum(pdf)
+
+
+        ps = p[x[half]:]
+        diffs = np.diff([ps, yh[:-1]], axis = 0)
+        above_idx = np.where(diffs < 0)[1]
+        below_idx = np.where(diffs > 0)[1]
+        prob_above = np.sum(ps[above_idx])
+        prob_below = np.sum(ps[below_idx])
+
+        kprob_b = prob_above / prob_below
+
+        self.k3b = kprob_b
+
+        tdf = np.histogram(self.T, bins = np.arange(1, np.max(self.T) + 2))[0]
+        p = tdf / np.sum(tdf)
+        x = np.arange(self.tmin, np.max(self.T) + 1)
+        y = (np.size(np.where(self.T == self.tmin + 6)[0]) / np.power(self.tmin + 6, -self.beta)) * \
+            np.power(x, -self.beta)
+        y = y / np.sum(tdf)
+
+
+        half = int(math.sqrt(self.tmin*np.max(self.T)))
+        xh = np.arange(x[half], np.max(self.T) + 1)
+        yh = (np.size(np.where(self.T == self.tmin + 6)[0]) / np.power(self.tmin + 6, -self.beta)) * \
+            np.power(xh, -self.beta)
+        yh = yh / np.sum(tdf)
+
+
+        ps = p[x[half]:]
+        diffs = np.diff([ps, yh[:-1]], axis = 0)
+        above_idx = np.where(diffs < 0)[1]
+        below_idx = np.where(diffs > 0)[1]
+        prob_above = np.sum(ps[above_idx])
+        prob_below = np.sum(ps[below_idx])
+
+        kprob_t = prob_above / prob_below
+
+        self.k3t = kprob_t
 
 
 

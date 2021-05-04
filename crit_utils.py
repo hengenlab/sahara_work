@@ -534,10 +534,10 @@ def get_params(animal):
         'caf37': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 15,
+                    'bm': 30,
                     'tm':10,
-                    'nfactor_bm_tail':0.75,
-                    'nfactor_tm_tail':0.75,
+                    'nfactor_bm_tail':0.9,
+                    'nfactor_tm_tail':0.9,
                     'quals': [1,2]
                     },
         'caf40': {
