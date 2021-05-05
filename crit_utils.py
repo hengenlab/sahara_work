@@ -502,8 +502,9 @@ def get_params(animal):
         'nfactor_tm_tail':0.8,
         'quals': [1,2]
     }
-
-    params = {
+    # as of 5/05/21 these params produced an effect on all our data
+    # if you need to return to these, they're here, don't delete
+    keep_these_params = {
         'caf22': {
                     'nfactor_bm': 5,
                     'nfactor_tm':0,
@@ -773,6 +774,315 @@ def get_params(animal):
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8,
                     'quals': [1]
+                    },
+        'eab47': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'eab50': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'eab40': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    }
+    }
+    
+    params = {
+        'caf22': {
+                    'nfactor_bm': 5,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':8,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf26': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 15,
+                    'tm':10,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf34': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':6,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf37': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.9,
+                    'nfactor_tm_tail':0.9,
+                    'quals': [1,2]
+                    },
+        'caf40': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf42': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 10,
+                    'tm':9,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf48': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf49': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.78,
+                    'quals': [1,2]
+                    },
+        'caf50': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.85,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf52': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':8,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf58': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf60': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 40,
+                    'tm':15,
+                    'nfactor_bm_tail':0.9,
+                    'nfactor_tm_tail':0.9,
+                    'quals': [1]
+                    },
+        'caf61': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':20,
+                    'nfactor_bm_tail':0.65,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf62': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':1,
+                    'nfactor_tm_tail':1,
+                    'quals': [1,2]
+                    },
+        'caf66': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf69': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf72': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf77': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 15,
+                    'tm':8,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf78': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf79': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf80': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 40,
+                    'tm':10,
+                    'nfactor_bm_tail':0.9,
+                    'nfactor_tm_tail':0.9,
+                    'quals': [1,2]
+                    },
+        'caf81': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':12,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf82': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf84': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf88': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf89': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':10,
+                    'nfactor_bm_tail':0.7,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf90': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.85,
+                    'nfactor_tm_tail':0.85,
+                    'quals': [1,2,3]
+                    },
+        'caf92': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 15,
+                    'tm':6,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.9,
+                    'quals': [1,2]
+                    },
+        'caf95': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.75,
+                    'quals': [1,2]
+                    },
+        'caf96': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1]
+                    },
+        'caf97': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
                     },
         'eab47': {
                     'nfactor_bm': 0,

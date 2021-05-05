@@ -153,6 +153,12 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     return 0
 
 
+def smol_2_big(animal):
+    if len(animal)==5:
+        a = animal[:3].upper() + '000' + animal[3:]
+    else:
+        a = animal[:3].upper() + '00' + animal[3:]
+    return a
 
 def get_all_paths(animal):
     all_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{animal}*/*/*/*/co/*neurons_group0.npy'))
@@ -165,12 +171,12 @@ def get_all_paths(animal):
         probe = sw.get_probe(animal, region = 'CA1')
         geno = sw.get_genotype(animal)
         if geno == 'app_ps1':
-            a = animal[:3].upper() + '000' + animal[-2:]
+            a = smol_2_big(animal)
             animal_paths = sorted([p for p in all_paths if a in p])
             print(f'{animal}: {len(animal_paths)}')
             allpaths.append(animal_paths)
         elif probe != -1:
-            a = animal[:3].upper() + '000' + animal[-2:]
+            a = smol_2_big(animal)
             animal_paths = sorted([p for p in all_paths if a in p and probe in p])
             print(f'{animal}: {len(animal_paths)}')
             allpaths.append(animal_paths)
@@ -185,7 +191,7 @@ def get_rand_subset(per_animal = 2):
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         if probe != -1:
-            a = animal[:3].upper() + '000' + animal[-2:]
+            a = smol_2_big(animal)
             animal_paths = np.sort([p for p in allpaths if a in p and probe in p])
             rand = np.random.randint(low=0, high = len(animal_paths), size=per_animal)
             ps = animal_paths[rand]
@@ -206,7 +212,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
     jobcount = 0
     finalpaths = []
     for animal in all_animals:
-        a = animal[:3].upper() + '000' + animal[-2:]
+        a = smol_2_big(animal)
         animal_paths = [p for p in paths if a in p]
         print(f'{animal}: {len(animal_paths)}')
         bins = np.arange(0, len(animal_paths), paths_per_job)
