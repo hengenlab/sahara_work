@@ -30,7 +30,7 @@ def get_cols():
     '''
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
              'p_val_b', 'p_val_t', 'dcc', 'alpha', 'beta', 'fit_sigma', 'sigma', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
-              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2', 'burst', 'T', 'num_cells', 'npy_file']   
+              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'k3b', 'k3t', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2', 'burst', 'T', 'num_cells', 'npy_file']   
     return cols
 
 def get_all_results(csvloc, loaded_file, re_load):

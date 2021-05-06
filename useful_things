@@ -6,6 +6,7 @@ find *.e* -size +0 -exec ls -lh {} \;
 
 qselect -u sensley | xargs qdel
 
+qstatu | grep ' R ' -c
 
 
 
