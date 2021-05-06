@@ -126,3 +126,12 @@ df = pd.read_csv(files[0])
 for f in files[1:]:
     t = pd.read_csv(f)
     df = df.append(t)
+
+
+import pandas as pd
+import glob
+files = glob.glob('*_job_*.pkl') 
+print(len(files)) 
+df = pd.read_pickle(files[0]) 
+for f in files[1:]: 
+    df = df.append(pd.read_pickle(f)) 

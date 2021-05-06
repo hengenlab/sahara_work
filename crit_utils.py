@@ -217,7 +217,7 @@ def lil_helper_boi(crit):
 
         info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
                 crit.p_value_burst, crit.p_value_t, crit.dcc, crit.alpha, crit.beta, crit.fit_sigma, crit.sigma, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
-                crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.EXCLUDED_b, crit.EXCLUDED_t, 
+                crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.k3b, crit.k3t, crit.EXCLUDED_b, crit.EXCLUDED_t, 
                 crit.acc1, crit.acc2, crit.br1, crit.br2, crit.burst, crit.T, crit.pathname]
     except Exception as e:
         print(f'error: {e}')
