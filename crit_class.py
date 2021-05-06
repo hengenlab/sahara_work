@@ -16,6 +16,7 @@ from datetime import timedelta
 import csv
 from copy import deepcopy as cdc
 import sys
+import math
 
 class Crit:
     """
