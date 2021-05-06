@@ -30,7 +30,7 @@ def get_cols():
     '''
     cols = ['animal', 'probe', 'date', 'time_frame', 'block_num', 'scored', 'bday', 'rstart_time', 'age', 'geno',
              'p_val_b', 'p_val_t', 'dcc', 'alpha', 'beta', 'fit_sigma', 'sigma', 'passed', 'kappa_b', 'kappa_t', 'k2b', 'k2t', 'kprob_b', 'kprob_t',
-              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2', 'burst', 'T', 'npy_file']   
+              'xmin', 'xmax', 'tmin', 'tmax', 'burstperc', 'Tperc', 'excluded_b', 'excluded_t', 'acc1', 'acc2', 'br1', 'br2', 'burst', 'T', 'num_cells', 'npy_file']   
     return cols
 
 def get_all_results(csvloc, loaded_file, re_load):
@@ -218,7 +218,7 @@ def lil_helper_boi(crit):
         info = [crit.animal, crit.probe, crit.date, crit.time_frame, crit.block_num, crit.scored_by, birth, start_time, age, geno,
                 crit.p_value_burst, crit.p_value_t, crit.dcc, crit.alpha, crit.beta, crit.fit_sigma, crit.sigma, passed, crit.kappa_burst, crit.kappa_t, crit.k2b, crit.k2t,
                 crit.kprob_b, crit.kprob_t, crit.xmin, crit.xmax, crit.tmin, crit.tmax, burstperc, Tperc, crit.k3b, crit.k3t, crit.EXCLUDED_b, crit.EXCLUDED_t, 
-                crit.acc1, crit.acc2, crit.br1, crit.br2, crit.burst, crit.T, crit.pathname]
+                crit.acc1, crit.acc2, crit.br1, crit.br2, crit.burst, crit.T, crit.num_cells, crit.pathname]
     except Exception as e:
         print(f'error: {e}')
         err = True
