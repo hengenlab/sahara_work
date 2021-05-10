@@ -1594,7 +1594,7 @@ def generate_timeframes(start, end, blocksize):
 
 
 def gen_timeline():
-    locs = ['bs001r/rawdata/', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r', 'bs003r/D1/', 'bs004r/D1/', 'bs005r/D1/', 'bs006r/D1/', 'bs007r/D1/', 'bs007r/D1_442b/', 'bs007r/D1_442a/']
+    locs = ['bs001r/rawdata/', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r', 'bs003r/D1/','bs003r/D1_442b/', 'bs004r/D1/', 'bs005r/D1/', 'bs006r/D1/', 'bs007r/D1/', 'bs007r/D1_442b/', 'bs007r/D1_442a/']
     dat = {}
     for loc in locs:
         print(loc)
