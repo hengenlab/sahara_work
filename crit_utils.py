@@ -1063,7 +1063,7 @@ def get_params(animal):
         'caf95': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 20,
+                    'bm': 30,
                     'tm':10,
                     'nfactor_bm_tail':0.75,
                     'nfactor_tm_tail':0.75,
@@ -1522,7 +1522,7 @@ def get_hstype(animal):
         'caf94': ['hs64'],
         'caf95': ['hs64'],
         'caf96': ['hs64'],
-        'caf97': ['hs64'],
+        'caf97': ['APT_PCB'],
         'caf99': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
         'caf100': ['hs64'],
         'caf101': ['hs64'],

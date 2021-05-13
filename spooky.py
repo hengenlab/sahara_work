@@ -3,11 +3,11 @@ import numpy as np
 import os
 import datetime as dt 
 
-dirs = glob.glob('/media/HlabShare/Sleep_Scoring/CAF00022*/*/*/*/co/') 
+dirs = glob.glob('/media/HlabShare/Clustering_Data/*/*/*/*/co/') 
 print(len(dirs)) 
 crashed = [] 
 for d in dirs: 
-    neurons = glob.glob(d+'*lfp_group0.npy') 
+    neurons = glob.glob(d+'*neurons_group0.npy') 
     if len(neurons) < 1: 
         crashed.append(d) 
 
