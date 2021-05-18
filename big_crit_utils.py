@@ -170,7 +170,7 @@ def get_all_paths(animal):
     for animal in all_animals:
         probe = sw.get_probe(animal, region = 'CA1')
         geno = sw.get_genotype(animal)
-        if geno == 'app_ps1' or len(sw.get_regions(animal)>=4):
+        if geno == 'app_ps1' or (len(sw.get_regions(animal))>=4):
             a = smol_2_big(animal)
             animal_paths = sorted([p for p in all_paths if a in p])
             print(f'{animal}: {len(animal_paths)}')
