@@ -385,7 +385,7 @@ def get_regions(animal):
         'caf79': ['CA1'],
         'caf80': ['CA1'],
         'caf81': ['ACAd','V1', 'CA1', 'RSPv'],
-        'caf82': ['CA1','RSPv','V1','ACAd'],
+        'caf82': ['CA1','RSPv','V1','ACad'],
         'caf84': ['CA1'],
         'caf88': ['CA1','ACad','RSPv','V1'],
         'caf89': ['CA1'],
