@@ -387,7 +387,7 @@ def get_regions(animal):
         'caf81': ['ACAd','V1', 'CA1', 'RSPv'],
         'caf82': ['CA1','RSPv','V1','ACAd'],
         'caf84': ['CA1'],
-        'caf88': ['CA1','ACAd','RSPv','V1'],
+        'caf88': ['CA1','ACad','RSPv','V1'],
         'caf89': ['CA1'],
         'caf90': ['CA1'],
         'caf91': ['CA1'],
@@ -1055,9 +1055,9 @@ def get_params(animal):
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
                     'bm': 15,
-                    'tm':6,
+                    'tm':9,
                     'nfactor_bm_tail':0.8,
-                    'nfactor_tm_tail':0.9,
+                    'nfactor_tm_tail':0.85,
                     'quals': [1,2]
                     },
         'caf95': {
