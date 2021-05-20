@@ -2267,7 +2267,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
             num_cells = len(good_cells)
 
             if overlap :
-                pritn('There is an overlap so cutting out the first hour')
+                print('There is an overlap so cutting out the first hour')
                 start = 3600
             else:
                 start = False
