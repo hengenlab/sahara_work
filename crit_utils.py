@@ -559,7 +559,7 @@ def get_genotype(animal):
 def get_hstype(animal):
     if len(animal) > 6:
         animal = animal[:3].lower() + str(int(animal[3:]))
-    regions = {
+    hstype = {
         'caf01': ['EAB50chmap_00'],
         'caf19': ['EAB50chmap_00'],
         'caf22': ['EAB50chmap_00','EAB50chmap_00'],
@@ -612,7 +612,7 @@ def get_hstype(animal):
         'eab50': ['EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00'],
     }
 
-
+    return hstype[animal]
 
 
 
