@@ -3,7 +3,8 @@ import glob
 import pandas as pd
 from sahara_work import Crit
 from sahara_work import lilo_and_stitch
-import sahara_work as sw
+import matplotlib.pyplot as plt
+import sahara_work as saw
 from datetime import datetime as dt
 import signal
 import sys
