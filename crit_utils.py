@@ -308,6 +308,11 @@ def get_birthday(animal):
         'caf101':dt(2021, 3, 1, 7, 30),
         'caf102':dt(2021, 1, 30, 7, 30),
         'caf103':dt(2020, 11, 24, 7, 30),
+        'caf104':dt(2020, 5, 26, 7, 30),
+        'caf106':dt(2020, 12, 17, 7, 30),
+        'caf107':dt(2021, 3, 30, 7, 30),
+        'caf108':dt(2020, 8, 14, 7, 30),
+        'caf109':dt(2020, 7, 20, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -401,6 +406,11 @@ def get_regions(animal):
         'caf101': ['CA1'],
         'caf102': ['CA1'],
         'caf103': ['CA1'],
+        'caf104': ['CA1','V1','ACad','RSPv'],
+        'caf106': ['M1','S1','C_Pu','NAc','LGN','RSPv','Sup_col','V1'],
+        'caf107': ['CA1'],
+        'caf108': ['CA1'],
+        'caf109': ['CA1'],
         'eab52': ['CA1','V1'],
         'eab47': ['M1_M2','CA1','V2'],
         'eab': ['M1_M2','CA1','V2'],
@@ -408,7 +418,6 @@ def get_regions(animal):
         'eab40': ['S1','CA1','M1','M2']
     }
     return regions[animal]
-
 
 def get_sex(animal):
     '''
@@ -463,6 +472,11 @@ def get_sex(animal):
         'caf101': 'F',
         'caf102': 'M',
         'caf103': 'F',
+        'caf104': 'F',
+        'caf106': 'F',
+        'caf107': 'M',
+        'caf108': 'F',
+        'caf109': 'F',
         'eab52': 'F',
         'eab47': 'M',
         'eab': 'M',
@@ -471,6 +485,131 @@ def get_sex(animal):
     }
 
     return sex[animal]
+
+def get_genotype(animal):
+    '''
+    returns genotype of animal
+    '''
+    if len(animal) > 6:
+        animal = animal[:3].lower() + str(int(animal[3:]))
+    genos = {
+        'caf01': 'e4',
+        'caf19': 'te4',
+        'caf22': 'te4',
+        'caf26': 'wt',
+        'caf34': 'wt',
+        'caf37': 'te4',
+        'caf40': 'wt',
+        'caf42': 'wt',
+        'caf48': 'te4',
+        'caf49': 'te4',
+        'caf50': 'e4',
+        'caf52': 'te4',
+        'caf54': 'myt1l',
+        'caf55': 'myt1l',
+        'caf58': 'e4',
+        'caf60': 'te4',
+        'caf61': 'e4',
+        'caf62': 'te4',
+        'caf66': 'wt',
+        'caf69': 'wt',
+        'caf71': 'app_ps1',
+        'caf72': 'te4',
+        'caf73': 'app_ps1',
+        'caf74': 'app_ps1',
+        'caf75': 'app_ps1',
+        'caf77': 'wt',
+        'caf78': 'te4',
+        'caf79': 'te4',
+        'caf80': 'te4',
+        'caf81': 'wt',
+        'caf82': 'wt',
+        'caf84':'te4',
+        'caf88': 'wt',
+        'caf89': 'wt',
+        'caf90': 'wt',
+        'caf91': 'wt',
+        'caf92': 'wt',
+        'caf94': 'wt',
+        'caf95': 'wt',
+        'caf96': 'wt',
+        'caf97': 'wt',
+        'caf99': 'wt',
+        'caf100': 'e4',
+        'caf101': 'e4',
+        'caf102': 'wt',
+        'caf103': 'e4',
+        'caf104': 'wt',
+        'caf106': 'wt',
+        'caf107': 'wt',
+        'caf108': 'e4',
+        'caf109': 'e4',
+        'eab52': 'te4',
+        'eab47': 'te4',
+        'eab': 'te4',
+        'eab50': 'wt',
+        'eab40': 'wt'
+    }
+
+    return genos[animal]
+
+def get_hstype(animal):
+    if len(animal) > 6:
+        animal = animal[:3].lower() + str(int(animal[3:]))
+    hstype = {
+        'caf01': ['EAB50chmap_00'],
+        'caf19': ['EAB50chmap_00'],
+        'caf22': ['EAB50chmap_00','EAB50chmap_00'],
+        'caf26': ['EAB50chmap_00','APT_PCB','APT_PCB'],
+        'caf34': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf37': ['APT_PCB'],
+        'caf40': ['APT_PCB'],
+        'caf42': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf48': ['hs64'],
+        'caf49': ['hs64'],
+        'caf50': ['hs64'],
+        'caf52': ['hs64'],
+        'caf60': ['APT_PCB'],
+        'caf61': ['hs64'],
+        'caf62': ['hs64'],
+        'caf69': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf71': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf72': ['hs64'],
+        'caf73': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf74': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf75': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf77': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf78': ['hs64'],
+        'caf79': ['hs64'],
+        'caf80': ['hs64'],
+        'caf81': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf82': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf84':['hs64'],
+        'caf88': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf89': ['hs64'],
+        'caf90': ['hs64'],
+        'caf91': ['hs64'],
+        'caf92': ['hs64'],
+        'caf94': ['hs64'],
+        'caf95': ['hs64'],
+        'caf96': ['hs64'],
+        'caf97': ['APT_PCB'],
+        'caf99': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf100': ['hs64'],
+        'caf101': ['hs64'],
+        'caf102': ['hs64'],
+        'caf103': ['hs64'],
+        'caf104': ['hs64'],
+        'caf106': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
+        'caf107': ['hs64'],
+        'caf108': ['hs64'],
+        'caf109': ['hs64'],
+        'eab52': ['EAB50champ_00','EAB50champ_00'],
+        'eab47': ['EAB50champ_00','EAB50champ_00','EAB50champ_00'],
+        'eab50': ['EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00'],
+    }
+
+    return hstype[animal]
 
 def get_probe(animal, region): 
     '''
@@ -490,7 +629,6 @@ def get_probe(animal, region):
         return -1 
     probe = f'probe{probenum[0]+1}' 
     return probe 
-
 
 def get_params(animal, probe):
     # as of 5/05/21 these params produced an effect on all our data
@@ -1610,120 +1748,7 @@ def get_params(animal, probe):
     
     # otherwise base params it is, thank you for visiting
     return base
-    
-    
-def get_genotype(animal):
-    '''
-    returns genotype of animal
-    '''
-    if len(animal) > 6:
-        animal = animal[:3].lower() + str(int(animal[3:]))
-    genos = {
-        'caf01': 'e4',
-        'caf19': 'te4',
-        'caf22': 'te4',
-        'caf26': 'wt',
-        'caf34': 'wt',
-        'caf37': 'te4',
-        'caf40': 'wt',
-        'caf42': 'wt',
-        'caf48': 'te4',
-        'caf49': 'te4',
-        'caf50': 'e4',
-        'caf52': 'te4',
-        'caf54': 'myt1l',
-        'caf55': 'myt1l',
-        'caf58': 'e4',
-        'caf60': 'te4',
-        'caf61': 'e4',
-        'caf62': 'te4',
-        'caf66': 'wt',
-        'caf69': 'wt',
-        'caf71': 'app_ps1',
-        'caf72': 'te4',
-        'caf73': 'app_ps1',
-        'caf74': 'app_ps1',
-        'caf75': 'app_ps1',
-        'caf77': 'wt',
-        'caf78': 'te4',
-        'caf79': 'te4',
-        'caf80': 'te4',
-        'caf81': 'wt',
-        'caf82': 'wt',
-        'caf84':'te4',
-        'caf88': 'wt',
-        'caf89': 'wt',
-        'caf90': 'wt',
-        'caf91': 'wt',
-        'caf92': 'wt',
-        'caf94': 'wt',
-        'caf95': 'wt',
-        'caf96': 'wt',
-        'caf97': 'wt',
-        'caf99': 'wt',
-        'caf100': 'e4',
-        'caf101': 'e4',
-        'caf102': 'wt',
-        'eab52': 'te4',
-        'eab47': 'te4',
-        'eab': 'te4',
-        'eab50': 'wt',
-        'eab40': 'wt'
-    }
-
-    return genos[animal]
-
-def get_hstype(animal):
-    if len(animal) > 6:
-        animal = animal[:3].lower() + str(int(animal[3:]))
-    regions = {
-        'caf01': ['EAB50chmap_00'],
-        'caf19': ['EAB50chmap_00'],
-        'caf22': ['EAB50chmap_00','EAB50chmap_00'],
-        'caf26': ['EAB50chmap_00','APT_PCB','APT_PCB'],
-        'caf34': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf37': ['APT_PCB'],
-        'caf40': ['APT_PCB'],
-        'caf42': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf48': ['hs64'],
-        'caf49': ['hs64'],
-        'caf50': ['hs64'],
-        'caf52': ['hs64'],
-        'caf60': ['APT_PCB'],
-        'caf61': ['hs64'],
-        'caf62': ['hs64'],
-        'caf69': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf71': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf72': ['hs64'],
-        'caf73': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf74': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf75': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf77': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf78': ['hs64'],
-        'caf79': ['hs64'],
-        'caf80': ['hs64'],
-        'caf81': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf82': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf84':['hs64'],
-        'caf88': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf89': ['hs64'],
-        'caf90': ['hs64'],
-        'caf91': ['hs64'],
-        'caf92': ['hs64'],
-        'caf94': ['hs64'],
-        'caf95': ['hs64'],
-        'caf96': ['hs64'],
-        'caf97': ['APT_PCB'],
-        'caf99': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
-        'caf100': ['hs64'],
-        'caf101': ['hs64'],
-        'caf102': ['hs64'],
-        'caf103': ['hs64'],
-        'eab52': ['EAB50champ_00','EAB50champ_00'],
-        'eab47': ['EAB50champ_00','EAB50champ_00','EAB50champ_00'],
-        'eab50': ['EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00'],
-    }
-
+             
 def load_crit(path):
     '''
     loads a crit object
