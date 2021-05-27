@@ -11,6 +11,7 @@ import sys
 import os
 import shutil
 import time
+import seaborn as sns
 
 
 def write_qsub_header(shfile):
@@ -350,19 +351,26 @@ def plot_dist(ax, burst, xmin, alpha, c, shuffled):
     ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_xlim(1,10**4)
+    sns.despine()
 
-def scrub_dists(crit_objs):
+def scrub_dists(df, start_idx=0):
     res = []
-    for p in crit_objs:
-        crit = saw.load_crit(p)
+    for i, row in df.iloc[start_idx:].iterrows():
+        if i % 100 == 0:
+            print(f'nice - {i}')
+            np.save('dist_scores_sofar.npy', res)
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
-        plot_dist(ax, crit.burst, crit.xmin, crit.alpha, 'lightseagreen', None)
+        plot_dist(ax, row.burst, row.xmin, row.alpha, 'lightseagreen', None)
         fig.show()
-        score = input('rating?: ')
-        res.append([crit.animal, crit.date, crit.time_frame, crit.block_num, crit.probe, crit.burst, 'burst', score])
-
+        score_burst = input(f'{i} rating?: ')
+        while score_burst not in ['1', '2', '3', '4']:
+            score_burst = input(f'{i} --- rating?: ')
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
-        plot_dist(ax, crit.T, crit.tmin, crit.beta, 'lightcoral', None)
+        plot_dist(ax, row['T'], row.tmin, row.beta, 'lightcoral', None)
         fig.show()
-        score = input('rating?: ')
-        res.append([crit.animal, crit.date, crit.time_frame, crit.block_num, crit.probe, crit.T, 'T', score])
+        score_t = input(f'{i} rating?: ')
+        while score_t not in ['1', '2', '3', '4']:
+            score_t = input(f'{i} --- rating?: ')
+        res.append([i, row.animal, row.date, row.time_frame, row.block_num, score_burst, score_t])
+    np.save('dist_scores.npy', res)
+    return res

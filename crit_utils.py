@@ -809,7 +809,7 @@ def get_params(animal, probe):
                     'nfactor_tm':0,
                     'bm': 20,
                     'tm':10,
-                    'nfactor_bm_tail':0.75,
+                    'nfactor_bm_tail':0.70,
                     'nfactor_tm_tail':0.8,
                     'quals': [1,2]
                     },
@@ -817,7 +817,7 @@ def get_params(animal, probe):
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
                     'bm': 20,
-                    'tm':10,
+                    'tm':15,
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8,
                     'quals': [1,2]
@@ -951,7 +951,7 @@ def get_params(animal, probe):
         'caf77': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 15,
+                    'bm': 20,
                     'tm':8,
                     'nfactor_bm_tail':0.75,
                     'nfactor_tm_tail':0.75,
@@ -988,7 +988,7 @@ def get_params(animal, probe):
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
                     'bm': 20,
-                    'tm':12,
+                    'tm':15,
                     'nfactor_bm_tail':0.75,
                     'nfactor_tm_tail':0.75,
                     'quals': [1,2]
@@ -1025,8 +1025,8 @@ def get_params(animal, probe):
                     'nfactor_tm':0,
                     'bm': 30,
                     'tm':10,
-                    'nfactor_bm_tail':0.75,
-                    'nfactor_tm_tail':0.8,
+                    'nfactor_bm_tail':0.7,
+                    'nfactor_tm_tail':0.7,
                     'quals': [1,2]
                     },
         'caf90': {
@@ -1605,16 +1605,13 @@ def get_params(animal, probe):
             return probe_params[animal][region]
 
     # if no probe params but normal params return those
-    if animal in params.keys():
-        return params[animal]
+    if animal in harsh_params.keys():
+        return harsh_params[animal]
     
     # otherwise base params it is, thank you for visiting
     return base
     
     
-
-        
-
 def get_genotype(animal):
     '''
     returns genotype of animal
