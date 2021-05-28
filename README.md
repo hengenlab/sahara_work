@@ -212,3 +212,56 @@ print(crit.dcc)
 The *exact* same as crit_class, except this is is built for our data and meant to be run in lilo_and_stitch. Therefore it expects whatever function that runs it to set the animal and date and time frame and paths and so on. Check out the init method to see everything it expects to be set. 
 
 Would 100% recomend using this class as the plots it generates are more tailored to our data, but if you don't double check what you set while running criticality (if you're not using lilo_and_stitch) it may error, so be careful. I tried to fail-safe it but you never know.
+
+
+# Other (important) Helper Functions
+-----
+**Informative Functions**:
+Unless otherwise stated: animal can be either in 'caf22' format or 'CAF00022' format
+
+These are all dependent on you updating these dictionaries with the proper information after doing a surgery
+```python
+geno = get_genotype(animal = 'caf22')
+print(geno)
+'te4'
+
+bday = get_birthday(animal = 'caf22')
+print(bday)
+'2020-02-17 07:30:00'
+
+sex = get_sex(animal = 'caf22')
+print(sex)
+'F'
+
+regions = get_regions(animal = 'caf22')
+print(regions)
+['V1', 'CA1']
+
+probe = get_probe(animal = 'caf22', region = 'CA1')
+print(probe)
+'probe2'
+
+params = get_params(animal = 'caf22')
+print(params)
+{'nfactor_bm': 5, 
+'nfactor_tm': 0, 
+'bm': 20, 
+'tm': 8, 
+'nfactor_bm_tail': 0.8, 
+'nfactor_tm_tail': 0.75, 
+'quals': [1, 2]}
+
+probe_params = get_params(animal = 'caf22', region= 'V1')
+print(probe_params)
+{'nfactor_bm': 5, 
+'nfactor_tm': 0, 
+'bm': 20, 
+'tm': 8, 
+'nfactor_bm_tail': 0.8, 
+'nfactor_tm_tail': 0.75, 
+'quals': [1, 2]}
+
+hstype =  get_hstype(animal = 'caf22')
+print(hstype)
+['EAB50chmap_00','EAB50chmap_00']
+```
