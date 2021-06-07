@@ -596,9 +596,9 @@ def get_hstype(animal):
         'caf107': ['hs64'],
         'caf108': ['hs64'],
         'caf109': ['hs64'],
-        'eab52': ['EAB50champ_00','EAB50champ_00'],
-        'eab47': ['EAB50champ_00','EAB50champ_00','EAB50champ_00'],
-        'eab50': ['EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00'],
+        'eab52': ['EAB50chmap_00','EAB50chmap_00'],
+        'eab47': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
+        'eab50': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
     }
 
     return hstype[animal]
