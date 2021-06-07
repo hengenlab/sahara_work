@@ -254,7 +254,7 @@ def get_paths(scorer = '', geno=None, animal = '', probe = ''):
                 errors.append(f)
     return og
 
-def get_birthday(animal):
+def get_birthday(animal, returnall=False):
     '''
     animal: string animal name in format 'abc123'
     returns: datetime object of animals birthday at 7:30am on the day
@@ -308,11 +308,6 @@ def get_birthday(animal):
         'caf101':dt(2021, 3, 1, 7, 30),
         'caf102':dt(2021, 1, 30, 7, 30),
         'caf103':dt(2020, 11, 24, 7, 30),
-        'caf104':dt(2020, 5, 26, 7, 30),
-        'caf106':dt(2020, 12, 17, 7, 30),
-        'caf107':dt(2021, 3, 30, 7, 30),
-        'caf108':dt(2020, 8, 14, 7, 30),
-        'caf109':dt(2020, 7, 20, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -320,6 +315,8 @@ def get_birthday(animal):
         'eab40': dt(2018, 12, 5, 7, 30)
     }
 
+    if returnall:
+        return bdays.keys()
     return bdays[animal]
 
 def encode_animal(animal):
@@ -327,14 +324,9 @@ def encode_animal(animal):
     meant to help lower the size of arrays carrying information, turns animal into 
     number (cause strings are large compared to ints)
 
-    needs to be updated
+    relies on the assumtion that the birthday dictionary is updated
     '''
-    animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
-                'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
-                'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74', 
-                'caf75','caf77', 'caf78', 'caf79', 'caf80', 'caf81', 'caf82', 'caf84',
-                'caf88', 'caf89', 'caf90', 'caf91', 'caf92', 'caf94', 'caf95', 'caf96', 
-                'caf97','eab52', 'eab47', 'eab', 'eab50', 'eab40']
+    animals = get_birthday('', returnall=True)
     nums = np.arange(len(animals))
 
     keys = dict(zip(animals, nums))
