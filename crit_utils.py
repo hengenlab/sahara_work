@@ -308,6 +308,7 @@ def get_birthday(animal, returnall=False):
         'caf101':dt(2021, 3, 1, 7, 30),
         'caf102':dt(2021, 1, 30, 7, 30),
         'caf103':dt(2020, 11, 24, 7, 30),
+        'caf106':dt(2020, 12, 7, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -596,9 +597,9 @@ def get_hstype(animal):
         'caf107': ['hs64'],
         'caf108': ['hs64'],
         'caf109': ['hs64'],
-        'eab52': ['EAB50champ_00','EAB50champ_00'],
-        'eab47': ['EAB50champ_00','EAB50champ_00','EAB50champ_00'],
-        'eab50': ['EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00','EAB50champ_00'],
+        'eab52': ['EAB50chmap_00','EAB50chmap_00'],
+        'eab47': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
+        'eab50': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
     }
 
     return hstype[animal]
