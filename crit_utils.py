@@ -1259,7 +1259,7 @@ def get_params(animal, probe):
         'caf34': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 20,
+                    'bm': 12,
                     'tm':6,
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8,
@@ -1484,7 +1484,7 @@ def get_params(animal, probe):
         'caf92': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 15,
+                    'bm': 10,
                     'tm':9,
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.85,
@@ -1493,10 +1493,10 @@ def get_params(animal, probe):
         'caf95': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
-                    'bm': 35,
+                    'bm': 30,
                     'tm':10,
-                    'nfactor_bm_tail':0.8,
-                    'nfactor_tm_tail':0.8,
+                    'nfactor_bm_tail':0.85,
+                    'nfactor_tm_tail':0.85,
                     'quals': [1,2]
                     },
         'caf96': {
@@ -1516,6 +1516,14 @@ def get_params(animal, probe):
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8,
                     'quals': [1,2]
+                    },
+        'caf100': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 15,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8
                     },
         'eab47': {
                     'nfactor_bm': 0,
@@ -1736,7 +1744,7 @@ def get_params(animal, probe):
 
     # if no probe params but normal params return those
     if animal in harsh_params.keys():
-        return harsh_params[animal]
+        return params[animal]
     
     # otherwise base params it is, thank you for visiting
     return base
@@ -1802,28 +1810,32 @@ def generate_timeframes(start, end, blocksize):
 
 
 def gen_timeline():
-    locs = ['bs001r/rawdata/', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r', 'bs003r/D1/','bs003r/D1_442b/', 'bs004r/D1/', 'bs005r/D1/', 'bs006r/D1/', 'bs007r/D1/', 'bs007r/D1_442b/', 'bs007r/D1_442a/']
+    locs = ['bs001r/rawdata/', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r']
+    locs_sub = ['','D1', 'D1_442b', 'D1_442a']
     dat = {}
     for loc in locs:
-        print(loc)
-        restarts = glob.glob(f'/media/{loc}/*/')
-        for folder in restarts:
-            animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
-            matches = re.findall(animal_pattern, folder)
-            if len(matches) > 0:
-                animal = matches[0][0]
-                animal_clean = animal[:3].lower() + str(int(animal[3:]))
-                try:
-                    g = saw.get_genotype(animal_clean)
-                except KeyError:
-                    print(f'dont have records for {animal_clean} ---- skipping')
-                    g=None
-                    pass
+        for l in locs_sub:
+            print(f'/media/{loc}/{l}/')
+            restarts = glob.glob(f'/media/{loc}/{l}/*/')
+            if len(restarts) == 0:
+                print('----- Not a folder')
+            for folder in restarts:
+                animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
+                matches = re.findall(animal_pattern, folder)
+                if len(matches) > 0:
+                    animal = matches[0][0]
+                    animal_clean = animal[:3].lower() + str(int(animal[3:]))
+                    try:
+                        g = saw.get_genotype(animal_clean)
+                    except KeyError:
+                        print(f'dont have records for {animal_clean} ---- skipping')
+                        g=None
+                        pass
                 if g in ['te4', 'wt', 'e4']:
                     if 'D1' in folder:
-                        files = sorted(glob.glob(folder+'*.bin'))
+                        files = sorted(glob.glob(folder+'Headstage*.bin'))
                     else:
-                        files = sorted(glob.glob(folder+'*/*.bin'))
+                        files = sorted(glob.glob(folder+'*/Headstage*.bin'))
                     if len(files) > 0:
                         f1 = files[0]
                         f2 = files[-1]
