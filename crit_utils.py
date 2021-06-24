@@ -1821,7 +1821,7 @@ def gen_timeline():
             if len(restarts) == 0:
                 print('----- Not a folder')
             for folder in restarts:
-                animal_pattern = '((caf|eab|knr|CAF|EAB|KNR)\d{2,})'
+                animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
                 matches = re.findall(animal_pattern, folder)
                 if len(matches) > 0:
                     animal = matches[0][0]
@@ -1883,7 +1883,7 @@ def get_info_from_path(path):
     this function will pull out the animal, restart date, and probe
     and return all that
     '''
-    animal_pattern = '((caf|eab|knr|CAF|EAB|KNR)\d{2,})'
+    animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
     matches = re.findall(animal_pattern, path)
     animal = matches[0][0]
 
