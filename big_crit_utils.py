@@ -24,7 +24,7 @@ def write_qsub_header(shfile):
 
 
 def write_to_files(o, csvloc):
-    err, appended = sw.write_to_results_csv(o, csvloc)
+    err, appended = saw.write_to_results_csv(o, csvloc)
     if err:
         print('something weird happened, this should not have errored')
     # else:
@@ -35,7 +35,7 @@ def write_to_files(o, csvloc):
     return appended
 
 def write_to_files_chpc(o, csvloc):
-    err, appended = sw.write_to_results_csv(o, csvloc)
+    err, appended = saw.write_to_results_csv(o, csvloc)
     if err:
         print('something weird happened, this should not have errored')
     else:
@@ -46,7 +46,7 @@ def write_to_files_chpc(o, csvloc):
     return appended
 
 def write_to_pkl_chpc(o, pkl_loc):
-    err, appended = sw.write_to_results_pkl(o, pkl_loc)
+    err, appended = saw.write_to_results_pkl(o, pkl_loc)
     if err:
         print('something weird happened, this should not have errored')
     else:
@@ -105,9 +105,9 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
     csv_file = f'{JOBDIR}/results_{jobname}.csv'
     pkl_file = f'{JOBDIR}/results_{jobname}.pkl'
 
-    sw.write_csv_header(csv_file)
+    saw.write_csv_header(csv_file)
 
-    all_objs, errors = sw.lilo_and_stitch(paths, params, save = params['save'], timeout=params['timeout'])
+    all_objs, errors = saw.lilo_and_stitch(paths, params, save = params['save'], timeout=params['timeout'])
 
     results = []
     for o in all_objs:
@@ -116,7 +116,7 @@ def run_testing_chpc(paths, params, JOBDIR, jobnum=0, jobname = '',animal = '', 
         results.append(appended)
 
     if len(all_objs) > 0:
-        cols = sw.get_cols()
+        cols = saw.get_cols()
         df = pd.DataFrame(results, columns = cols)
         
         group = df.groupby(['animal', 'probe', 'date', 'scored'])
@@ -166,13 +166,13 @@ def get_all_paths(animal):
     all_paths = sorted(glob.glob(f'/scratch/khengen_lab/crit_sahara/DATA/media/HlabShare/Clustering_Data/{animal}*/*/*/*/co/*neurons_group0.npy'))
     all_paths = [p for p in all_paths if 'block' not in p]
     print(f'total num paths: {len(all_paths)}', flush=True)
-    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in all_paths])
+    all_animals = np.unique([saw.get_info_from_path(p)[0] for p in all_paths])
     print(f'total num animals: {len(all_animals)}', flush=True)
     allpaths = []
     for animal in all_animals:
-        probe = sw.get_probe(animal, region = 'CA1')
-        geno = sw.get_genotype(animal)
-        if geno == 'app_ps1' or (len(sw.get_regions(animal))>=4):
+        probe = saw.get_probe(animal, region = 'CA1')
+        geno = saw.get_genotype(animal)
+        if geno == 'app_ps1' or (len(saw.get_regions(animal))>=4):
             a = smol_2_big(animal)
             animal_paths = sorted([p for p in all_paths if a in p])
             print(f'{animal}: {len(animal_paths)}')
@@ -189,9 +189,9 @@ def get_all_paths(animal):
 def get_rand_subset(per_animal = 2):
     paths = []
     allpaths = get_all_paths('')
-    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in allpaths])
+    all_animals = np.unique([saw.get_info_from_path(p)[0] for p in allpaths])
     for animal in all_animals:
-        probe = sw.get_probe(animal, region = 'CA1')
+        probe = saw.get_probe(animal, region = 'CA1')
         if probe != -1:
             a = smol_2_big(animal)
             animal_paths = np.sort([p for p in allpaths if a in p and probe in p])
@@ -209,7 +209,7 @@ def make_chpc_crit_jobs(paths_per_job, jobname, total_jobs=None, paths = None, a
     if paths is None:
         paths = get_all_paths(animal)
 
-    all_animals = np.unique([sw.get_info_from_path(p)[0] for p in paths])
+    all_animals = np.unique([saw.get_info_from_path(p)[0] for p in paths])
     pathcount = 0
     jobcount = 0
     finalpaths = []
@@ -290,7 +290,7 @@ def resubmit_jobs(efiles):
 
 
 def run_linear(paths, params, jobnum, animal = '', probe = '', rerun = True, redo = False):
-    paths = sw.get_paths(animal = animal, probe = probe)
+    paths = saw.get_paths(animal = animal, probe = probe)
     all_objs, errors = lilo_and_stitch(paths, params, rerun = rerun, save = True, verbose=False)
     results = []
     for o in all_objs:
@@ -362,15 +362,48 @@ def scrub_dists(df, start_idx=0):
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
         plot_dist(ax, row.burst, row.xmin, row.alpha, 'lightseagreen', None)
         fig.show()
-        score_burst = input(f'{i} rating?: ')
+        try:
+            score_burst = input(f'{i} rating?: ')
+        except Exception:
+            score_burst = input(f'{i} --- rating?: ')
         while score_burst not in ['1', '2', '3', '4']:
             score_burst = input(f'{i} --- rating?: ')
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
         plot_dist(ax, row['T'], row.tmin, row.beta, 'lightcoral', None)
         fig.show()
-        score_t = input(f'{i} rating?: ')
+        try:
+            score_t = input(f'{i} rating?: ')
+        except Exception:
+            score_t = input(f'{i} --- rating?: ')
         while score_t not in ['1', '2', '3', '4']:
             score_t = input(f'{i} --- rating?: ')
         res.append([i, row.animal, row.date, row.time_frame, row.block_num, score_burst, score_t])
     np.save('dist_scores.npy', res)
     return res
+
+def scrub():
+    for r in res:
+        if r[5] not in ['1','2','3','4']:
+            row = df.iloc[r[0]]
+            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
+            plot_dist(ax, row.burst, row.xmin, row.alpha, 'lightseagreen', None)
+            fig.show()
+            try:
+                score_burst = input(f'{i} rating?: ')
+            except Exception:
+                score_burst = input(f'{i} --- rating?: ')
+            while score_burst not in ['1', '2', '3', '4']:
+                score_burst = input(f'{i} --- rating?: ')
+            r[5] = score_burst
+        if r[6] not in ['1','2','3','4']:
+            row = df.iloc[r[0]]
+            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=[5, 5])
+            plot_dist(ax, row['T'], row.tmin, row.beta, 'lightcoral', None)
+            fig.show()
+            try:
+                score_t = input(f'{i} rating?: ')
+            except Exception:
+                score_t = input(f'{i} --- rating?: ')
+            while score_t not in ['1', '2', '3', '4']:
+                score_t = input(f'{i} --- rating?: ')
+            r[6] = score_t

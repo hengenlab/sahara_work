@@ -308,7 +308,11 @@ def get_birthday(animal, returnall=False):
         'caf101':dt(2021, 3, 1, 7, 30),
         'caf102':dt(2021, 1, 30, 7, 30),
         'caf103':dt(2020, 11, 24, 7, 30),
+        'caf104':dt(2020, 5, 26, 7, 30),
         'caf106':dt(2020, 12, 7, 7, 30),
+        'caf107':dt(2021, 3, 30, 7, 30),
+        'caf108':dt(2020, 8, 14, 7, 30),
+        'caf109':dt(2020, 7, 20, 7, 30),
         'eab52': dt(2019, 4, 19, 7, 30),
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
@@ -1823,6 +1827,7 @@ def gen_timeline():
             for folder in restarts:
                 animal_pattern = '((caf|eab|CAF|EAB)\d{2,})'
                 matches = re.findall(animal_pattern, folder)
+                g = None
                 if len(matches) > 0:
                     animal = matches[0][0]
                     animal_clean = animal[:3].lower() + str(int(animal[3:]))
@@ -1830,7 +1835,6 @@ def gen_timeline():
                         g = saw.get_genotype(animal_clean)
                     except KeyError:
                         print(f'dont have records for {animal_clean} ---- skipping')
-                        g=None
                         pass
                 if g in ['te4', 'wt', 'e4']:
                     if 'D1' in folder:
@@ -1838,6 +1842,7 @@ def gen_timeline():
                     else:
                         files = sorted(glob.glob(folder+'*/Headstage*.bin'))
                     if len(files) > 0:
+                        print(f'looking in: {folder} for {animal}')
                         f1 = files[0]
                         f2 = files[-1]
                         d1 = f1[-23:f1.find('.bin')]

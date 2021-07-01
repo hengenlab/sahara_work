@@ -130,8 +130,14 @@ for f in files[1:]:
 
 import pandas as pd
 import glob
+import sahara_work as saw
 files = glob.glob('*_job_*.pkl') 
 print(len(files)) 
 df = pd.read_pickle(files[0]) 
 for f in files[1:]: 
-    df = df.append(pd.read_pickle(f)) 
+    try:
+        df = df.append(pd.read_pickle(f)) 
+    except Exception as err:
+        print(f'{err}: {f}')
+df['region'] = df.apply(lambda x: saw.get_regions(x.animal)[int(x.probe[-1])-1], axis=1)
+ca1 = df[df.region.isin(['CA1', 'CA1_DG'])]
