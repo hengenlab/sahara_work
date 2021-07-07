@@ -21,6 +21,7 @@ import signal
 import gc
 from copy import deepcopy as cdc
 import time
+import base64
 
 def get_cols():
     '''
@@ -86,6 +87,13 @@ def get_all_results(csvloc, loaded_file, re_load):
     np.save(error_save, errs)
 
     return errs, loaded
+
+
+def encode_to_file(message, file):
+    message_bytes = message.encode('ascii')
+    b64message = base64.b64encode(message_bytes).decode('ascii')
+    with open(file, 'w') as f:
+        f.write(b64message)
 
 
 def write_to_csv(data, cols, loc):

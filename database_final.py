@@ -19,6 +19,15 @@ def __escape_name(s):
     """
     return '`{}`'.format(s.replace('`', '``'))
 
+def __get_user_pwd():
+    t = []
+    with open('/media/HlabShare/db_creds.txt') as f:
+        for line in f:
+            t.append(line.rstrip())
+
+    pwd = base64.b64decode(t[1]).decode()
+    user = base64.b64decode(t[0]).decode()
+    return user, pwd
 
 def __get_conditionals(g):
     """
@@ -268,7 +277,7 @@ def __animalgui():
     return agui
 
 
-def __restartgui(current_animals, ogstart_day, ogend_day, ogcameras):
+def __restartgui(current_animals, ogstart_day, ogend_day):
     manipulationslist = ['none', 'MD', 'Food Dep', 'Crickets', 'Cocaine', 'Visual Stim', 'Auditory Dep', 'Operant Task', 'Sprinkles', 'OPTO', 'DREADDs', 'Lick Port']
 
     class restartupload(HasTraits):
@@ -278,7 +287,6 @@ def __restartgui(current_animals, ogstart_day, ogend_day, ogcameras):
         animalid        = Enum(list(current_animals))
         start_day       = Date(ogstart_day)
         end_day         = Date(ogend_day)
-        cameras         = Str(ogcameras)
         manipulations   = Enum(list(manipulationslist))
         exit = Bool()
 
@@ -288,7 +296,6 @@ def __restartgui(current_animals, ogstart_day, ogend_day, ogcameras):
             Item(name = 'animalid'),
             Item(name = 'start_day'),
             Item(name = 'end_day'),
-            Item(name = 'cameras'),
             Item(name = 'manipulations'),
             title = 'Restart Information.',
             buttons = ['OK'],
@@ -515,7 +522,6 @@ def submit_restart(g, cursor, db):
         "animal_id": int(animal_id),
         "start_day": g.start_day,
         "end_day": g.end_day,
-        "cameras" : g.cameras,
         "save_loc":g.masterpath,
         "manipulations":g.manipulations
     }
@@ -764,13 +770,11 @@ def upload_restart(user, pwd):
     if result.empty:
         sday = None
         eday = None
-        cs = None
     else:
         sday = result.start_day[0]
         eday = result.end_day[0]
-        cs = result.cameras[0]
 
-    g = __restartgui(current_implants, sday, eday, cs)
+    g = __restartgui(current_implants, sday, eday)
 
     if g.exit:
         print('--EXITING--')
@@ -959,13 +963,7 @@ def use_the_database():
     in the query - Google is your friend.
 
     """
-    t = []
-    with open('/media/HlabShare/db_creds.txt') as f:
-        for line in f:
-            t.append(line.rstrip())
-
-    pwd = base64.b64decode(t[0]).decode()
-    user = base64.b64decode(t[1]).decode()
+    user, pwd = __get_user_pwd()
 
     alive = True
     to_return = None
@@ -1223,13 +1221,7 @@ def __search_gui(current_sites, current_manipulations, current_genotypes, all_an
 ### NON GUI FUNCTIONS
 
 def get_all_animals():
-    t = []
-    with open('/media/HlabShare/db_creds.txt') as f:
-        for line in f:
-            t.append(line.rstrip())
-
-    pwd = base64.b64decode(t[0]).decode()
-    user = base64.b64decode(t[1]).decode()
+    user, pwd = __get_user_pwd()
 
     cursor, db = connectclusterdb(user, pwd)
 
@@ -1247,13 +1239,7 @@ def get_all_animals():
     return df
 
 def get_all_probes(animal=''):
-    t = []
-    with open('/media/HlabShare/db_creds.txt') as f:
-        for line in f:
-            t.append(line.rstrip())
-
-    pwd = base64.b64decode(t[0]).decode()
-    user = base64.b64decode(t[1]).decode()
+    user, pwd = __get_user_pwd()
 
     cursor, db = connectclusterdb(user, pwd)
     if len(animal) > 0:
@@ -1275,13 +1261,7 @@ def get_all_probes(animal=''):
     return df
 
 def get_all_unclustered_restarts():
-    t = []
-    with open('/media/HlabShare/db_creds.txt') as f:
-        for line in f:
-            t.append(line.rstrip())
-
-    pwd = base64.b64decode(t[0]).decode()
-    user = base64.b64decode(t[1]).decode()
+    user, pwd = __get_user_pwd()
 
     cursor, db = connectclusterdb(user, pwd)
 
@@ -1306,13 +1286,7 @@ def necromancy(animal):
 
         It'll yell at you if it didn't work. Otherwise nothing exciting happens.
     '''
-    t = []
-    with open('/media/HlabShare/db_creds.txt') as f:
-        for line in f:
-            t.append(line.rstrip())
-
-    pwd = base64.b64decode(t[0]).decode()
-    user = base64.b64decode(t[1]).decode()
+    user, pwd = __get_user_pwd()
 
     cursor, db = connectclusterdb(user, pwd)
 
