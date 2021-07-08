@@ -3,6 +3,8 @@ import numpy as np
 import pymysql
 import pandas as pd
 import base64
+import glob
+from datetime import datetime as dt
 from pandas.io.sql import DatabaseError
 from traits.api import HasTraits, Str, Enum, Range, Directory, Bool, File, Int, List, Date, Float
 from traitsui.api import View, Item, Handler, Action, VGroup, FileEditor, CheckListEditor, RangeEditor
@@ -1290,5 +1292,66 @@ def necromancy(animal):
 
     cursor, db = connectclusterdb(user, pwd)
 
-    q = 'UPDATE animals SET animals.alive = 1 WHERE animals.animal_name = "{animal}";'   
-    cursor.execute(query)
+    q = f'UPDATE animals SET animals.alive = 1 WHERE animals.animal_name = "{animal}";'
+    cursor.execute(q)
+
+def scrape():
+    animaldf = get_all_animals()
+
+    user, pwd = __get_user_pwd()
+    cursor, db = connectclusterdb(user, pwd)
+
+    for i, row in animaldf.iterrows():
+        animal_name = row.animal_name
+        animal_id = row.animal_id
+        restarts = glob.glob(f'/media/*/{animal_name}/*')
+        for r in restarts:
+            files = sorted(glob.glob(r+'/*.bin'))
+            f1 = files[0]
+            f2 = files[-1]
+            d1 = f1[-23:f1.find('.bin')]
+            d2 = f2[-23:f2.find('.bin')]
+            d1 = dt.strptime(d1, '%Y-%m-%d_%H-%M-%S').date()
+            d2 = dt.strptime(d2, '%Y-%m-%d_%H-%M-%S').date()
+            print(f'restart: {r} ---- {d1} to {d2}')
+
+            target_val_pair = {
+                "animal_id": int(animal_id),
+                "start_day": d1,
+                "end_day": d2,
+                "save_loc": r,
+                "manipulations": None
+            }
+            # convert dictionary target and value information into tuples
+            targets = tuple([*target_val_pair])
+
+            exists = __check_existance_restart(animal_id, d1, cursor)
+            if exists:
+                print("This restart already exists for this animal, if you want to edit it go write an edit query.")
+                #return None
+            else:
+                # values  = tuple( [*target_val_pair.values()] )
+                # automatically rewrite the target names into the proper format for mysql
+                cols = ', '.join(map(__escape_name, targets))  # assumes the keys are *valid column names*.
+                placeholders = ', '.join(['%({})s'.format(name) for name in targets])
+                query = 'INSERT INTO restarts ({}) VALUES ({})'.format(cols, placeholders)
+                cursor.execute(query, target_val_pair)
+                uniqueid = cursor.lastrowid
+
+                print(f'Submitted {d1} restart with id {uniqueid} to restarts table')
+                db.commit()
+                #return uniqueid
+
+        clustering_jobs = glob.glob(f'/media/HlabShare/Clustering_Data/{animal_name}/*/*/*/co/*neurons_group0.npy')
+        print(len(clustering_jobs))
+        for cdir in clustering_jobs:
+            cells = np.load(cdir, allow_pickle=True)
+            cell = cells[0]
+            region = cell.region
+            start_d = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S').date()
+
+            q = f'SELECT * FROM probes WHERE animal_id = {animal_id} and region = "{region}"'
+            probe_id = pd.read_sql(q, db).probe_id
+
+            q = f'SELECT * FROM restarts WHERE animal_id = {animal_id} and start_day = "{str(start_d)}"'
+            restart_id = pd.read_sql(q, db).restart_id
