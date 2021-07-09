@@ -1822,6 +1822,13 @@ def generate_timeframes(start, end, blocksize):
     return time_frames
 
 
+def get_all_restarts(animal):
+    locs = ['bs001r/rawdata/', '*']
+    ls = [f'/media/{loc}/{animal}/*' for loc in locs]
+    restarts = [glob.glob(l) for l in ls]
+    restarts = np.concatenate(restarts)
+    return restarts
+
 def gen_timeline():
     locs = ['bs001r/rawdata/', 'bs002r', 'bs003r', 'bs004r', 'bs005r', 'bs006r', 'bs007r']
     locs_sub = ['','D1', 'D1_442b', 'D1_442a']

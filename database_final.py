@@ -6,7 +6,8 @@ import base64
 import glob
 from datetime import datetime as dt
 from pandas.io.sql import DatabaseError
-from traits.api import HasTraits, Str, Enum, Range, Directory, Bool, File, Int, List, Date, Float
+import re
+from traits.api import HasTraits, Str, Enum, Range, Directory, Bool, File, Int, List, Date, Float, Datetime
 from traitsui.api import View, Item, Handler, Action, VGroup, FileEditor, CheckListEditor, RangeEditor
 from traitsui.menu import OKCancelButtons
 
@@ -287,8 +288,8 @@ def __restartgui(current_animals, ogstart_day, ogend_day):
         """
         masterpath      = Directory(os.getcwd())
         animalid        = Enum(list(current_animals))
-        start_day       = Date(ogstart_day)
-        end_day         = Date(ogend_day)
+        start_day       = Datetime(ogstart_day)
+        end_day         = Datetime(ogend_day)
         manipulations   = Enum(list(manipulationslist))
         exit = Bool()
 
@@ -465,6 +466,7 @@ def submit_clusters(g, cursor, db):
     #first gotta load the cells
     try:
         cells = np.load(g.masterpath, allow_pickle = True)
+        cells = [cell for cell in cells if cell.quality < 4]
         count = 0
         for cell in cells:
             neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1/samplerate
@@ -484,8 +486,8 @@ def submit_clusters(g, cursor, db):
                 'fr' : float(fr),
                 'cluster_idx' : int(cell.clust_idx),
                 'duration' : float(cell.start_time - cell.end_time),
-                'clustering_t0' : g.restart,
-                'tracklinks' : 'lol',
+                'clustering_t0' : str(cell.rstart_time),
+                'tracklinks' : str(cell.key),
                 'folder_location' : g.masterpath,
                 'time_frame' : g.time_frame
                 }
@@ -1304,15 +1306,18 @@ def scrape():
     for i, row in animaldf.iterrows():
         animal_name = row.animal_name
         animal_id = row.animal_id
-        restarts = glob.glob(f'/media/*/{animal_name}/*')
+        locs = ['bs001r/rawdata/', '*']
+        ls = [f'/media/{loc}/{animal_name}/*' for loc in locs]
+        restarts = [glob.glob(l) for l in ls]
+        restarts = np.concatenate(restarts)
         for r in restarts:
             files = sorted(glob.glob(r+'/*.bin'))
             f1 = files[0]
             f2 = files[-1]
             d1 = f1[-23:f1.find('.bin')]
             d2 = f2[-23:f2.find('.bin')]
-            d1 = dt.strptime(d1, '%Y-%m-%d_%H-%M-%S').date()
-            d2 = dt.strptime(d2, '%Y-%m-%d_%H-%M-%S').date()
+            d1 = dt.strptime(d1, '%Y-%m-%d_%H-%M-%S')
+            d2 = dt.strptime(d2, '%Y-%m-%d_%H-%M-%S')
             print(f'restart: {r} ---- {d1} to {d2}')
 
             target_val_pair = {
@@ -1346,12 +1351,61 @@ def scrape():
         print(len(clustering_jobs))
         for cdir in clustering_jobs:
             cells = np.load(cdir, allow_pickle=True)
+            cells = [cell for cell in cells if cell.quality < 4]
+            if len(cells) == 0:
+                print('No good cells in this directory - moving on')
+                continue
+
             cell = cells[0]
             region = cell.region
-            start_d = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S').date()
+            start_d = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S')
+            end_d = dt.strptime(cell.rend_time, '%Y-%m-%d_%H-%M-%S')
 
             q = f'SELECT * FROM probes WHERE animal_id = {animal_id} and region = "{region}"'
-            probe_id = pd.read_sql(q, db).probe_id
+            probe_id = int(pd.read_sql(q, db).probe_id)
 
-            q = f'SELECT * FROM restarts WHERE animal_id = {animal_id} and start_day = "{str(start_d)}"'
-            restart_id = pd.read_sql(q, db).restart_id
+            q = f'SELECT * FROM restarts WHERE animal_id = {animal_id} and start_day <= "{str(start_d)}" and end_day >= "{str(end_d)}"'
+            restart_id = int(pd.read_sql(q, db).restart_id)
+
+            time_frame_pattern = '/\d{1,}_\d{1,}'
+            matches = re.findall(time_frame_pattern, cdir)
+            time_frame = matches[0][1:]
+
+            samplerate = 25000
+            count = 0
+
+            for cell in cells:
+                neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1/samplerate
+                half = np.sum( cell.waveforms < 0.5 * cell.waveforms.min() ) * (1/samplerate)
+                falling = (cell.waveforms[28] - cell.waveforms[24]) / (4 * (1 / samplerate) * 1000)
+                fr = len(cell.spike_time)/cell.end_time
+
+                clust_stats = {
+                    'animal_id': int(animal_id),
+                    'restart_id' : int(restart_id),
+                    'probe_id' : int(probe_id),
+                    'quality' : int(cell.quality),
+                    'neg_pos_t' : float(neg_pos_t),
+                    'half_width' : float(half),
+                    'slope_falling' : float(falling),
+                    'mean_amplitude' : int(cell.mean_amplitude),
+                    'fr' : float(fr),
+                    'cluster_idx' : int(cell.clust_idx),
+                    'duration' : float(cell.start_time - cell.end_time),
+                    'clustering_t0' : dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S'),
+                    'tracklinks' : str(cell.key),
+                    'folder_location' : cdir,
+                    'time_frame' : str(time_frame)
+                    }
+
+                targets = tuple([*clust_stats])
+                cols = ', '.join(map(__escape_name, targets))
+                placeholders = ', '.join(['%({})s'.format(name) for name in targets])
+                query = 'INSERT INTO clusters ({}) VALUES ({})'.format(cols, placeholders)
+                cursor.execute(query, clust_stats)
+                uniqueid = cursor.lastrowid
+                count += 1
+
+            print(f'inserted {count} clusters into tables')
+
+
