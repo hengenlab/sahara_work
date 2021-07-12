@@ -196,7 +196,7 @@ def __animalgui():
     # set up dictionaries for GUI field enumeration
     specieslist = ['Unknown', 'Mouse', 'Rat']
 
-    surgeonlist = ['CAF', 'EAB', 'KBH', 'SCF', 'SJB']
+    surgeonlist = ['CAF', 'EAB', 'KBH', 'SCF', 'SJB', 'XYF']
 
     sexlist = ['Unknown', 'Female', 'Male']
 
@@ -208,7 +208,7 @@ def __animalgui():
                   'CA1', 'CeA', 'DG', 'Endo ctx', 'Ento ctx', 'HC', \
                   'LGN', 'M1', 'm2', 'OFC', 'perirh ctx', 'NAc', \
                   'RSC', 'SCN', 'S1', 'S2', 'Subiculum', 'V1m', \
-                  'V1b', 'V2']
+                  'V1', 'V1b', 'V2']
 
     daqsyslist = ['Unknown', 'ecube', 'intan']
 
@@ -331,18 +331,11 @@ def __clustergui(current_animals, current_restarts):
         """ IMPLANTUPLOAD: Class for traitsui GUI creation and subsequent datastorage.
         """
         masterpath      = File(editor = FileEditor())
-        animal          = Enum(list(current_animals))
-        restart         = Enum(list(current_restarts))
-        probe_num       = Enum(list(np.arange(1, 9)))
-        time_frame      = Str('ex. 0-12')
+
         exit = Bool()
         view = View(
             Item(name = 'exit', label = 'EXIT'),
             Item(name = 'masterpath', label="Clustering File"),
-            Item(name = 'animal', label = 'Animal'),
-            Item(name = 'restart', label = 'Restart'),
-            Item(name = 'probe_num', label = 'Probe Number'),
-            Item(name = 'time_frame', label = 'Time Frame Clustered'),
             title = 'Cluster Information.',
             buttons = ['OK'],
             resizable = True,
@@ -444,67 +437,18 @@ def submit_clusters(g, cursor, db):
 
     returns: the last id from the entered clusters
     """
-    samplerate=25000
-    #get implant and restart info
-    q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{g.animal}"'
+    cells = np.load(g.masterpath, allow_pickle = True)
+    name = cells[0].animal_name
+    if len(name) == 5:
+        name = name[:3].upper()+'000'+name[3:]
+    if len(name) == 6:
+        name = name[:3].upper() + '00' + name[3:]
+
+    q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{name}"'
     cursor.execute(q)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
-    q2 = f'SELECT restart_id FROM clusteringdb.restarts WHERE animal_id = {animal_id} AND start_day = "{g.restart}"'
-    q3 = f'SELECT probe_id FROM clusteringdb.probes WHERE animal_id = {animal_id} AND probe_num = {g.probe_num}'
-    try:
-        cursor.execute(q2)
-        restart_id = np.asarray(cursor.fetchall()).flatten()[0]
-
-        cursor.execute(q3)
-        probe_id = np.asarray(cursor.fetchall()).flatten()[0]
-
-    except IndexError:
-        print('There is no restart or probe connected to that animal in the database. Please add it before you submit a clustering job.')
-        return None
-
-    #first gotta load the cells
-    try:
-        cells = np.load(g.masterpath, allow_pickle = True)
-        cells = [cell for cell in cells if cell.quality < 4]
-        count = 0
-        for cell in cells:
-            neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1/samplerate
-            half = np.sum( cell.waveforms < 0.5 * cell.waveforms.min() ) * (1/samplerate)
-            falling = (cell.waveforms[28] - cell.waveforms[24]) / (4 * (1 / samplerate) * 1000)
-            fr = len(cell.spike_time)/cell.end_time
-
-            clust_stats = {
-                'animal_id': int(animal_id),
-                'restart_id' : int(restart_id),
-                'probe_id' : int(probe_id),
-                'quality' : int(cell.quality),
-                'neg_pos_t' : float(neg_pos_t),
-                'half_width' : float(half),
-                'slope_falling' : float(falling),
-                'mean_amplitude' : int(cell.mean_amplitude),
-                'fr' : float(fr),
-                'cluster_idx' : int(cell.clust_idx),
-                'duration' : float(cell.start_time - cell.end_time),
-                'clustering_t0' : str(cell.rstart_time),
-                'tracklinks' : str(cell.key),
-                'folder_location' : g.masterpath,
-                'time_frame' : g.time_frame
-                }
-
-            targets = tuple([*clust_stats])
-            cols = ', '.join(map(__escape_name, targets))
-            placeholders = ', '.join(['%({})s'.format(name) for name in targets])
-            query = 'INSERT INTO clusters ({}) VALUES ({})'.format(cols, placeholders)
-            cursor.execute(query, clust_stats)
-            uniqueid = cursor.lastrowid
-            count += 1
-    except ValueError as err:
-        print("There was an error uploading your clusters. Make sure your clustering file is clean.")
-        print(f"ERROR: {str(err)}")
-        return
-    db.commit()
-    print(f'Submitted {count} clusters to the clusters table. cluster_ids {uniqueid-count} - {uniqueid}')
+    uniqueid = __insert_clusters(cells, g.masterpath, animal_id, False, cursor, db)
     return uniqueid
 
 
@@ -1297,6 +1241,117 @@ def necromancy(animal):
     q = f'UPDATE animals SET animals.alive = 1 WHERE animals.animal_name = "{animal}";'
     cursor.execute(q)
 
+def __check_existance_cluster(animal_id, probe_id, restart_id, clust_idx, cursor):
+    q = f'SELECT EXISTS(SELECT * FROM clusters WHERE animal_id = {animal_id} AND probe_id = {probe_id} AND ' \
+        f'restart_id = {restart_id} AND cluster_idx = {clust_idx})'
+    cursor.execute(q)
+    result = np.asarray(cursor.fetchall()).flatten()[0]
+    return result
+
+
+def __insert_restart(target_val_pair, cursor, db):
+    targets = tuple([*target_val_pair])
+
+    exists = __check_existance_restart(target_val_pair['animal_id'], target_val_pair['start_day'], cursor)
+    if exists:
+        print("This restart already exists for this animal, if you want to edit it go write an edit query.")
+        # return None
+    else:
+        # values  = tuple( [*target_val_pair.values()] )
+        # automatically rewrite the target names into the proper format for mysql
+        cols = ', '.join(map(__escape_name, targets))  # assumes the keys are *valid column names*.
+        placeholders = ', '.join(['%({})s'.format(name) for name in targets])
+        query = 'INSERT INTO restarts ({}) VALUES ({})'.format(cols, placeholders)
+        cursor.execute(query, target_val_pair)
+        uniqueid = cursor.lastrowid
+        db.commit()
+        print(f'Submitted {target_val_pair["start_day"]} restart with id {uniqueid} to restarts table')
+        return uniqueid
+
+
+def __insert_clusters(cells, cdir, animal_id, addrestart, cursor, db):
+    cells = [cell for cell in cells if cell.quality < 4]
+    if len(cells) == 0:
+        print('No good cells in this directory - moving on')
+        return None
+
+    cell = cells[0]
+    region = cell.region
+    start_d = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S')
+    end_d = dt.strptime(cell.rend_time, '%Y-%m-%d_%H-%M-%S')
+
+    q = f'SELECT * FROM probes WHERE animal_id = {animal_id} and region = "{region}"'
+    probe_id = int(pd.read_sql(q, db).probe_id)
+
+    q = f'SELECT * FROM restarts WHERE animal_id = {animal_id} and start_day <= "{str(start_d)}" and end_day >= "{str(end_d)}"'
+    restart_id = pd.read_sql(q, db)
+    if len(restart_id) == 0 and addrestart:
+        print('That restart doesnt appear to be on the servers - adding it to the database')
+        target_val_pair = {
+            "animal_id": int(animal_id),
+            "start_day": cell.rstart_time,
+            "end_day": cell.rend_time,
+            "save_loc": 'Not on the server - on box or deleted',
+            "manipulations": None
+        }
+        restart_id = __insert_restart(target_val_pair, cursor, db)
+    elif len(restart_id) > 0:
+        restart_id = int(restart_id.restart_id)
+    else:
+        print("That restart isn't in the database yet, please add it before adding clusters through "
+              "the gui - or run the scrape method overnight")
+        return None
+
+    try:
+        time_frame_pattern = '/\d{1,}_\d{1,}'
+        matches = re.findall(time_frame_pattern, cdir)
+        time_frame = matches[0][1:]
+    except Exception:
+        time_frame = 'n/a'
+
+    samplerate = 25000
+    count = 0
+
+    for cell in cells:
+        exists = __check_existance_cluster(animal_id, probe_id, restart_id, cell.clust_idx, cursor)
+        if exists:
+            print('This cluster already exists in the database')
+            uniqueid = None
+        else:
+            neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1 / samplerate
+            half = np.sum(cell.waveforms < 0.5 * cell.waveforms.min()) * (1 / samplerate)
+            falling = (cell.waveforms[28] - cell.waveforms[24]) / (4 * (1 / samplerate) * 1000)
+            fr = len(cell.spike_time) / cell.end_time
+
+            clust_stats = {
+                'animal_id': int(animal_id),
+                'restart_id': int(restart_id),
+                'probe_id': int(probe_id),
+                'quality': int(cell.quality),
+                'neg_pos_t': float(neg_pos_t),
+                'half_width': float(half),
+                'slope_falling': float(falling),
+                'mean_amplitude': int(cell.mean_amplitude),
+                'fr': float(fr),
+                'cluster_idx': int(cell.clust_idx),
+                'duration': float(round((cell.end_time - cell.start_time) / 60 / 60, 3)),
+                'clustering_t0': dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S'),
+                'tracklinks': str(cell.key),
+                'folder_location': cdir,
+                'time_frame': str(time_frame)
+            }
+
+            targets = tuple([*clust_stats])
+            cols = ', '.join(map(__escape_name, targets))
+            placeholders = ', '.join(['%({})s'.format(name) for name in targets])
+            query = 'INSERT INTO clusters ({}) VALUES ({})'.format(cols, placeholders)
+            cursor.execute(query, clust_stats)
+            uniqueid = cursor.lastrowid
+            db.commit()
+            count += 1
+    print(f'inserted {count} clusters into tables')
+    return uniqueid
+
 def scrape():
     animaldf = get_all_animals()
 
@@ -1327,85 +1382,12 @@ def scrape():
                 "save_loc": r,
                 "manipulations": None
             }
-            # convert dictionary target and value information into tuples
-            targets = tuple([*target_val_pair])
-
-            exists = __check_existance_restart(animal_id, d1, cursor)
-            if exists:
-                print("This restart already exists for this animal, if you want to edit it go write an edit query.")
-                #return None
-            else:
-                # values  = tuple( [*target_val_pair.values()] )
-                # automatically rewrite the target names into the proper format for mysql
-                cols = ', '.join(map(__escape_name, targets))  # assumes the keys are *valid column names*.
-                placeholders = ', '.join(['%({})s'.format(name) for name in targets])
-                query = 'INSERT INTO restarts ({}) VALUES ({})'.format(cols, placeholders)
-                cursor.execute(query, target_val_pair)
-                uniqueid = cursor.lastrowid
-
-                print(f'Submitted {d1} restart with id {uniqueid} to restarts table')
-                db.commit()
-                #return uniqueid
+            __insert_restart(target_val_pair, cursor, db)
 
         clustering_jobs = glob.glob(f'/media/HlabShare/Clustering_Data/{animal_name}/*/*/*/co/*neurons_group0.npy')
         print(len(clustering_jobs))
         for cdir in clustering_jobs:
-            cells = np.load(cdir, allow_pickle=True)
-            cells = [cell for cell in cells if cell.quality < 4]
-            if len(cells) == 0:
-                print('No good cells in this directory - moving on')
-                continue
-
-            cell = cells[0]
-            region = cell.region
-            start_d = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S')
-            end_d = dt.strptime(cell.rend_time, '%Y-%m-%d_%H-%M-%S')
-
-            q = f'SELECT * FROM probes WHERE animal_id = {animal_id} and region = "{region}"'
-            probe_id = int(pd.read_sql(q, db).probe_id)
-
-            q = f'SELECT * FROM restarts WHERE animal_id = {animal_id} and start_day <= "{str(start_d)}" and end_day >= "{str(end_d)}"'
-            restart_id = int(pd.read_sql(q, db).restart_id)
-
-            time_frame_pattern = '/\d{1,}_\d{1,}'
-            matches = re.findall(time_frame_pattern, cdir)
-            time_frame = matches[0][1:]
-
-            samplerate = 25000
-            count = 0
-
-            for cell in cells:
-                neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1/samplerate
-                half = np.sum( cell.waveforms < 0.5 * cell.waveforms.min() ) * (1/samplerate)
-                falling = (cell.waveforms[28] - cell.waveforms[24]) / (4 * (1 / samplerate) * 1000)
-                fr = len(cell.spike_time)/cell.end_time
-
-                clust_stats = {
-                    'animal_id': int(animal_id),
-                    'restart_id' : int(restart_id),
-                    'probe_id' : int(probe_id),
-                    'quality' : int(cell.quality),
-                    'neg_pos_t' : float(neg_pos_t),
-                    'half_width' : float(half),
-                    'slope_falling' : float(falling),
-                    'mean_amplitude' : int(cell.mean_amplitude),
-                    'fr' : float(fr),
-                    'cluster_idx' : int(cell.clust_idx),
-                    'duration' : float(cell.start_time - cell.end_time),
-                    'clustering_t0' : dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S'),
-                    'tracklinks' : str(cell.key),
-                    'folder_location' : cdir,
-                    'time_frame' : str(time_frame)
-                    }
-
-                targets = tuple([*clust_stats])
-                cols = ', '.join(map(__escape_name, targets))
-                placeholders = ', '.join(['%({})s'.format(name) for name in targets])
-                query = 'INSERT INTO clusters ({}) VALUES ({})'.format(cols, placeholders)
-                cursor.execute(query, clust_stats)
-                uniqueid = cursor.lastrowid
-                count += 1
-
-            print(f'inserted {count} clusters into tables')
+            cells = np.load(cdir, allow_pickle = True)
+            __insert_clusters(cells, cdir, animal_id, True, cursor, db)
 
 
