@@ -1,0 +1,1689 @@
+{
+    "CAF00022" : {
+        "surgery_date":"2020-04-18",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-02-17",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan":128,
+        "num_probes": 2,
+        "num_regions": 2,
+        "alive": false,
+        "sac_date" : "2020-06-09",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "V1",
+                "ap": -3.82,
+                "ml": -2.2,
+                "dv": -0.5,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "CA1",
+                "ap": -2.27,
+                "ml": -1.75,
+                "dv": -1.25,
+                "chan_range": "65-128"
+            }
+        }
+    },
+    "CAF00026" : {
+        "surgery_date":"2020-06-20",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-02-20",
+        "strain":"C57/BL6",
+        "genotype":"wt",
+        "num_chan":192,
+        "num_probes": 3,
+        "num_regions": 3,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "M1",
+                "ap": 1.21,
+                "ml": -1.75,
+                "dv": 0.5,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.2,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "S1",
+                "ap": -0.59,
+                "ml": 2.5,
+                "dv": 0.5,
+                "chan_range": "129-192"
+            }
+        }
+    },
+    "CAF00034" : {
+        "surgery_date":"2020-07-28",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-03-18",
+        "strain":"C57/BL6",
+        "genotype":"wt",
+        "num_chan":256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "S1",
+                "ap": 0.5,
+                "ml": 1.4,
+                "dv": 1.0,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "M1",
+                "ap": 2.25,
+                "ml": -2,
+                "dv": 1.0,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "CA1",
+                "ap": -1.75,
+                "ml": -0.75,
+                "dv": 1.25,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "NAc",
+                "ap": 2,
+                "ml": -3,
+                "dv": 3.6,
+                "chan_range": "192-256"
+            }
+        }
+    },
+    "CAF00037" : {
+        "surgery_date":"2020-08-18",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-08-18",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan":64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2020-09-14",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00042" : {
+        "surgery_date":"2020-09-20",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-02-20",
+        "strain":"C57/BL6",
+        "genotype":"wt",
+        "num_chan":320,
+        "num_probes": 5,
+        "num_regions": 5,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "M1",
+                "ap": -1.25,
+                "ml": -1.75,
+                "dv": 0.85,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.3,
+                "dv": 0.8,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -0.55,
+                "dv": 1.17,
+                "chan_range": "193-256"
+            },
+            "5": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.32,
+                "dv": 2.85,
+                "chan_range": "257-320"
+            }
+        }
+    },
+    "CAF00048" : {
+        "surgery_date":"2020-10-01",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-07-20",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2020-12-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00049" : {
+        "surgery_date":"2020-10-07",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-07-20",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-05-21",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00050" : {
+        "surgery_date":"2020-10-07",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-07-20",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-03-20",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00052" : {
+        "surgery_date":"2020-10-16",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-04-19",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-01-21",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.27,
+                "ml": -1.75,
+                "dv": -1.2,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00054" : {
+        "surgery_date":"2020-10-26",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-07-11",
+        "strain":"C57/BL6",
+        "genotype":"MYT1L",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "V1m",
+                "ap": -3.65,
+                "ml": -2.15,
+                "dv": 0.85,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00055" : {
+        "surgery_date":"2020-10-26",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-07-11",
+        "strain":"C57/BL6",
+        "genotype":"MYT1L",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "V1m",
+                "ap": -3.65,
+                "ml": -2.15,
+                "dv": 0.85,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00060" : {
+        "surgery_date":"2020-11-11",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-09-23",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2020-12-28",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00061" : {
+        "surgery_date":"2020-11-12",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2019-12-11",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2020-12-15",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00062" : {
+        "surgery_date":"2020-11-13",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2019-11-18",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2020-11-23",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00069" : {
+        "surgery_date":"2020-12-15",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-01-05",
+        "strain":"C57/BL6",
+        "genotype":"wt",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "193-256"
+            }
+        }
+    },
+    "CAF00071" : {
+        "surgery_date":"2020-12-30",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-08-30",
+        "strain":"C57/BL6",
+        "genotype":"APP_PS1",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "4": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "192-256"
+            },
+            "2": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "65-128"
+            },
+            "1": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "1-64"
+            },
+            "3": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "129-192"
+            }
+        }
+    },
+    "CAF00072" : {
+        "surgery_date":"2021-1-13",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-11-24",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-05-10",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00073" : {
+        "surgery_date":"2021-01-13",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-01-05",
+        "strain":"C57/BL6",
+        "genotype":"APP_PS1",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "1-64"
+            },
+            "3": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "193-256"
+            },
+            "2": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "65-128"
+            }
+        }
+    },
+    "CAF00074" : {
+        "surgery_date":"2021-01-20",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-12-05",
+        "strain":"C57/BL6",
+        "genotype":"APP_PS1",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "65-128"
+            },
+            "4": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "193-256"
+            },
+            "3": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "129-192"
+            }
+        }
+    },
+    "CAF00075" : {
+        "surgery_date":"2021-01-20",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-01-05",
+        "strain":"C57/BL6",
+        "genotype":"APP_PS1",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "1-64"
+            },
+            "3": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "193-256"
+            },
+            "2": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "65-128"
+            }
+        }
+    },
+    "CAF00077" : {
+        "surgery_date":"2021-02-01",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-01-05",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "3": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "129-192"
+            },
+            "2": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "65-128"
+            },
+            "4": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "193-256"
+            },
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00078" : {
+        "surgery_date":"2021-02-02",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-04-19",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-05-05",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00079" : {
+        "surgery_date":"2021-02-04",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-04-19",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-02-15",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00080" : {
+        "surgery_date":"2021-02-04",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-04-19",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-03-08",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00081" : {
+        "surgery_date":"2021-02-09",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2019-12-05",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "1-64"
+            },
+            "4": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "192-256"
+            },
+            "2": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "129-192"
+            }
+        }
+    },
+    "CAF00082" : {
+        "surgery_date":"2021-02-12",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-12-05",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "4": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "193-256"
+            },
+            "2": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "129-192"
+            },
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00084" : {
+        "surgery_date":"2021-02-24",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-08-10",
+        "strain":"C57/BL6",
+        "genotype":"p301s/E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "2021-04-20",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00088" : {
+        "surgery_date":"2021-03-15",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-12-05",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "2": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "193-256"
+            },
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00089" : {
+        "surgery_date":"2021-03-16",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2020-07-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00091" : {
+        "surgery_date":"2021-03-25",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-02-04",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00090" : {
+        "surgery_date":"2021-03-25",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-02-04",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00092" : {
+        "surgery_date":"2021-03-25",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-02-24",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00094" : {
+        "surgery_date":"2021-03-30",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-01-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00095" : {
+        "surgery_date":"2021-03-30",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-01-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00096" : {
+        "surgery_date":"2021-03-31",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2021-01-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00097" : {
+        "surgery_date":"2021-03-31",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2021-01-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00099" : {
+        "surgery_date":"2021-04-07",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-10-01",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 512,
+        "num_probes": 8,
+        "num_regions": 8,
+        "alive": true,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "C_Pu",
+                "ap": 0.5,
+                "ml": 5,
+                "dv": 2.96,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "S1",
+                "ap": -0.5,
+                "ml": 2.25,
+                "dv": 0.8,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "M1",
+                "ap": 1.25,
+                "ml": 1.75,
+                "dv": 1,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "NAc",
+                "ap": 1.25,
+                "ml": -1.5,
+                "dv": 4.01,
+                "chan_range": "193-256"
+            },
+            "5": {
+                "region": "LGN",
+                "ap": -2.25,
+                "ml": -3.65,
+                "dv": 2.77,
+                "chan_range": "257-320"
+            },
+            "6": {
+                "region": "V1",
+                "ap": -4,
+                "ml": -3.32,
+                "dv": 1.04,
+                "chan_range": "321-384"
+            },
+            "7": {
+                "region": "RSPv",
+                "ap": -2.7,
+                "ml": -1.2,
+                "dv": 1.44,
+                "chan_range": "385-448"
+            },
+            "8": {
+                "region": "Sup_col",
+                "ap": -4.1,
+                "ml": -1.07,
+                "dv": 0.75,
+                "chan_range": "449-512"
+            }
+        }
+    },
+    "CAF00100" : {
+        "surgery_date":"2021-04-22",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-03-01",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00101" : {
+        "surgery_date":"2021-04-22",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2021-03-01",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00102" : {
+        "surgery_date":"2021-04-29",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-01-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00103" : {
+        "surgery_date":"2021-05-05",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-11-24",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00104" : {
+        "surgery_date":"2021-05-12",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-05-26",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "3": {
+                "region": "ACad",
+                "ap": 0.6,
+                "ml": -0.8,
+                "dv": 0.94,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "RSPv",
+                "ap": -3.25,
+                "ml": -1.25,
+                "dv": 1.36,
+                "chan_range": "193-256"
+            },
+            "2": {
+                "region": "V1",
+                "ap": -4.03,
+                "ml": -2.88,
+                "dv": 0.99,
+                "chan_range": "65-128"
+            },
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00106" : {
+        "surgery_date":"2021-05-14",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-12-07",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 512,
+        "num_probes": 8,
+        "num_regions": 8,
+        "alive": true,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "3": {
+                "region": "C_Pu",
+                "ap": 0.5,
+                "ml": 5,
+                "dv": 2.96,
+                "chan_range": "129-192"
+            },
+            "2": {
+                "region": "S1",
+                "ap": -0.5,
+                "ml": 2.25,
+                "dv": 0.8,
+                "chan_range": "65-128"
+            },
+            "1": {
+                "region": "M1",
+                "ap": 1.25,
+                "ml": 1.75,
+                "dv": 1,
+                "chan_range": "1-64"
+            },
+            "4": {
+                "region": "NAc",
+                "ap": 1.25,
+                "ml": -1.5,
+                "dv": 4.01,
+                "chan_range": "193-256"
+            },
+            "5": {
+                "region": "LGN",
+                "ap": -2.25,
+                "ml": -3.65,
+                "dv": 2.77,
+                "chan_range": "257-320"
+            },
+            "8": {
+                "region": "V1",
+                "ap": -4,
+                "ml": -3.32,
+                "dv": 1.04,
+                "chan_range": "449-512"
+            },
+            "6": {
+                "region": "RSPv",
+                "ap": -2.7,
+                "ml": -1.2,
+                "dv": 1.44,
+                "chan_range": "321-384"
+            },
+            "7": {
+                "region": "Sup_col",
+                "ap": -4.1,
+                "ml": -1.07,
+                "dv": 0.75,
+                "chan_range": "385-448"
+            }
+        }
+    },
+    "CAF00107" : {
+        "surgery_date":"2021-05-18",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2021-03-30",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00108" : {
+        "surgery_date":"2021-05-18",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-08-14",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "CAF00109" : {
+        "surgery_date":"2021-05-18",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2020-07-20",
+        "strain":"C57/BL6",
+        "genotype":"E4",
+        "num_chan": 64,
+        "num_probes": 1,
+        "num_regions": 1,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "CAF",
+        "electrode" : "Tetrode",
+        "headstage" : "hs64",
+        "PROBES": {
+            "1": {
+                "region": "CA1",
+                "ap": -2.52,
+                "ml": -1.75,
+                "dv": 1.4,
+                "chan_range": "1-64"
+            }
+        }
+    },
+    "EAB00040" : {
+        "surgery_date":"2019-02-21",
+        "species": "mouse",
+        "sex":"F",
+        "animal_dob":"2018-12-05",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 256,
+        "num_probes": 4,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "EAB",
+        "electrode" : "Silicon",
+        "headstage" : "unknown",
+        "PROBES": {
+            "1": {
+                "region": "S1",
+                "ap": -2.03,
+                "ml": 3.00,
+                "dv": 1.5,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "CA1",
+                "ap": -1.91,
+                "ml": -1.25,
+                "dv": 2,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "M1",
+                "ap": 1.33,
+                "ml": 1.5,
+                "dv": 2,
+                "chan_range": "129-192"
+            },
+            "4": {
+                "region": "M2",
+                "ap": 2.46,
+                "ml": 1,
+                "dv": 1.75,
+                "chan_range": "193-256"
+            }
+        }
+    },
+    "EAB00047" : {
+        "surgery_date":"2021-05-31",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-02-17",
+        "strain":"C57/BL6",
+        "genotype":"P301s/E4",
+        "num_chan": 192,
+        "num_probes": 3,
+        "num_regions": 4,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "EAB",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "1": {
+                "region": "M1_M2",
+                "ap": 1.75,
+                "ml": 1.25,
+                "dv": 0.75,
+                "chan_range": "1-64"
+            },
+            "2": {
+                "region": "CA1",
+                "ap": -2.25,
+                "ml": 1.75,
+                "dv": 1.5,
+                "chan_range": "65-128"
+            },
+            "3": {
+                "region": "V2",
+                "ap": -2.41,
+                "ml": 0.91,
+                "dv": 0.5,
+                "chan_range": "129-192"
+            }
+        }
+    },
+    "EAB00050" : {
+        "surgery_date":"2019-06-14",
+        "species": "mouse",
+        "sex":"M",
+        "animal_dob":"2019-02-15",
+        "strain":"C57/BL6",
+        "genotype":"WT",
+        "num_chan": 512,
+        "num_probes": 8,
+        "num_regions": 5,
+        "alive": false,
+        "sac_date" : "1900-01-01",
+        "surgeon" : "EAB",
+        "electrode" : "Tetrode",
+        "headstage" : "hs640",
+        "PROBES": {
+            "3": {
+                "region": "M1_M2",
+                "ap": 2.23,
+                "ml": 1.5,
+                "dv": 1,
+                "chan_range": "129-192"
+            },
+            "2": {
+                "region": "C_Pu",
+                "ap": 0.59,
+                "ml": -1.5,
+                "dv": 2,
+                "chan_range": "65-128"
+            },
+            "1": {
+                "region": "C_Pu",
+                "ap": 0.59,
+                "ml": -1.5,
+                "dv": 2,
+                "chan_range": "1-64"
+            },
+            "4": {
+                "region": "CA1_DG",
+                "ap": -3.16,
+                "ml": -3.0,
+                "dv": 1.75,
+                "chan_range": "193-256"
+            },
+            "5": {
+                "region": "CA1_DG",
+                "ap": -3.16,
+                "ml": -3.0,
+                "dv": 1.75,
+                "chan_range": "257-320"
+            },
+            "8": {
+                "region": "V1_V2",
+                "ap": -3.57,
+                "ml": 1.25,
+                "dv": 2.25,
+                "chan_range": "449-512"
+            },
+            "6": {
+                "region": "S1",
+                "ap": -0.48,
+                "ml": 2.0,
+                "dv": 1.0,
+                "chan_range": "321-384"
+            },
+            "7": {
+                "region": "Sup_col",
+                "ap": -3.57,
+                "ml": 1.25,
+                "dv": 2.25,
+                "chan_range": "385-448"
+            }
+        }
+    }
+}
