@@ -4,6 +4,7 @@ import pymysql
 import pandas as pd
 import base64
 import glob
+import json
 from datetime import datetime as dt
 from pandas.io.sql import DatabaseError
 import re
@@ -94,8 +95,8 @@ def __check_existance(name, cursor, db):
     result = np.asarray(cursor.fetchall()).flatten()[0]
     return result
 
-def __check_existance_restart(name, start, cursor):
-    q = f'SELECT EXISTS(SELECT * FROM restarts WHERE animal_id = {name} AND start_day = "{start}")'
+def __check_existance_restart(name, start, end, cursor):
+    q = f'SELECT EXISTS(SELECT * FROM restarts WHERE animal_id = {name} AND start_day = "{start}" AND end_day = "{end}")'
     cursor.execute(q)
     result = np.asarray(cursor.fetchall()).flatten()[0]
     return result
@@ -288,8 +289,6 @@ def __restartgui(current_animals, ogstart_day, ogend_day):
         """
         masterpath      = Directory(os.getcwd())
         animalid        = Enum(list(current_animals))
-        start_day       = Datetime(ogstart_day)
-        end_day         = Datetime(ogend_day)
         manipulations   = Enum(list(manipulationslist))
         exit = Bool()
 
@@ -297,8 +296,6 @@ def __restartgui(current_animals, ogstart_day, ogend_day):
             Item(name = 'exit', label = 'EXIT'),
             Item(name = 'masterpath', label = 'Directory'),
             Item(name = 'animalid'),
-            Item(name = 'start_day'),
-            Item(name = 'end_day'),
             Item(name = 'manipulations'),
             title = 'Restart Information.',
             buttons = ['OK'],
@@ -447,8 +444,11 @@ def submit_clusters(g, cursor, db):
     q = f'SELECT animal_id FROM clusteringdb.animals WHERE animal_name = "{name}"'
     cursor.execute(q)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
-
-    uniqueid = __insert_clusters(cells, g.masterpath, animal_id, False, cursor, db)
+    try:
+        uniqueid = __insert_clusters(cells, g.masterpath, animal_id, name, 0, False, cursor, db)
+    except Exception as err:
+        print("There was an error submitting the clusters - I would run the scrape script")
+        print(err)
     return uniqueid
 
 
@@ -466,17 +466,22 @@ def submit_restart(g, cursor, db):
     cursor.execute(query1)
     animal_id = np.asarray(cursor.fetchall()).flatten()[0]
 
+    d1, d2 = __get_start_end_restart(g.masterpath)
+    print(f'------- {g.masterpath}')
+    if d1 == 0:
+        print('EXITING')
+        return 0
     target_val_pair = {
         "animal_id": int(animal_id),
-        "start_day": g.start_day,
-        "end_day": g.end_day,
+        "start_day": d1,
+        "end_day": d2,
         "save_loc":g.masterpath,
         "manipulations":g.manipulations
     }
     # convert dictionary target and value information into tuples
     targets = tuple( [*target_val_pair] )
 
-    exists = __check_existance_restart(animal_id, g.start_day, cursor)
+    exists = __check_existance_restart(animal_id, d1, d2, cursor)
     if exists:
         print("This restart already exists for this animal, if you want to edit it go write an edit query.")
         return None
@@ -489,7 +494,7 @@ def submit_restart(g, cursor, db):
         cursor.execute(query, target_val_pair)
         uniqueid = cursor.lastrowid
 
-        print(f'Submitted {g.start_day} restart with id {uniqueid} to restarts table')
+        print(f'Submitted {d1} restart with id {uniqueid} to restarts table')
         db.commit()
         return uniqueid
 
@@ -809,10 +814,8 @@ def __top_gui():
             resizable = True,
             scrollable = True
         )
-
     # Create the GUI:
     top_gui = toplevel()
-
     # Run the GUI (if invoked from the command line):
     if __name__ == '__main__':
         top_gui.configure_traits()
@@ -936,8 +939,6 @@ def use_the_database():
             to_return = SEARCH(user, pwd)
         elif g.action == 'DLC/SWS':
             upload_dlc_sws_edit(user, pwd)
-
-
     return to_return
 
 
@@ -1018,6 +1019,7 @@ def SEARCH(user, pwd):
 
     else:
         conditionals = __get_conditionals(g)
+        joins = ''
         if len(conditionals) == 0:
             print('You have to give it a parameter. If you want all the data we have, go look at the simple queries')
             return df
@@ -1041,7 +1043,8 @@ def SEARCH(user, pwd):
 
         if g.clusters:
             if 'clusters' not in joins:
-                joins += "JOIN clusters ON animals.animal_id = clusters.animal_id "
+                joins += "JOIN clusters ON animals.animal_id = clusters.animal_id " \
+                        "JOIN probes ON animals.animal_id = probes.animal_id "
             q = 'SELECT animals.animal_name, clusters.cluster_idx, clusters.folder_location ' \
                 'FROM animals ' \
                 f'{joins}' \
@@ -1165,7 +1168,6 @@ def __search_gui(current_sites, current_manipulations, current_genotypes, all_an
     return sgui
 
 
-
 ### NON GUI FUNCTIONS
 
 def get_all_animals():
@@ -1241,18 +1243,24 @@ def necromancy(animal):
     q = f'UPDATE animals SET animals.alive = 1 WHERE animals.animal_name = "{animal}";'
     cursor.execute(q)
 
-def __check_existance_cluster(animal_id, probe_id, restart_id, clust_idx, cursor):
+def __check_existance_cluster(animal_id, probe_id, restart_id, clust_idx, startt, cursor):
     q = f'SELECT EXISTS(SELECT * FROM clusters WHERE animal_id = {animal_id} AND probe_id = {probe_id} AND ' \
-        f'restart_id = {restart_id} AND cluster_idx = {clust_idx})'
+        f'restart_id = {restart_id} AND cluster_idx = {clust_idx} AND clustering_t0 = "{str(startt)}")'
     cursor.execute(q)
     result = np.asarray(cursor.fetchall()).flatten()[0]
     return result
 
+def __check_existance_probe(animal_id, region, probe_num, cursor):
+    q = f'SELECT EXISTS(SELECT * FROM probes WHERE animal_id = {animal_id} AND region = "{region}" \
+        AND probe_num = {probe_num})'
+    cursor.execute(q)
+    result = np.asarray(cursor.fetchall()).flatten()[0]
+    return result
 
 def __insert_restart(target_val_pair, cursor, db):
     targets = tuple([*target_val_pair])
 
-    exists = __check_existance_restart(target_val_pair['animal_id'], target_val_pair['start_day'], cursor)
+    exists = __check_existance_restart(target_val_pair['animal_id'], target_val_pair['start_day'], target_val_pair['end_day'], cursor)
     if exists:
         print("This restart already exists for this animal, if you want to edit it go write an edit query.")
         # return None
@@ -1268,21 +1276,48 @@ def __insert_restart(target_val_pair, cursor, db):
         print(f'Submitted {target_val_pair["start_day"]} restart with id {uniqueid} to restarts table')
         return uniqueid
 
+def __get_start_end_restart(path):
+    files = sorted(glob.glob(path+'/*.bin'))
+    if len(files) == 0:
+        print(f'{path} -- not a restart folder')
+        return 0, 0
+    f1 = files[0]
+    f2 = files[-1]
+    d1 = f1[-23:f1.find('.bin')]
+    d2 = f2[-23:f2.find('.bin')]
+    d1 = dt.strptime(d1, '%Y-%m-%d_%H-%M-%S')
+    d2 = dt.strptime(d2, '%Y-%m-%d_%H-%M-%S')
+    return d1, d2
 
-def __insert_clusters(cells, cdir, animal_id, addrestart, cursor, db):
+def __insert_clusters(cells, cdir, animal_id, animal, probe_num, addrestart, cursor, db):
     cells = [cell for cell in cells if cell.quality < 4]
     if len(cells) == 0:
         print('No good cells in this directory - moving on')
         return None
 
     cell = cells[0]
-    region = cell.region
+    try:
+        region = cell.region
+    except AttributeError:
+        print('This neuron object is old and should be updated ... pulling from JSON')
+        with open('git/work_git/sahara_work/database_info.json') as f:
+            jdat = json.load(f)
+        probedat = jdat[animal]['PROBES'][probe_num]
+        region = probedat['region']
+    if type(region) == list:
+        region = region[0]
+    if region == 'V1':
+        region = 'V1m'
     start_d = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S')
     end_d = dt.strptime(cell.rend_time, '%Y-%m-%d_%H-%M-%S')
 
     q = f'SELECT * FROM probes WHERE animal_id = {animal_id} and region = "{region}"'
-    probe_id = int(pd.read_sql(q, db).probe_id)
-
+    probe_id = pd.read_sql(q, db)
+    if len(probe_id) > 1:
+        probe_id = probe_id[probe_id['probe_num'] == int(probe_num)]
+        probe_id = int(probe_id.probe_id)
+    else:
+        probe_id = int(probe_id.probe_id)
     q = f'SELECT * FROM restarts WHERE animal_id = {animal_id} and start_day <= "{str(start_d)}" and end_day >= "{str(end_d)}"'
     restart_id = pd.read_sql(q, db)
     if len(restart_id) == 0 and addrestart:
@@ -1296,6 +1331,9 @@ def __insert_clusters(cells, cdir, animal_id, addrestart, cursor, db):
         }
         restart_id = __insert_restart(target_val_pair, cursor, db)
     elif len(restart_id) > 0:
+        if len(restart_id) > 1:
+            "This is weird, but I think it means only some of the raw data was deleted"
+            restart_id = restart_id[0:1]
         restart_id = int(restart_id.restart_id)
     else:
         print("That restart isn't in the database yet, please add it before adding clusters through "
@@ -1313,16 +1351,21 @@ def __insert_clusters(cells, cdir, animal_id, addrestart, cursor, db):
     count = 0
 
     for cell in cells:
-        exists = __check_existance_cluster(animal_id, probe_id, restart_id, cell.clust_idx, cursor)
+        startt = dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S')
+        exists = __check_existance_cluster(animal_id, probe_id, restart_id, cell.clust_idx, startt, cursor)
         if exists:
             print('This cluster already exists in the database')
             uniqueid = None
         else:
-            neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1 / samplerate
-            half = np.sum(cell.waveforms < 0.5 * cell.waveforms.min()) * (1 / samplerate)
-            falling = (cell.waveforms[28] - cell.waveforms[24]) / (4 * (1 / samplerate) * 1000)
-            fr = len(cell.spike_time) / cell.end_time
-
+            try:
+                neg_pos_t = (cell.waveforms[cell.waveforms.argmin():-1].argmax()) * 1 / samplerate
+                half = np.sum(cell.waveforms < 0.5 * cell.waveforms.min()) * (1 / samplerate)
+                falling = (cell.waveforms[28] - cell.waveforms[24]) / (4 * (1 / samplerate) * 1000)
+                fr = len(cell.spike_time) / cell.end_time
+            except Exception as err:
+                print(err)
+                print('There was an error with the cluster statistics, skipping this cell')
+                continue
             clust_stats = {
                 'animal_id': int(animal_id),
                 'restart_id': int(restart_id),
@@ -1335,7 +1378,7 @@ def __insert_clusters(cells, cdir, animal_id, addrestart, cursor, db):
                 'fr': float(fr),
                 'cluster_idx': int(cell.clust_idx),
                 'duration': float(round((cell.end_time - cell.start_time) / 60 / 60, 3)),
-                'clustering_t0': dt.strptime(cell.rstart_time, '%Y-%m-%d_%H-%M-%S'),
+                'clustering_t0': startt,
                 'tracklinks': str(cell.key),
                 'folder_location': cdir,
                 'time_frame': str(time_frame)
@@ -1367,6 +1410,9 @@ def scrape():
         restarts = np.concatenate(restarts)
         for r in restarts:
             files = sorted(glob.glob(r+'/*.bin'))
+            if len(files) == 0:
+                print(f'{r} -- not a restart folder')
+                continue
             f1 = files[0]
             f2 = files[-1]
             d1 = f1[-23:f1.find('.bin')]
@@ -1380,14 +1426,105 @@ def scrape():
                 "start_day": d1,
                 "end_day": d2,
                 "save_loc": r,
-                "manipulations": None
+                "manipulations": 'none'
             }
             __insert_restart(target_val_pair, cursor, db)
 
         clustering_jobs = glob.glob(f'/media/HlabShare/Clustering_Data/{animal_name}/*/*/*/co/*neurons_group0.npy')
+        clustering_jobs = [c for c in clustering_jobs if 'scored' not in c]
         print(len(clustering_jobs))
-        for cdir in clustering_jobs:
-            cells = np.load(cdir, allow_pickle = True)
-            __insert_clusters(cells, cdir, animal_id, True, cursor, db)
+        for i, cdir in enumerate(clustering_jobs):
+            print(f'Loading {i} of {len(clustering_jobs)} jobs for {animal_name}')
+            pnum = cdir[cdir.find('probe')+5:cdir.find('probe')+6]
+            try:
+                cells = np.load(cdir, allow_pickle = True)
+            except Exception:
+                print('well that didnt work for some reason -- moving on')
+                continue
+            __insert_clusters(cells, cdir, animal_id, animal_name, pnum, True, cursor, db)
 
+def __read_JSON(jfile):
+    user, pwd = __get_user_pwd()
+    cursor, db = connectclusterdb(user, pwd)
+
+    with open(jfile) as j:
+        dat = json.load(j)
+    for k in dat.keys():
+        d = dat[k]
+        if d['genotype'] == 'wt':
+            d['genotype'] = 'WT'
+        target_val_pair = {
+            "animal_name": k,
+            "species" : d['species'],
+            "sex" : d['sex'],
+            "animal_dob" : d['animal_dob'],
+            "strain" : d['strain'],
+            "genotype" : d['genotype'],
+            "daqsys" : 'ecube',
+            "num_chan" : d['num_chan'],
+            "num_probes"  : d['num_probes'],
+            "num_regions" : d['num_regions'],
+            "implant_date" : d['surgery_date'],
+            "alive" : d['alive'],
+            "sac_date" : d['sac_date'],
+            "surgeon" : d['surgeon'],
+            "electrode" : d['electrode'],
+            "headstage" : d['headstage']
+            }
+
+        # convert dictionary target and value information into tuples
+        exists = __check_existance(k, cursor, db)
+        if exists:
+            print('That animal already exists, if you want to edit it please write an edit query, see the help docs for the search funciton.')
+        else:
+            if d['alive']:
+                target_val_pair.pop('sac_date')
+            targets = tuple( [*target_val_pair] )
+            #values  = tuple( [*target_val_pair.values()] )
+            # automatically rewrite the target names into the proper format for mysql
+            cols = ', '.join(map(__escape_name, targets))  # assumes the keys are *valid column names*.
+            placeholders = ', '.join(['%({})s'.format(name) for name in targets])
+            # submit to the implants_db table.
+
+            query = 'INSERT INTO animals ({}) VALUES ({})'.format(cols, placeholders)
+
+            cursor.execute(query, target_val_pair)
+            animal_id = cursor.lastrowid
+
+            db.commit()
+            print(f'Added {k} to the aniamls table.')
+            
+        
+        all_probes = d['PROBES']
+        for kk in all_probes.keys():
+            probe_dat = all_probes[kk]
+            if probe_dat['region'] == 'V1':
+                probe_dat['region'] = 'V1m'
+            target_val_pair = {
+                "animal_id": int(animal_id),
+                "probe_num": int(kk),
+                "region": probe_dat['region'],
+                "ap": float(probe_dat['ap']),
+                "ml": float(probe_dat['ml']),
+                "dv": float(probe_dat['dv']),
+                "chan_range": probe_dat['chan_range']
+            }
+
+            probe_exists = __check_existance_probe(animal_id, probe_dat['region'], int(kk), cursor)
+            if probe_exists:
+                print('This probe already exists')
+            else:
+                # convert dictionary target and value information into tuples
+                targets = tuple([*target_val_pair])
+                # values  = tuple( [*target_val_pair.values()] )
+                # automatically rewrite the target names into the proper format for mysql
+                cols = ', '.join(map(__escape_name, targets))  # assumes the keys are *valid column names*.
+                placeholders = ', '.join(['%({})s'.format(name) for name in targets])
+                query = 'INSERT INTO probes ({}) VALUES ({})'.format(cols, placeholders)
+
+                cursor.execute(query, target_val_pair)
+                uniqueid = cursor.lastrowid
+
+                db.commit()
+                print(f'----- Added {k} probe {kk} to the probes table.')
 
