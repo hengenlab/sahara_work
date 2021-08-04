@@ -604,7 +604,7 @@ def get_hstype(animal):
         'caf101': ['hs64'],
         'caf102': ['hs64'],
         'caf103': ['hs64'],
-        'caf104': ['hs64'],
+        'caf104': ['APT_PCB', 'APT_PCB', 'APT_PCB', 'APT_PCB'],
         'caf106': ['APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB','APT_PCB'],
         'caf107': ['hs64'],
         'caf108': ['hs64'],
