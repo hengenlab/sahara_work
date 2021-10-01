@@ -1,3 +1,13 @@
+# sahara_work
+
+Collection of utility scripts to assist in lab data analysis.
+
+When imported with python `import sahara_work as saw` this package can be used to analyze large datasets in conjunction with the Criticality package. Explanations of the files included in the  `__init__.py`  file are below.
+
+------
+
+
+
 ## Crit_utils
 These are functions to make running large amounts of data through criticality easier and more efficient in addition to helper functions to deal with data.
 
@@ -17,11 +27,10 @@ This bad boy takes in a list of paths, in addition to a dictionary of parameters
 
 
 *Paths*: a list of paths to each of the scrubbed neurons you want to run criticality on. Make sure the path is **complete**, and goes all the way to a .npy file. 
-ex: paths = ['/media/Hlabshare/Clustering_Data/CAF00019/caf19_03262020/0_12/*neurons_group0.npy', ...]
+ex: `paths = ['/media/Hlabshare/Clustering_Data/CAF00019/caf19_03262020/0_12/*neurons_group0.npy', ...]`
 
 
-*Params*:
-A dictionary with the necessary parameters, there are a many necessary inputs so the function can run. The params dictionary needs look *at least* like this:
+*Params*: A dictionary with the necessary parameters, there are a many necessary inputs so the function can run. The params dictionary needs look *at least* like this:
 
 ```python
 params = {
