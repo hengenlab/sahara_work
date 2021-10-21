@@ -325,7 +325,8 @@ def get_birthday(animal, returnall=False):
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
         'eab50': dt(2019, 2, 15, 7, 30),
-        'eab40': dt(2018, 12, 5, 7, 30)
+        'eab40': dt(2018, 12, 5, 7, 30),
+        'kdr14': dt(2021, 08, 19, 7, 30)
     }
 
     if returnall:
@@ -354,7 +355,7 @@ def decode_animal(num):
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
-                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40']
+                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14']
 
     return animals[num]
 
@@ -420,7 +421,8 @@ def get_regions(animal):
         'eab47': ['M1_M2','CA1','V2'],
         'eab': ['M1_M2','CA1','V2'],
         'eab50': ['C_Pu','C_Pu','M1_M2','CA1_DG','CA1_DG','S1','Sup_col','V1_V2'],
-        'eab40': ['S1','CA1','M1','M2']
+        'eab40': ['S1','CA1','M1','M2'],
+        'kdr14': ['CA1']
     }
     return regions[animal]
 
@@ -486,7 +488,8 @@ def get_sex(animal):
         'eab47': 'M',
         'eab': 'M',
         'eab50': 'F',
-        'eab40': 'F'
+        'eab40': 'F',
+        'kdr14': 'F'
     }
 
     return sex[animal]
@@ -553,7 +556,8 @@ def get_genotype(animal):
         'eab47': 'te4',
         'eab': 'te4',
         'eab50': 'wt',
-        'eab40': 'wt'
+        'eab40': 'wt',
+        'kdr14': 'wt'
     }
 
     return genos[animal]
@@ -1978,7 +1982,8 @@ def construct_fr_df(paths):
         'eab47': dt(2019, 2, 17, 7, 30),
         'eab': dt(2019, 2, 17, 7, 30),
         'eab50': dt(2019, 2, 15, 7, 30),
-        'eab40': dt(2018, 12, 5, 7, 30)
+        'eab40': dt(2018, 12, 5, 7, 30),
+        'kdr14': dt(2021, 08, 19, 7, 30)
     }
     seconds_in_day = 60 * 60 * 24
     with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'w', newline = '') as c:
