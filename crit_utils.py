@@ -489,7 +489,7 @@ def get_sex(animal):
         'eab': 'M',
         'eab50': 'F',
         'eab40': 'F',
-        'kdr14': 'F'
+        'kdr14': 'M'
     }
 
     return sex[animal]
