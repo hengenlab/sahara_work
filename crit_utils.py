@@ -326,7 +326,7 @@ def get_birthday(animal, returnall=False):
         'eab': dt(2019, 2, 17, 7, 30),
         'eab50': dt(2019, 2, 15, 7, 30),
         'eab40': dt(2018, 12, 5, 7, 30),
-        'kdr14': dt(2021, 08, 19, 7, 30)
+        'kdr14': dt(2021, 8, 19, 7, 30)
     }
 
     if returnall:
@@ -1983,7 +1983,7 @@ def construct_fr_df(paths):
         'eab': dt(2019, 2, 17, 7, 30),
         'eab50': dt(2019, 2, 15, 7, 30),
         'eab40': dt(2018, 12, 5, 7, 30),
-        'kdr14': dt(2021, 08, 19, 7, 30)
+        'kdr14': dt(2021, 8, 19, 7, 30)
     }
     seconds_in_day = 60 * 60 * 24
     with open('/media/HlabShare/clayton_sahara_work/criticality/cell_stats.csv', 'w', newline = '') as c:
