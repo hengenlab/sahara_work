@@ -639,7 +639,7 @@ def get_probe(animal, region):
     probe = f'probe{probenum[0]+1}' 
     return probe 
 
-def get_params(animal, probe):
+def get_params(animal, probe, flag=1):
     # as of 5/05/21 these params produced an effect on all our data
     # if you need to return to these, they're here, don't delete
     keep_these_params = {
@@ -1755,16 +1755,22 @@ def get_params(animal, probe):
     region = get_regions(animal)[int(probe[-1])-1]
 
     #pref the probe params
-    if animal in probe_params.keys():
-        if region in probe_params[animal].keys():
-            return probe_params[animal][region]
-
-    # if no probe params but normal params return those
-    if animal in harsh_params.keys():
-        return params[animal]
-    
-    # otherwise base params it is, thank you for visiting
-    return base
+    if flag == 1:
+        if animal in probe_params.keys():
+            if region in probe_params[animal].keys():
+                return probe_params[animal][region]
+        # if no probe params but normal params return those
+        if animal in harsh_params.keys():
+            return params[animal]
+    elif flag == 2:
+        if animal in harsh_params.keys():
+            return harsh_params[animal]
+    elif flag == 3:
+        if animal in harsh_params.keys():
+            return keep_these_params[animal]
+    else:
+        # otherwise base params it is, thank you for visiting
+        return base
              
 def load_crit(path):
     '''
