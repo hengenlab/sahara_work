@@ -640,6 +640,15 @@ def get_probe(animal, region):
     return probe 
 
 def get_params(animal, probe, flag=1):
+    '''
+    animal : animal_name, example 'CAF00072'
+    probe : location, example 'CA1'
+    flag : 1 default, probe_params or params
+         : 2 harsh_params
+         : 3 keep_these_params
+         : 4 base, if animal not found in flag =1 base is returned
+
+    '''
     # as of 5/05/21 these params produced an effect on all our data
     # if you need to return to these, they're here, don't delete
     keep_these_params = {
