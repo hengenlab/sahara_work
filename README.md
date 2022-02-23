@@ -250,6 +250,14 @@ probe = get_probe(animal = 'caf22', region = 'CA1')
 print(probe)
 'probe2'
 
+
+# params = get_params(animal='caf72', 'CA1', flag=1) 
+#    animal : animal_name, example 'CAF00072'
+#    probe : location, example 'CA1'
+#    flag : 1 default, probe_params or params
+#         : 2 harsh_params
+#         : 3 keep_these_params
+#         : 4 base, if animal not found in flag =1 base is returned
 params = get_params(animal = 'caf22')
 print(params)
 {'nfactor_bm': 5, 
