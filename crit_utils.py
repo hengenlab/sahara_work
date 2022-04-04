@@ -326,7 +326,9 @@ def get_birthday(animal, returnall=False):
         'eab': dt(2019, 2, 17, 7, 30),
         'eab50': dt(2019, 2, 15, 7, 30),
         'eab40': dt(2018, 12, 5, 7, 30),
-        'kdr14': dt(2021, 8, 19, 7, 30)
+        'kdr14': dt(2021, 8, 19, 7, 30),
+	'kdr27': dt(2021, 11, 1, 7, 30)
+	'kdr36': dt(2021, 11, 1, 7, 30)
     }
 
     if returnall:
@@ -355,7 +357,7 @@ def decode_animal(num):
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
-                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14']
+                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14', 'kdr27', 'kdr36']
 
     return animals[num]
 
@@ -422,7 +424,9 @@ def get_regions(animal):
         'eab': ['M1_M2','CA1','V2'],
         'eab50': ['C_Pu','C_Pu','M1_M2','CA1_DG','CA1_DG','S1','Sup_col','V1_V2'],
         'eab40': ['S1','CA1','M1','M2'],
-        'kdr14': ['CA1']
+        'kdr14': ['CA1'],
+	'kdr27': ['CA1'],
+	'kdr36': ['CA1']
     }
     return regions[animal]
 
@@ -489,7 +493,9 @@ def get_sex(animal):
         'eab': 'M',
         'eab50': 'F',
         'eab40': 'F',
-        'kdr14': 'M'
+        'kdr14': 'M',
+	'kdr27': 'F',
+	'kdr36': 'M'
     }
 
     return sex[animal]
@@ -557,7 +563,9 @@ def get_genotype(animal):
         'eab': 'te4',
         'eab50': 'wt',
         'eab40': 'wt',
-        'kdr14': 'wt'
+        'kdr14': 'wt',
+	'kdr27': 'wt',
+	'kdr36': 'wt'
     }
 
     return genos[animal]
@@ -616,6 +624,9 @@ def get_hstype(animal):
         'eab52': ['EAB50chmap_00','EAB50chmap_00'],
         'eab47': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
         'eab50': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
+	'kdr14': ['APT_PCB'],
+	'kdr27': ['hs64'],
+	'kdr36': ['hs64']
     }
 
     return hstype[animal]
@@ -922,6 +933,78 @@ def get_params(animal, probe, flag=1):
                     'nfactor_tm_tail':0.8,
                     'quals': [1]
                     },
+	 'caf100': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':25,
+                    'tm':10,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1]
+                    },
+        'caf101': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf102': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1]
+                    },
+        'caf103': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf104': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1]
+                    },
+        'caf107': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':15,
+                    'tm':12,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf108': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf109': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':25,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
         'eab47': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
@@ -945,6 +1028,33 @@ def get_params(animal, probe, flag=1):
                     'nfactor_tm':0,
                     'bm': 50,
                     'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'kdr14': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'kdr27': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':25,
+                    'tm':15,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'kdr36': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8,
                     'quals': [1,2]
@@ -1551,6 +1661,69 @@ def get_params(animal, probe, flag=1):
                     'nfactor_bm_tail':0.8,
                     'nfactor_tm_tail':0.8
                     },
+	'caf101': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':30,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf102': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':10,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1]
+                    },
+	'caf103': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf104': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1]
+                    },
+        'caf107': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':15,
+                    'tm':12,
+                    'nfactor_bm_tail':0.75,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'caf108': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':20,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+        'caf109': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm':25,
+                    'tm':15,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
         'eab47': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
@@ -1570,6 +1743,33 @@ def get_params(animal, probe, flag=1):
                     'quals': [1,2]
                     },
         'eab40': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'kdr14': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'kdr27': {
+                    'nfactor_bm': 0,
+                    'nfactor_tm':0,
+                    'bm': 50,
+                    'tm':20,
+                    'nfactor_bm_tail':0.8,
+                    'nfactor_tm_tail':0.8,
+                    'quals': [1,2]
+                    },
+	'kdr36': {
                     'nfactor_bm': 0,
                     'nfactor_tm':0,
                     'bm': 50,
