@@ -327,8 +327,8 @@ def get_birthday(animal, returnall=False):
         'eab50': dt(2019, 2, 15, 7, 30),
         'eab40': dt(2018, 12, 5, 7, 30),
         'kdr14': dt(2021, 8, 19, 7, 30),
-	'kdr27': dt(2021, 11, 1, 7, 30)
-	'kdr36': dt(2021, 11, 1, 7, 30)
+        'kdr27': dt(2021, 11, 1, 7, 30),
+        'kdr36': dt(2021, 11, 1, 7, 30)
     }
 
     if returnall:
