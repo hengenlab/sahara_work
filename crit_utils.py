@@ -1975,7 +1975,7 @@ def get_params(animal, probe, flag=1):
         if animal in harsh_params.keys():
             return harsh_params[animal]
     elif flag == 3:
-        if animal in harsh_params.keys():
+        if animal in keep_these_params.keys():
             return keep_these_params[animal]
     else:
         # otherwise base params it is, thank you for visiting
