@@ -2521,7 +2521,7 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
         print('start: ', start_bin, ' end ', num_bins, ' bin_len ', bin_len)
 
         # set individual params
-        indiv = get_params(animal, probe)
+        indiv = get_params(animal, probe, 3)
         for key in indiv.keys():
             params[key] = indiv[key]
 
