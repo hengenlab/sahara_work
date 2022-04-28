@@ -52,3 +52,6 @@ Temporary Items
 *.h5
 *.mp4
 *.npy
+
+# Pycharm
+.idea
