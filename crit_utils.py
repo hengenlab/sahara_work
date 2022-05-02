@@ -2542,7 +2542,6 @@ def lilo_and_stitch(paths, params=None,
         print("="*20)
         print("="*20)
         print("\n ")
-        sys.exit()
 
         quals = params['quals']
         fr_cutoff = params['fr_cutoff']
