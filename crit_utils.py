@@ -2486,10 +2486,15 @@ def lilo_and_stitch_extended_edition(paths, params, rerun = False, save = True, 
     return all_objs, errors
 
 
-def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False):
+def lilo_and_stitch(paths, params=None,
+                    params_num=None,
+                    save=True, overlap=False,
+                    timeout=False):
     '''
     read the readme online. too much to put here. i'll even link it for you
     https://github.com/hengenlab/sahara_work/blob/master/README.md
+    params_num : if 3 or 4 use get_params
+                 otherwise use the params in the argument
     '''
     all_objs = []
     errors = []
@@ -2521,9 +2526,23 @@ def lilo_and_stitch(paths, params, save = True, overlap = False, timeout = False
         print('start: ', start_bin, ' end ', num_bins, ' bin_len ', bin_len)
 
         # set individual params
-        indiv = get_params(animal, probe, 3)
-        for key in indiv.keys():
-            params[key] = indiv[key]
+        if params_num in [3, 4]:
+            indiv = get_params(animal, probe, params_num)
+            for key in indiv.keys():
+                params[key] = indiv[key]
+        else:
+            indiv = params
+
+        # print bm and tm we are using
+        print("\n ")
+        print("="*20)
+        print("params")
+        print("="*20)
+        print(params)
+        print("="*20)
+        print("="*20)
+        print("\n ")
+        sys.exit()
 
         quals = params['quals']
         fr_cutoff = params['fr_cutoff']
