@@ -328,7 +328,8 @@ def get_birthday(animal, returnall=False):
         'eab40': dt(2018, 12, 5, 7, 30),
         'kdr14': dt(2021, 8, 19, 7, 30),
         'kdr27': dt(2021, 11, 1, 7, 30),
-        'kdr36': dt(2021, 11, 1, 7, 30)
+        'kdr36': dt(2021, 11, 1, 7, 30),
+        'kdr38': dt(2022, 1, 29, 7, 30)
     }
 
     if returnall:
@@ -357,7 +358,8 @@ def decode_animal(num):
     animals = ['caf01', 'caf19', 'caf22', 'caf26', 'caf34', 'caf37', 'caf40', 'caf42', 
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
-                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14', 'kdr27', 'kdr36']
+                 'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14', 'kdr27', 'kdr36',
+                 'kdr38']
 
     return animals[num]
 
@@ -426,7 +428,8 @@ def get_regions(animal):
         'eab40': ['S1','CA1','M1','M2'],
         'kdr14': ['CA1'],
 	'kdr27': ['CA1'],
-	'kdr36': ['CA1']
+	'kdr36': ['CA1'],
+	'kdr48': ['Su_col', 'LGN', 'AnteriorCingulateCortex']
     }
     return regions[animal]
 
@@ -495,7 +498,8 @@ def get_sex(animal):
         'eab40': 'F',
         'kdr14': 'M',
 	'kdr27': 'F',
-	'kdr36': 'M'
+	'kdr36': 'M',
+	'kdr48': 'M'
     }
 
     return sex[animal]
@@ -565,7 +569,8 @@ def get_genotype(animal):
         'eab40': 'wt',
         'kdr14': 'wt',
 	'kdr27': 'wt',
-	'kdr36': 'wt'
+	'kdr36': 'wt',
+	'kdr48': 'wt'
     }
 
     return genos[animal]
@@ -626,7 +631,8 @@ def get_hstype(animal):
         'eab50': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
 	'kdr14': ['APT_PCB'],
 	'kdr27': ['hs64'],
-	'kdr36': ['hs64']
+	'kdr36': ['hs64'],
+	'kdr48': ['APT_PCB', 'APT_PCB', 'APT_PCB']
     }
 
     return hstype[animal]
