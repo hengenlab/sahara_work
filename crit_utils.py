@@ -329,7 +329,7 @@ def get_birthday(animal, returnall=False):
         'kdr14': dt(2021, 8, 19, 7, 30),
         'kdr27': dt(2021, 11, 1, 7, 30),
         'kdr36': dt(2021, 11, 1, 7, 30),
-        'kdr38': dt(2022, 1, 29, 7, 30)
+        'kdr48': dt(2022, 1, 29, 7, 30)
     }
 
     if returnall:
@@ -359,7 +359,7 @@ def decode_animal(num):
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
                  'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14', 'kdr27', 'kdr36',
-                 'kdr38']
+                 'kdr48']
 
     return animals[num]
 
