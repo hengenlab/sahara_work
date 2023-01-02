@@ -329,7 +329,11 @@ def get_birthday(animal, returnall=False):
         'kdr14': dt(2021, 8, 19, 7, 30),
         'kdr27': dt(2021, 11, 1, 7, 30),
         'kdr36': dt(2021, 11, 1, 7, 30),
-        'kdr48': dt(2022, 1, 29, 7, 30)
+        'kdr48': dt(2022, 1, 29, 7, 30),
+        'zbr27': dt(2022, 9, 20, 7, 30),
+        'zbr30': dt(2022, 9, 20, 7, 30),
+        'zbr33': dt(2022, 10, 16, 7, 30),
+        'zbr34': dt(2022, 10, 30, 7, 30)
     }
 
     if returnall:
@@ -359,7 +363,7 @@ def decode_animal(num):
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
                  'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14', 'kdr27', 'kdr36',
-                 'kdr48']
+                 'kdr48', 'zbr27', 'zbr30', 'zbr33', 'zbr34']
 
     return animals[num]
 
@@ -427,9 +431,13 @@ def get_regions(animal):
         'eab50': ['C_Pu','C_Pu','M1_M2','CA1_DG','CA1_DG','S1','Sup_col','V1_V2'],
         'eab40': ['S1','CA1','M1','M2'],
         'kdr14': ['CA1'],
-	'kdr27': ['CA1'],
-	'kdr36': ['CA1'],
-	'kdr48': ['Su_col', 'LGN', 'AnteriorCingulateCortex']
+        'kdr27': ['CA1'],
+        'kdr36': ['CA1'],
+        'kdr48': ['Su_col', 'LGN', 'AnteriorCingulateCortex'],
+        'zbr27': ['CA1'],
+        'zbr30': ['ACC'],
+        'zbr33': ['ACC'],
+        'zbr34': ['ACC']
     }
     return regions[animal]
 
@@ -497,9 +505,13 @@ def get_sex(animal):
         'eab50': 'F',
         'eab40': 'F',
         'kdr14': 'M',
-	'kdr27': 'F',
-	'kdr36': 'M',
-	'kdr48': 'M'
+        'kdr27': 'F',
+        'kdr36': 'M',
+        'kdr48': 'M',
+        'zbr27': 'M',
+        'zbr30': 'M',
+        'zbr33': 'M',
+        'zbr34': 'M'
     }
 
     return sex[animal]
@@ -568,9 +580,13 @@ def get_genotype(animal):
         'eab50': 'wt',
         'eab40': 'wt',
         'kdr14': 'wt',
-	'kdr27': 'wt',
-	'kdr36': 'wt',
-	'kdr48': 'wt'
+        'kdr27': 'wt',
+        'kdr36': 'wt',
+        'kdr48': 'wt',
+        'zbr27': 'wt',
+        'zbr30': 'wt',
+        'zbr33': 'DNMT3A',
+        'zbr34': 'DNMT3A'
     }
 
     return genos[animal]
@@ -629,10 +645,14 @@ def get_hstype(animal):
         'eab52': ['EAB50chmap_00','EAB50chmap_00'],
         'eab47': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
         'eab50': ['EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00','EAB50chmap_00'],
-	'kdr14': ['APT_PCB'],
-	'kdr27': ['hs64'],
-	'kdr36': ['hs64'],
-	'kdr48': ['APT_PCB', 'APT_PCB', 'APT_PCB']
+        'kdr14': ['APT_PCB'],
+        'kdr27': ['hs64'],
+        'kdr36': ['hs64'],
+        'kdr48': ['APT_PCB', 'APT_PCB', 'APT_PCB'],
+        'zbr27': ['APT_PCB'],
+        'zbr30': ['APT_PCB'],
+        'zbr33': ['APT_PCB'],
+        'zbr34': ['APT_PCB']
     }
 
     return hstype[animal]
