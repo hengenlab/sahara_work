@@ -333,7 +333,9 @@ def get_birthday(animal, returnall=False):
         'zbr27': dt(2022, 9, 20, 7, 30),
         'zbr30': dt(2022, 9, 20, 7, 30),
         'zbr33': dt(2022, 10, 16, 7, 30),
-        'zbr34': dt(2022, 10, 30, 7, 30)
+        'zbr34': dt(2022, 10, 30, 7, 30),
+        'zbr50': dt(2023, 1, 10, 7, 30),
+        'zbr52': dt(2023, 1, 10, 7, 30)
     }
 
     if returnall:
@@ -363,7 +365,7 @@ def decode_animal(num):
                 'caf48', 'caf49', 'caf50', 'caf52', 'caf54', 'caf55', 'caf58', 'caf60', 
                 'caf61', 'caf62', 'caf66', 'caf69', 'caf71', 'caf72', 'caf73', 'caf74',
                  'caf75', 'eab52', 'eab47', 'eab', 'eab50', 'eab40', 'kdr14', 'kdr27', 'kdr36',
-                 'kdr48', 'zbr27', 'zbr30', 'zbr33', 'zbr34']
+                 'kdr48', 'zbr27', 'zbr30', 'zbr33', 'zbr34', 'zbr50', 'zbr52']
 
     return animals[num]
 
@@ -437,7 +439,9 @@ def get_regions(animal):
         'zbr27': ['CA1'],
         'zbr30': ['ACC'],
         'zbr33': ['ACC'],
-        'zbr34': ['ACC']
+        'zbr34': ['ACC'],
+        'zbr50': ['ACC', 'V1'],
+        'zbr52': ['ACC', 'V1']
     }
     return regions[animal]
 
@@ -511,7 +515,9 @@ def get_sex(animal):
         'zbr27': 'M',
         'zbr30': 'M',
         'zbr33': 'M',
-        'zbr34': 'M'
+        'zbr34': 'M',
+        'zbr50': 'M',
+        'zbr52': 'M'
     }
 
     return sex[animal]
@@ -586,7 +592,9 @@ def get_genotype(animal):
         'zbr27': 'wt',
         'zbr30': 'wt',
         'zbr33': 'DNMT3A',
-        'zbr34': 'DNMT3A'
+        'zbr34': 'DNMT3A',
+        'zbr50': 'MYT1L+',
+        'zbr52': 'MYT1L-'
     }
 
     return genos[animal]
@@ -652,7 +660,9 @@ def get_hstype(animal):
         'zbr27': ['APT_PCB'],
         'zbr30': ['APT_PCB'],
         'zbr33': ['APT_PCB'],
-        'zbr34': ['APT_PCB']
+        'zbr34': ['APT_PCB'],
+        'zbr50': ['APT_PCB'],
+        'zbr52': ['APT_PCB']
     }
 
     return hstype[animal]
